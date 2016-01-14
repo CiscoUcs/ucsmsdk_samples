@@ -73,7 +73,7 @@ def qos_class_disable(handle, priority):
     """
     qos_class = handle.query_dn("fabric/lan/classes/class-" + priority)
     if qos_class:
-        qos_class.admin_state = admin_state
+        qos_class.admin_state = "disabled" 
     else:
         raise ValueError("QoS class is not available")
 
@@ -83,7 +83,7 @@ def qos_class_disable(handle, priority):
 
 
 def qos_class_exists(handle, priority, admin_state=None, cos=None, drop=None,
-                     weight=None, mtu=None, multicast_optimize=None):
+                     weight=None, mtu=None, multicast_optimize=None, match_props=False):
     """
     Checks if the Mo with the specified Params already exists
 
@@ -107,11 +107,12 @@ def qos_class_exists(handle, priority, admin_state=None, cos=None, drop=None,
     dn = "fabric/lan/classes/class-" + priority
     mo = handle.query_dn(dn)
     if mo:
-        if ((admin_state and mo.admin_state != admin_state) and
-            (cos and mo.cos != cos) and
-            (drop and mo.drop != drop) and
-            (weight and mo.weight != weight) and
-            (mtu and mo.mtu != mtu) and
+        if (match_props and
+            (admin_state and mo.admin_state != admin_state) or
+            (cos and mo.cos != cos) or
+            (drop and mo.drop != drop) or
+            (weight and mo.weight != weight) or
+            (mtu and mo.mtu != mtu) or
             (multicast_optimize and mo.multicast_optimize != multicast_optimize)):
             return False
         return True

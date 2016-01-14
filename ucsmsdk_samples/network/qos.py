@@ -107,6 +107,9 @@ def qos_class_exists(handle, priority, admin_state=None, cos=None, drop=None,
     dn = "fabric/lan/classes/class-" + priority
     mo = handle.query_dn(dn)
     if mo:
+        if admin_state == "disabled" and mo.admin_state == admin_state:
+            return False 
+            
         if (match_props and
             (admin_state and mo.admin_state != admin_state) or
             (cos and mo.cos != cos) or

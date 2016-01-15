@@ -82,10 +82,10 @@ def qos_class_disable(handle, priority):
     return qos_class
 
 
-def qos_class_exists(handle, priority, admin_state=None, cos=None, drop=None,
-                     weight=None, mtu=None, multicast_optimize=None, match_props=False):
+def qos_class_conf_drift(handle, priority, admin_state=None, cos=None, drop=None,
+                     weight=None, mtu=None, multicast_optimize=None):
     """
-    Checks if the Mo with the specified Params already exists
+    Detects configuration drift for Qos Class
 
     Args:
         handle (UcsHandle)
@@ -101,24 +101,37 @@ def qos_class_exists(handle, priority, admin_state=None, cos=None, drop=None,
         True/False - bool
 
     Example:
-        bool_var = qos_class_exists(handle, "platinum", "enabled", "6", "drop", "9", "fc", "yes")
+        bool_var = qos_class_conf_drift(handle, "platinum", "enabled", "6", "drop", "9", "fc", "yes")
 
     """
     dn = "fabric/lan/classes/class-" + priority
     mo = handle.query_dn(dn)
     if mo:
+        # the mo is present and already disabled 
         if admin_state == "disabled" and mo.admin_state == admin_state:
             return False 
-            
-        if (match_props and
-            (admin_state and mo.admin_state != admin_state) or
-            (cos and mo.cos != cos) or
-            (drop and mo.drop != drop) or
-            (weight and mo.weight != weight) or
-            (mtu and mo.mtu != mtu) or
-            (multicast_optimize and mo.multicast_optimize != multicast_optimize)):
+
+        # the mo is present and not disabled. Need to act
+        if admin_state == "disabled" and mo.admin_state != admin_state:
+            return True 
+
+        # the mo is present and already enabled
+        if admin_state == "enabled" and mo.admin_state == admin_state:
+            # check props for drift
+            if ((cos and mo.cos != cos) or
+                (drop and mo.drop != drop) or
+                (weight and mo.weight != weight) or
+                (mtu and mo.mtu != mtu) or
+                (multicast_optimize and mo.multicast_optimize != multicast_optimize)):
+                # configuration drift detected
+                return True
+            # passed prop:val and mo[prop:val] are same. No configuration drift detected
             return False
-        return True
+
+        # the mo is present and not enabled. Need to act
+        if admin_state == "enabled" and mo.admin_state != admin_state:
+            return True
+            
     return False
 
 def qos_policy_add(handle, name, priority, burst, rate,

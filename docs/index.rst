@@ -9,11 +9,12 @@ Welcome to ucsmsdk_samples's documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    readme
    installation
    usage
+   ucsmsdk_samples
    contributing
    authors
    history

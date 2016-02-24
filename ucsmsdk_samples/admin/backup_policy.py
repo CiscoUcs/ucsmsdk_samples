@@ -12,7 +12,8 @@
 # limitations under the License.
 
 
-def backup_policy_remote_add(handle, hostname, user, pwd, remote_file,
+
+def backup_policy_remote_create(handle, hostname, user, pwd, remote_file,
                                 admin_state,
                                 type="full-state",
                                 proto="ftp",
@@ -36,7 +37,7 @@ def backup_policy_remote_add(handle, hostname, user, pwd, remote_file,
         MgmtBackup: Managed object
 
     Example:
-        mo = backup_policy_remote_add(handle, hostname="10.10.10.10",
+        mo = backup_policy_remote_create(handle, hostname="10.10.10.10",
                             user="root", pwd="12345",
                             remote_file="/root/backup",
                             admin_state="enabled",

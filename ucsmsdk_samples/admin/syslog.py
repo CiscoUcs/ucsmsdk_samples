@@ -12,75 +12,130 @@
 # limitations under the License.
 
 
-def syslog_local_console(handle, admin_state, severity="emergencies"):
+
+def syslog_local_console_enable(handle, severity="emergencies"):
     """
-    This method configures System Logs on local console.
+    This method enables system logs on local console.
 
     Args:
         handle (UcsHandle)
-        admin_state (string): "enabled" or "disabled"
         severity (string): Level of logging.
+                           ["alerts", "critical", "emergencies"]
 
     Returns:
-        CommSyslogConsole: Managed object
+        CommSyslogConsole Object
 
     Example:
-        To Enable Logs on Console:
-        mo = syslog_local_console(handle, admin_state="enabled",
-                                    severity="alert")
-
-        To Disable Logs on Console:
-        mo = syslog_local_console(handle, admin_state="disabled")
+        syslog_local_console_enable(handle, severity="alert")
     """
 
-    from ucsmsdk.mometa.comm.CommSyslogConsole import CommSyslogConsole
+    from ucsmsdk.mometa.comm.CommSyslogConsole import CommSyslogConsoleConsts
 
-    mo = CommSyslogConsole(parent_mo_or_dn="sys/svc-ext/syslog",
-                           admin_state=admin_state, severity=severity)
-    handle.add_mo(mo, modify_present=True)
+    dn = "sys/svc-ext/syslog/console"
+    mo = handle.query_dn(dn)
+    if not mo:
+        raise ValueError("sys log console does not exist.")
+
+    mo.admin_state = CommSyslogConsoleConsts.ADMIN_STATE_ENABLED
+    mo.severity = severity
+    handle.set_mo(mo)
     handle.commit()
     return mo
 
 
-def syslog_local_monitor(handle, admin_state, severity="emergencies"):
+def syslog_local_console_disable(handle):
     """
-    This method configures System Logs on local monitor.
+    This method disables system logs on local console.
 
     Args:
         handle (UcsHandle)
-        admin_state (string): "enabled" or "disabled"
-        severity (string): Level of logging.
 
     Returns:
-        CommSyslogMonitor: Managed object
+        CommSyslogConsole Object
 
     Example:
-        To Enable Logs:
-        mo = syslog_local_monitor(handle, admin_state="enabled",
-                                    severity="alert")
-
-        To Disable Logs:
-        mo = syslog_local_monitor(handle, admin_state="disabled")
+        syslog_local_console_enable(handle)
     """
 
-    from ucsmsdk.mometa.comm.CommSyslogMonitor import CommSyslogMonitor
+    from ucsmsdk.mometa.comm.CommSyslogConsole import CommSyslogConsoleConsts
 
-    mo = CommSyslogMonitor(parent_mo_or_dn="sys/svc-ext/syslog",
-                           admin_state=admin_state,
-                           severity=severity)
-    handle.add_mo(mo, modify_present=True)
+    dn = "sys/svc-ext/syslog/console"
+    mo = handle.query_dn(dn)
+    if not mo:
+        raise ValueError("sys log console does not exist.")
+
+    mo.admin_state = CommSyslogConsoleConsts.ADMIN_STATE_DISABLED
+    handle.set_mo(mo)
     handle.commit()
     return mo
 
 
-def syslog_local_file(handle, admin_state, name, severity="emergencies",
-                       size="40000"):
+def syslog_local_monitor_enable(handle, severity="emergencies"):
+    """
+    This method enables logs on local monitor.
+
+    Args:
+        handle (UcsHandle)
+        severity (string): Level of logging.
+                        ["alerts", "critical", "debugging", "emergencies",
+                        "errors", "information", "notifications", "warnings"]
+
+    Returns:
+        CommSyslogMonitor
+
+    Example:
+        syslog_local_monitor_enable(handle, severity="alert")
+    """
+
+    from ucsmsdk.mometa.comm.CommSyslogMonitor import CommSyslogMonitorConsts
+
+    dn = "sys/svc-ext/syslog/monitor"
+    mo = handle.query_dn(dn)
+    if not mo:
+        raise ValueError("sys log monitor does not exist.")
+
+    mo.admin_state = CommSyslogMonitorConsts.ADMIN_STATE_ENABLED
+    mo.severity = severity
+
+    handle.set_mo(mo)
+    handle.commit()
+    return mo
+
+
+def syslog_local_monitor_disable(handle):
+    """
+    This method disables logs on local monitor.
+
+    Args:
+        handle (UcsHandle)
+
+    Returns:
+        CommSyslogMonitor
+
+    Example:
+        mo = syslog_local_monitor_disable(handle)
+    """
+
+    from ucsmsdk.mometa.comm.CommSyslogMonitor import CommSyslogMonitorConsts
+
+    dn = "sys/svc-ext/syslog/monitor"
+    mo = handle.query_dn(dn)
+    if not mo:
+        raise ValueError("sys log monitor does not exist.")
+
+    mo.admin_state = CommSyslogMonitorConsts.ADMIN_STATE_DISABLED
+
+    handle.set_mo(mo)
+    handle.commit()
+    return mo
+
+
+def syslog_local_file_enable(handle, name, severity="emergencies", size="40000"):
     """
     This method configures System Logs on local file storage.
 
     Args:
         handle (UcsHandle)
-        admin_state (string): "enabled" or "disabled"
         name (string): Name of Log file.
         severity (string): Level of logging.
         size (string): Maximum allowed size of log file(In KBs).
@@ -89,21 +144,50 @@ def syslog_local_file(handle, admin_state, name, severity="emergencies",
         CommSyslogFile: Managed object
 
     Example:
-        To Enable Logs:
-        mo = syslog_local_file(handle, admin_state="enabled", severity="alert"
-                            size="435675", name="sys_log")
-
-        To Disable Logs:
-        mo = syslog_local_file(handle, admin_state="disabled")
+        syslog_local_file_enable(handle, severity="alert", size="435675",
+                                name="sys_log")
     """
 
-    from ucsmsdk.mometa.comm.CommSyslogFile import CommSyslogFile
+    from ucsmsdk.mometa.comm.CommSyslogFile import CommSyslogFileConsts
 
-    mo = CommSyslogFile(parent_mo_or_dn="sys/svc-ext/syslog", size=size,
-                        admin_state=admin_state,
-                        name=name,
-                        severity=severity)
-    handle.add_mo(mo, modify_present=True)
+    dn = "sys/svc-ext/syslog/file"
+    mo = handle.query_dn(dn)
+    if not mo:
+        raise ValueError("sys log file does not exist.")
+
+    mo.admin_state = CommSyslogFileConsts.ADMIN_STATE_ENABLED
+    mo.name = name
+    mo.severity = severity
+    mo.size = size
+
+    handle.set_mo(mo)
+    handle.commit()
+    return mo
+
+
+def syslog_local_file_disable(handle):
+    """
+    This method disables System Logs on local file storage.
+
+    Args:
+        handle (UcsHandle)
+
+    Returns:
+        CommSyslogFile
+
+    Example:
+        syslog_local_file_disable(handle)
+    """
+
+    from ucsmsdk.mometa.comm.CommSyslogFile import CommSyslogFileConsts
+
+    dn = "sys/svc-ext/syslog/file"
+    mo = handle.query_dn(dn)
+    if not mo:
+        raise ValueError("sys log file does not exist.")
+
+    mo.admin_state = CommSyslogFileConsts.ADMIN_STATE_DISABLED
+    handle.set_mo(mo)
     handle.commit()
     return mo
 
@@ -116,28 +200,36 @@ def syslog_remote_enable(handle, name, hostname,
 
     Args:
         handle (UcsHandle)
-        hostname (string) : Remote host IP or Name
-        severity (string): Level of logging.
         name (string): Remote Server ID -
                             "primary" or "secondary" or "tertiary"
+        hostname (string) : Remote host IP or Name
+        severity (string): Level of logging.
+                        ["alerts", "critical", "debugging", "emergencies",
+                        "errors", "information", "notifications", "warnings"]
+
         forwarding_facility (string): Forwarding mechanism local0 to local7.
 
     Returns:
-        CommSyslogClient: Managed object
+        CommSyslogClient Object
 
     Example:
-        syslog_remote_enable(handle, hostname="192.168.1.2",
-                        severity="alert",
-                        name="primary")
+        syslog_remote(handle, name="primary", hostname="192.168.1.2",
+                    severity="alert")
     """
 
-    from ucsmsdk.mometa.comm.CommSyslogClient import CommSyslogClient
+    from ucsmsdk.mometa.comm.CommSyslogClient import CommSyslogClientConsts
 
-    mo = CommSyslogClient(parent_mo_or_dn="sys/svc-ext/syslog",
-                          forwarding_facility=forwarding_facility,
-                          hostname=hostname, admin_state="enabled",
-                          severity=severity, name=name)
-    handle.add_mo(mo, modify_present=True)
+    dn="sys/svc-ext/syslog/client-" + name
+    mo = handle.query_dn(dn)
+    if not mo:
+        raise ValueError("Remote Destination '%s' does not exist" % dn)
+
+    mo.admin_state = CommSyslogClientConsts.ADMIN_STATE_ENABLED
+    mo.forwarding_facility = forwarding_facility
+    mo.hostname = hostname
+    mo.severity = severity
+
+    handle.set_mo(mo)
     handle.commit()
     return mo
 
@@ -145,7 +237,7 @@ def syslog_remote_enable(handle, name, hostname,
 def syslog_remote_disable(handle, name):
 
     """
-    This method disables System Logs on remote server.
+    This method enables System Logs on remote server.
 
     Args:
         handle (UcsHandle)
@@ -153,34 +245,35 @@ def syslog_remote_disable(handle, name):
                             "primary" or "secondary" or "tertiary"
 
     Returns:
-        None
-
-    Raises:
-        ValueError: If CommSyslogClient Mo is not present
+        CommSyslogClient Object
 
     Example:
         syslog_remote_disable(handle, name="primary")
     """
 
-    mo = handle.query_dn("sys/svc-ext/syslog/client-" + name)
-    if mo:
-        mo.admin_state = "disabled"
-        handle.add_mo(mo, modify_present=True)
-        handle.commit()
-    else:
-        raise ValueError("Syslog Mo is not available.")
+    from ucsmsdk.mometa.comm.CommSyslogClient import CommSyslogClientConsts
+
+    dn="sys/svc-ext/syslog/client-" + name
+    mo = handle.query_dn(dn)
+    if not mo:
+        raise ValueError("Remote Destination '%s' does not exist" % dn)
+
+    mo.admin_state = CommSyslogClientConsts.ADMIN_STATE_DISABLED
+
+    handle.set_mo(mo)
+    handle.commit()
+    return mo
 
 
-def syslog_source(handle, faults="enabled", audits="enabled",
-                  events="enabled"):
+def syslog_source(handle, faults=None, audits=None, events=None):
     """
     This method configures Type of System Logs.
 
     Args:
         handle (UcsHandle)
-        faults (string) : for fault logging.
-        audits (string): for audit task logging.
-        events (string): for event logging.
+        faults (string) : for fault logging. ["disabled", "enabled"]
+        audits (string): for audit task logging. ["disabled", "enabled"]
+        events (string): for event logging. ["disabled", "enabled"]
 
     Returns:
         CommSyslogSource: Managed object
@@ -191,12 +284,18 @@ def syslog_source(handle, faults="enabled", audits="enabled",
 
     """
 
-    from ucsmsdk.mometa.comm.CommSyslogSource import CommSyslogSource
+    dn = "sys/svc-ext/syslog/source"
+    mo = handle.query_dn(dn)
+    if not mo:
+        raise ValueError("local sources '%s' does not exist" % dn)
 
-    mo = CommSyslogSource(parent_mo_or_dn="sys/svc-ext/syslog",
-                          faults=faults,
-                          audits=audits,
-                          events=events)
-    handle.add_mo(mo, modify_present=True)
+    if faults is not None:
+        mo.faults = faults
+    if audits is not None:
+        mo.audits = audits
+    if events is not None:
+        mo.events = events
+
+    handle.set_mo(mo)
     handle.commit()
     return mo

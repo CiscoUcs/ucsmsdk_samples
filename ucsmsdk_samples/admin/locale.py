@@ -17,14 +17,87 @@ This module performs the operation related to dns server management.
 
 
 def locale_create(handle, name, descr="", policy_owner="local"):
+    """
+    creates a locale
+
+    Args:
+        handle (UcsHandle)
+        name (string): name of ldap provider
+        descr (string): descr
+        policy_owner (string): policy_owner
+    Returns:
+        AaaLocale : Managed Object
+
+    Example:
+        locale_create(handle, name="test_locale")
+    """
+
     from ucsmsdk.mometa.aaa.AaaLocale import AaaLocale
 
     mo = AaaLocale(parent_mo_or_dn="sys/user-ext",
                    name=name,
                    descr=descr,
                    policy_owner=policy_owner)
-    handle.add_mo(mo)
+    handle.add_mo(mo, True)
     handle.commit()
+    return mo
+
+
+def locale_exists(handle, name, descr="", policy_owner="local"):
+    """
+    checks if locale exists
+
+    Args:
+        handle (UcsHandle)
+        name (string): name of ldap provider
+        descr (string): descr
+        policy_owner (string): policy_owner
+    Returns:
+        True/False
+
+    Example:
+        locale_create(handle, name="test_locale")
+    """
+
+    dn = "sys/user-ext/locale-" + name
+    mo = handle.query_dn(dn)
+    if mo:
+        if ((descr and mo.descr != descr) and
+            (policy_owner and mo.policy_owner != policy_owner)):
+            return False
+        return True
+    return False
+
+
+def locale_modify(handle, name, descr="", policy_owner="local"):
+    """
+    modifies a locale
+
+    Args:
+        handle (UcsHandle)
+        name (string): name of ldap provider
+        descr (string): descr
+        policy_owner (string): policy_owner
+    Returns:
+        AaaLocale : Managed Object
+
+    Example:
+        locale_modify(handle, name="test_locale")
+    """
+
+    dn = "sys/user-ext/locale-" + name
+    mo = handle.query_dn(dn)
+    if not mo:
+        raise ValueError("Locale does not exist")
+
+    if descr is not None:
+        mo.descr = descr
+    if policy_owner is not None:
+        mo.policy_owner = policy_owner
+
+    handle.set_mo(mo)
+    handle.commit()
+    return mo
 
 
 def locale_delete(handle, name):
@@ -39,7 +112,7 @@ def locale_delete(handle, name):
         None
 
     Example:
-
+        locale_delete(handle, name="test_locale")
     """
 
     dn = "sys/user-ext/locale-" + name
@@ -51,28 +124,60 @@ def locale_delete(handle, name):
     handle.commit()
 
 
-def locale_assign_org(handle,locale_name, name, org_dn="org-root", descr=""):
+def locale_assign_org(handle, locale_name, name, org_dn="org-root", descr=""):
+    """
+    assigns a locale
+
+    Args:
+        handle (UcsHandle)
+        locale_name(string): org name
+        name (string): name of ldap provider
+        org_dn (string): org_dn
+        descr (string): descr
+
+    Returns:
+        AaaOrg : Managed Object
+
+    Example:
+        locale_assign_org(handle, name="test_locale")
+    """
 
     from ucsmsdk.mometa.aaa.AaaOrg import AaaOrg
 
     dn = "sys/user-ext/locale-" + locale_name
     obj = handle.query_dn(dn)
-    if obj is None:
+    if not obj:
         raise ValueError("Locale does not exist")
 
     mo = AaaOrg(parent_mo_or_dn=obj, name=name, org_dn=org_dn, descr=descr)
     handle.add_mo(mo, True)
     handle.commit()
-
     return mo
 
 
 def locale_deassign_org(handle, locale_name, name):
+    """
+    deassigns a locale
+
+    Args:
+        handle (UcsHandle)
+        locale_name(string): org name
+        name (string): name of ldap provider
+        org_dn (string): org_dn
+        descr (string): descr
+
+    Returns:
+        None
+
+    Example:
+        locale_deassign_org(handle, locale_name="test_locale,
+                            name="org_name")
+    """
 
     locale_dn = "sys/user-ext/locale-" + locale_name
     dn = locale_dn + "/org-" + name
     mo = handle.query_dn(dn)
-    if mo is None:
+    if not mo:
         raise ValueError("No Org assigned to Locale")
 
     handle.remove_mo(mo)

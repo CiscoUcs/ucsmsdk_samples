@@ -12,16 +12,33 @@
 # limitations under the License.
 
 """
-This module performs the operation related to dns server management.
+This module performs the operation related to radius configuration.
 """
-
-import logging
-log = logging.getLogger('ucs')
 
 
 def radius_provider_create(handle, name, order="lowest-available", key="",
                            auth_port="1812", timeout="5", retries="1",
                            enc_key="", descr=""):
+    """
+    Creates a radius provider
+
+    Args:
+        handle (UcsHandle)
+        name (string): name
+        order (string): order
+        key (string): key
+        auth_port (string): auth_port
+        timeout (string): timeout
+        retries (string): retries
+        enc_key (string): enc_key
+        descr (string): description
+
+    Returns:
+        AaaRadiusProvider Object
+
+    Example:
+        radius_provider_create(handle, name="test_radius_provider")
+    """
 
     from ucsmsdk.mometa.aaa.AaaRadiusProvider import AaaRadiusProvider
 
@@ -34,13 +51,73 @@ def radius_provider_create(handle, name, order="lowest-available", key="",
                            retries=retries,
                            enc_key=enc_key,
                            descr=descr)
-    handle.add_mo(mo)
+    handle.add_mo(mo, True)
     handle.commit()
+    return mo
+
+
+def radius_provider_exists(handle, name, order="lowest-available", key="",
+                           auth_port="1812", timeout="5", retries="1",
+                           enc_key="", descr=""):
+    """
+    checks if radius provider exists
+
+    Args:
+        handle (UcsHandle)
+        name (string): name
+        order (string): order
+        key (string): key
+        auth_port (string): auth_port
+        timeout (string): timeout
+        retries (string): retries
+        enc_key (string): enc_key
+        descr (string): description
+
+    Returns:
+        True/False
+
+    Example:
+        radius_provider_exists(handle, name="test_radius_provider")
+    """
+
+    dn = "sys/radius-ext/provider-" + name
+    mo = handle.query_dn(dn)
+    if mo:
+        if ((order and mo.order != order) and
+            (key and mo.key != key) and
+            (auth_port and mo.auth_port != auth_port) and
+            (timeout and mo.timeout != timeout) and
+            (retries and mo.retries != retries) and
+            (enc_key and mo.enc_key != enc_key) and
+            (descr and mo.descr != descr)):
+            return False
+        return True
+    return False
 
 
 def radius_provider_modify(handle, name, order=None, key=None,
                            auth_port=None, timeout=None, retries=None,
                            enc_key=None, descr=None):
+    """
+    modifies a radius provider
+
+    Args:
+        handle (UcsHandle)
+        name (string): name
+        order (string): order
+        key (string): key
+        auth_port (string): auth_port
+        timeout (string): timeout
+        retries (string): retries
+        enc_key (string): enc_key
+        descr (string): description
+
+    Returns:
+        AaaRadiusProvider
+
+    Example:
+        radius_provider_modify(handle, name="test_radius_provider")
+    """
 
     dn = "sys/radius-ext/provider-" + name
     mo = handle.query_dn(dn)
@@ -64,9 +141,23 @@ def radius_provider_modify(handle, name, order=None, key=None,
 
     handle.set_mo(mo)
     handle.commit()
+    return mo
 
 
 def radius_provider_delete(handle, name):
+    """
+    deletes a radius provider
+
+    Args:
+        handle (UcsHandle)
+        name (string): name
+
+    Returns:
+        None
+
+    Example:
+        radius_provider_delete(handle, name="test_radius_provider")
+    """
 
     dn = "sys/radius-ext/provider-" + name
     mo = handle.query_dn(dn)
@@ -78,17 +169,99 @@ def radius_provider_delete(handle, name):
 
 
 def radius_provider_group_create(handle, name, descr=""):
+    """
+    Creates a radius provider group
+
+    Args:
+        handle (UcsHandle)
+        name (string): name
+        descr (string): description
+
+    Returns:
+        AaaProviderGroup Object
+
+    Example:
+        radius_provider_group_create(handle, name="test_radius_provider_group")
+    """
 
     from ucsmsdk.mometa.aaa.AaaProviderGroup import AaaProviderGroup
 
     mo = AaaProviderGroup(parent_mo_or_dn="sys/radius-ext",
                           name=name, descr=descr)
-    handle.add_mo(mo)
+    handle.add_mo(mo, True)
+    handle.commit()
+    return mo
+
+
+def radius_provider_group_exists(handle, name, descr=""):
+    """
+    checks if radius provider group exists
+
+    Args:
+        handle (UcsHandle)
+        name (string): name
+        descr (string): description
+
+    Returns:
+        True/False
+
+    Example:
+        radius_provider_group_exists(handle, name="test_radius_provider_group")
+    """
+
+    dn = "sys/radius-ext/providergroup-" + name
+    mo = handle.query_dn(dn)
+    if mo:
+        if descr and mo.descr != descr:
+            return False
+        return True
+    return False
+
+
+def radius_provider_group_delete(handle, name):
+    """
+    deletes a radius provider group
+
+    Args:
+        handle (UcsHandle)
+        name (string): name
+
+    Returns:
+        None
+
+    Example:
+        radius_provider_group_delete(handle, name="test_radius_provider_group")
+    """
+
+    dn = "sys/radius-ext/providergroup-" + name
+    mo = handle.query_dn(dn)
+    if not mo:
+        raise ValueError("Provider  Group does not exist.")
+
+    handle.remove_mo(mo)
     handle.commit()
 
 
 def radius_provider_group_add_provider(handle, group_name, name, order,
                                        descr=""):
+    """
+    adds a provider to a radius provider group
+
+    Args:
+        handle (UcsHandle)
+        group_name (string): group_name
+        name (string): name
+        order (string): order
+        descr (string): description
+
+    Returns:
+        AaaProviderRef Object
+
+    Example:
+        radius_provider_group_add_provider(handle,
+                                    group_name="test_radius_provider_group",
+                                    name="test_radius_provider")
+    """
 
     from ucsmsdk.mometa.aaa.AaaProviderRef import AaaProviderRef
 
@@ -98,53 +271,118 @@ def radius_provider_group_add_provider(handle, group_name, name, order,
         raise ValueError("Radius Provider Group does not exist.")
 
     provider_dn = "sys/radius-ext/provider-" + name
-    provider_mo = handle.query_dn(provider_dn)
-    if provider_mo is None:
+    mo = handle.query_dn(provider_dn)
+    if not mo:
         raise ValueError("Radius Provider does not exist.")
 
     mo = AaaProviderRef(parent_mo_or_dn=group_mo,
                         name=name,
                         order=order,
                         descr=descr)
-    handle.add_mo(mo)
+    handle.add_mo(mo, True)
+    handle.commit()
+    return mo
+
+
+def radius_provider_group_provider_exists(handle, group_name, name, order,
+                                       descr=""):
+    """
+    checks if a provider exists under a radius provider group
+
+    Args:
+        handle (UcsHandle)
+        group_name (string): group_name
+        name (string): name
+        order (string): order
+        descr (string): description
+
+    Returns:
+        True/False
+
+    Example:
+        radius_provider_group_provider_exists(handle,
+                                    group_name="test_radius_provider_group",
+                                    name="test_radius_provider")
+    """
+
+    group_dn = "sys/radius-ext/providergroup-" + group_name
+    group_mo = handle.query_dn(group_dn)
+    if not group_mo:
+        raise ValueError("Radius Provider Group does not exist.")
+
+    provider_dn = "sys/radius-ext/provider-" + name
+    mo = handle.query_dn(provider_dn)
+    if not mo:
+        raise ValueError("Radius Provider does not exist.")
+
+    if mo:
+        if ((order and mo.order != order) and
+            (descr and mo.descr != descr)):
+            return False
+        return True
+    return False
 
 
 def radius_provider_group_modify_provider(handle, group_name, name,
                                         order=None, descr=None):
+    """
+    modifies a provider to a radius provider group
+
+    Args:
+        handle (UcsHandle)
+        group_name (string): group_name
+        name (string): name
+        order (string): order
+        descr (string): description
+
+    Returns:
+        AaaProviderRef Object
+
+    Example:
+        radius_provider_group_modify_provider(handle,
+                                    group_name="test_radius_provider_group",
+                                    name="test_radius_provider")
+    """
 
     group_dn = "sys/radius-ext/providergroup-" + group_name
     provider_dn = group_dn + "/provider-ref-" + name
-    provider_mo = handle.query_dn(provider_dn)
-    if provider_mo is None:
+    mo = handle.query_dn(provider_dn)
+    if not mo:
         raise ValueError("Provider not available under group.")
 
     if order is not None:
-        provider_mo.order = order
+        mo.order = order
     if descr is not None:
-        provider_mo.descr = descr
+        mo.descr = descr
 
-    handle.set_mo(provider_mo)
+    handle.set_mo(mo)
     handle.commit()
+    return mo
 
 
 def radius_provider_group_remove_provider(handle, group_name, name):
+    """
+    removes a provider from a radius provider group
+
+    Args:
+        handle (UcsHandle)
+        group_name (string): group_name
+        name (string): name
+
+    Returns:
+        None
+
+    Example:
+        radius_provider_group_remove_provider(handle,
+                                    group_name="test_radius_provider_group",
+                                    name="test_radius_provider")
+    """
 
     group_dn = "sys/radius-ext/providergroup-" + group_name
     provider_dn = group_dn + "/provider-ref-" + name
-    provider_mo = handle.query_dn(provider_dn)
-    if provider_mo is None:
+    mo = handle.query_dn(provider_dn)
+    if not mo:
         raise ValueError("Provider not available under group.")
-
-    handle.remove_mo(provider_mo)
-    handle.commit()
-
-
-def radius_provider_group_delete(handle, name):
-
-    dn = "sys/radius-ext/providergroup-" + name
-    mo = handle.query_dn(dn)
-    if mo is None:
-        raise ValueError("Provider  Group does not exist.")
 
     handle.remove_mo(mo)
     handle.commit()

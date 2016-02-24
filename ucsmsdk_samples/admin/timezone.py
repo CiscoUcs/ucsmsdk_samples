@@ -14,10 +14,6 @@
 
 def time_zone_set(handle, timezone):
     """
-    Admin
-     - Time Zone Management
-     -- Configure Time Zone
-
     This method sets the timezone of the UCSM.
 
     Args:
@@ -39,20 +35,20 @@ def time_zone_set(handle, timezone):
     """
 
     mo = handle.query_dn("sys/svc-ext/datetime-svc")
-    if mo:
-        mo.timezone = timezone
-        mo.policy_owner = "local"
-        mo.admin_state = "enabled"
-        mo.port = "0"
+    if not mo:
+        raise ValueError("timezone does not exist")
 
-        handle.set_mo(mo)
-        handle.commit()
-        return mo
-    else:
-        return ValueError("timezone Mo does not exist")
+    mo.timezone = timezone
+    mo.policy_owner = "local"
+    mo.admin_state = "enabled"
+    mo.port = "0"
+
+    handle.set_mo(mo)
+    handle.commit()
+    return mo
 
 
-def ntp_server_add(handle, name, descr=""):
+def ntp_server_create(handle, name, descr=""):
     """
     Adds NTP server using IP address.
 
@@ -65,7 +61,7 @@ def ntp_server_add(handle, name, descr=""):
         CommNtpProvider: Managed object
 
     Example:
-        ntp_server_add(handle, "72.163.128.140", "Default NTP")
+        ntp_server_create(handle, "72.163.128.140", "Default NTP")
     """
 
     from ucsmsdk.mometa.comm.CommNtpProvider import CommNtpProvider
@@ -73,9 +69,34 @@ def ntp_server_add(handle, name, descr=""):
     mo = CommNtpProvider(parent_mo_or_dn="sys/svc-ext/datetime-svc",
                          name=name,
                          descr=descr)
-    handle.add_mo(mo, modify_present=True)
+    handle.add_mo(mo, True)
     handle.commit()
     return mo
+
+
+def ntp_server_exists(handle, name, descr=""):
+    """
+    checks if ntp server exists.
+
+    Args:
+        handle (UcsHandle)
+        name (string): NTP server IP address or Name
+        descr (string): Basic description about NTP server
+
+    Returns:
+        True/False
+
+    Example:
+        ntp_server_exists(handle, "72.163.128.140", "Default NTP")
+    """
+
+    dn = "sys/svc-ext/datetime-svc/ntp-" + name
+    mo = handle.query_dn(dn)
+    if mo:
+        if descr and mo.descr != descr:
+            return False
+        return True
+    return False
 
 
 def ntp_server_remove(handle, name):
@@ -96,8 +117,8 @@ def ntp_server_remove(handle, name):
         ntp_server_remove(handle, "72.163.128.140")
     """
 
-    dn_to_remove = "sys/svc-ext/datetime-svc/ntp-" + name
-    mo = handle.query_dn(dn=dn_to_remove)
+    dn = "sys/svc-ext/datetime-svc/ntp-" + name
+    mo = handle.query_dn(dn)
     if not mo:
         raise ValueError("NTP Server not found. Nothing to remove.")
 

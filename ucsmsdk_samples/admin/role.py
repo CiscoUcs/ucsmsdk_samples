@@ -12,16 +12,13 @@
 # limitations under the License.
 
 """
-This module performs the operation related to dns server management.
+This module performs the operation related to role.
 """
-
-import logging
-log = logging.getLogger('ucs')
 
 
 def role_create(handle, name, priv, descr="", policy_owner="local"):
     """
-    creates and modify role
+    creates a role
 
     Args:
         handle (UcsHandle)
@@ -34,6 +31,7 @@ def role_create(handle, name, priv, descr="", policy_owner="local"):
         AaaRole Object
 
     Example:
+        role_create(handle, name="testrole", priv="read-only")
 
     """
 
@@ -44,13 +42,43 @@ def role_create(handle, name, priv, descr="", policy_owner="local"):
                  priv=priv,
                  descr=descr,
                  policy_owner=policy_owner)
-    handle.add_mo(mo)
+    handle.add_mo(mo, True)
     handle.commit()
+    return AaaRole
+
+
+def role_exists(handle, name, priv, descr="", policy_owner="local"):
+    """
+    checks if a role exists
+
+    Args:
+        handle (UcsHandle)
+        name (string): role name
+        priv (comma separated string): role privilege
+        descr (string): descr
+        policy_owner (string): policy owner
+
+    Returns:
+        True/False
+
+    Example:
+        role_exists(handle, name="testrole", priv="read-only")
+    """
+
+    dn = "sys/user-ext/role-" + name
+    mo = handle.query_dn(dn)
+    if mo:
+        if ((priv and mo.priv != priv) and
+            (descr and mo.descr != descr) and
+            (policy_owner and mo.policy_owner != policy_owner)):
+            return False
+        return True
+    return False
 
 
 def role_modify(handle, name, priv=None, descr=None, policy_owner=None):
     """
-    creates and modify role
+    modifies role
 
     Args:
         handle (UcsHandle)
@@ -63,7 +91,7 @@ def role_modify(handle, name, priv=None, descr=None, policy_owner=None):
         AaaRole Object
 
     Example:
-
+        role_modify(handle, name="testrole", priv="read-only")
     """
 
     dn = "sys/user-ext/role-" + name
@@ -80,6 +108,7 @@ def role_modify(handle, name, priv=None, descr=None, policy_owner=None):
 
     handle.set_mo(mo)
     handle.commit()
+    return mo
 
 
 def role_delete(handle, name):
@@ -94,7 +123,7 @@ def role_delete(handle, name):
         None
 
     Example:
-
+        role_delete(handle, name="testrole")
     """
 
     dn = "sys/user-ext/role-" + name

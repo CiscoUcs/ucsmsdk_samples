@@ -27,11 +27,13 @@ def adapter_policy_create(handle, name, descr="",
        AdaptorHostEthIfProfile: Managed Object
 
     Example:
-        adapter_policy_create(handle, name="sample_adapter_pol", parent_dn="org-root/org-sub")
+        adapter_policy_create(handle, name="sample_adapter_pol",
+        parent_dn="org-root/org-sub")
 
     """
 
-    from ucsmsdk.mometa.adaptor.AdaptorHostEthIfProfile import AdaptorHostEthIfProfile
+    from ucsmsdk.mometa.adaptor.AdaptorHostEthIfProfile import \
+        AdaptorHostEthIfProfile
 
     obj = handle.query_dn(parent_dn)
     if not obj:

@@ -46,7 +46,7 @@ def vmedia_policy_create(handle, org_dn, name, retry_on_mount_fail="yes",
     if org is None:
         raise ValueError("Org '%s' does not exist" % org_dn)
 
-    mo = CimcvmediaMountConfigPolicy(parent_mo_or_dn=org_dn,
+    mo = CimcvmediaMountConfigPolicy(parent_mo_or_dn=org,
                                      name=name,
                                      retry_on_mount_fail=retry_on_mount_fail,
                                      policy_owner="local",
@@ -98,7 +98,10 @@ def vmedia_mount_add(handle, vmedia_policy_dn, mapping_name, device_type,
     from ucsmsdk.mometa.cimcvmedia.CimcvmediaConfigMountEntry import \
         CimcvmediaConfigMountEntry
 
-    mo = CimcvmediaConfigMountEntry(parent_mo_or_dn=vmedia_policy_dn,
+    mo = handle.query_dn(vmedia_policy_dn)
+    if mo is None:
+        raise ValueError("vmedia policy does not exist.")
+    mo = CimcvmediaConfigMountEntry(parent_mo_or_dn=mo,
                                     mapping_name=mapping_name,
                                     device_type=device_type,
                                     mount_protocol=mount_protocol,
@@ -287,13 +290,13 @@ def vmedia_mount_state(handle, sp_dn):
         "unmounting": "Unmounting in progress",
         "mounting": "Mounting in progress",
         "mounted": "Mounted successfully",
-        "mount-Failed": "Mounting failed",
+        "mount-failed": "Mounting failed",
     }
     for mount_entry in mount_entries:
-        log.info("%s, (%s - %s - %s)" % (
-            mnt_state[mount_entry.oper_mount_status],
+        log.debug("name:%s, type:%s, status:%s, description:%s" % (
             mount_entry.mapping_name,
             mount_entry.device_type,
-            mount_entry.oper_mount_status
+            mount_entry.oper_mount_status,
+            mnt_state[mount_entry.oper_mount_status],
         ))
     return mount_entries

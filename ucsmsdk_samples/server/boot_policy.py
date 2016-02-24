@@ -14,13 +14,24 @@
 import logging
 log = logging.getLogger('ucs')
 
+from ucsmsdk.mometa.lsboot.LsbootVirtualMedia import LsbootVirtualMedia
+
+from ucsmsdk.mometa.lsboot.LsbootStorage import LsbootStorage
+from ucsmsdk.mometa.lsboot.LsbootLocalStorage import LsbootLocalStorage
+from ucsmsdk.mometa.lsboot.LsbootDefaultLocalImage import \
+    LsbootDefaultLocalImage
+from ucsmsdk.mometa.lsboot.LsbootLocalHddImage import LsbootLocalHddImage
+from ucsmsdk.mometa.lsboot.LsbootUsbFlashStorageImage import \
+    LsbootUsbFlashStorageImage
+from ucsmsdk.mometa.lsboot.LsbootUsbInternalImage import LsbootUsbInternalImage
+from ucsmsdk.mometa.lsboot.LsbootUsbExternalImage import LsbootUsbExternalImage
+
 
 def boot_policy_create(handle, name, descr="",
                        reboot_on_update="yes",
                        enforce_vnic_name="yes",
                        boot_mode="legacy",
-                       parent_dn="org-root"):
-
+                       parent_dn="org-root", boot_device={}):
     """
     This method creates boot policy.
 
@@ -32,39 +43,42 @@ def boot_policy_create(handle, name, descr="",
         boot_mode (string): "legacy" or "uefi"
         parent_dn (string): Org DN.
         descr (string): Basic description.
+        boot_device (dict): Dictionary of boot devices. {"1":"cdrom-local"}
 
     Returns:
         None
 
     Example:
-        boot_policy_create(handle,
-                                name="sample_boot",
-                                reboot_on_update="yes",
-                                boot_mode="legacy",
-								parent_dn="org-root/org-finance")
+        boot_policy_create(handle, name="sample_boot",
+                            reboot_on_update="yes",
+                            boot_mode="legacy",
+                            parent_dn="org-root/org-finance",
+                            boot_device={"2":"cdrom-local","1":"usb-external",
+                            "3":"usb-internal"})
     """
 
     from ucsmsdk.mometa.lsboot.LsbootPolicy import LsbootPolicy
 
-    obj = handle.query_dn(parent_dn)
-    if obj:
-        mo = LsbootPolicy(parent_mo_or_dn=parent_dn,
-                          name=name, descr=descr,
-                          reboot_on_update=reboot_on_update,
-                          enforce_vnic_name=enforce_vnic_name,
-                          boot_mode=boot_mode)
-        handle.add_mo(mo, modify_present=True)
-        handle.commit()
-    else:
-        log.info("Sub-Org <%s> not found!" %org_name)
+    mo = handle.query_dn(parent_dn)
+    if mo is None:
+        raise ValueError("org '%s' does not exist" % parent_dn)
+
+    mo = LsbootPolicy(parent_mo_or_dn=mo,
+                      name=name, descr=descr,
+                      reboot_on_update=reboot_on_update,
+                      enforce_vnic_name=enforce_vnic_name,
+                      boot_mode=boot_mode)
+    if boot_device is not None:
+        _add_device(handle, mo, boot_device)
+    handle.add_mo(mo, modify_present=True)
+    handle.commit()
 
 
-def boot_policy_modify(handle, org_name, name, descr=None,
+def boot_policy_modify(handle, name, descr=None,
                        reboot_on_update=None,
                        enforce_vnic_name=None,
                        boot_mode=None,
-                       parent_dn=None):
-
+                       parent_dn="org-root"):
     """
     This method modifies boot policy.
 
@@ -74,38 +88,38 @@ def boot_policy_modify(handle, org_name, name, descr=None,
         reboot_on_update (string): "yes" or "no"
         enforce_vnic_name (string): "yes" or "no"
         boot_mode (string): "legacy" or "uefi"
-        org_parent (string): Parent of Org.
         descr (string): Basic description.
+        parent_dn (string): Parent of Org.
 
     Returns:
         None
 
     Example:
-        boot_policy_modify(handle, org_name="sample_org",
-                                name="sample_boot",
+        boot_policy_modify(handle, name="sample_boot",
                                 reboot_on_update="yes",
-                                boot_mode="legacy")
+                                boot_mode="legacy",
+                                parent_dn="org-root/org-test")
     """
 
-    org_dn = org_parent+ "/org-" + org_name
-    policy_dn= org_dn + "/boot-policy-" + name
-    mo = handle.query_dn(policy_dn)
-    if mo is not None:
-        if descr is not None:
-            mo.descr = descr
-        if reboot_on_update is not None:
-            mo.reboot_on_update = reboot_on_update
-        if enforce_vnic_name is not None:
-            mo.enforce_vnic_name = enforce_vnic_name
-        if boot_mode is not None:
-            mo.boot_mode = boot_mode
-        if org_parent is not None:
-            mo.org_parent = org_parent
-    else:
-        log.info("Boot Policy <%s> not found." % name)
+    dn = parent_dn + "/boot-policy-" + name
+    mo = handle.query_dn(dn)
+    if mo is None:
+        raise ValueError("boot policy '%s' does not exist" % dn)
+
+    if descr is not None:
+        mo.descr = descr
+    if reboot_on_update is not None:
+        mo.reboot_on_update = reboot_on_update
+    if enforce_vnic_name is not None:
+        mo.enforce_vnic_name = enforce_vnic_name
+    if boot_mode is not None:
+        mo.boot_mode = boot_mode
+
+    handle.set_mo()
+    handle.commit()
 
 
-def boot_policy_remove(handle, org_name, name,org_parent="org-root"):
+def boot_policy_remove(handle, name, parent_dn="org-root"):
     """
     This method removes boot policy.
 
@@ -113,30 +127,153 @@ def boot_policy_remove(handle, org_name, name,org_parent="org-root"):
         handle (UcsHandle)
         org_name (string): Name of the organization
         name (string): Name of the boot policy.
-        org_parent (string): Parent of Org
+        parent_dn (string): Parent of Org
 
     Returns:
         None
 
     Example:
-        boot_policy_remove(handle, org_name="sample_org",
-                                name="sample_boot")
+        boot_policy_remove(handle, name="sample_boot",
+                            parent_dn="org-root/org-test")
     """
 
-    org_dn = org_parent+ "/org-" + org_name
-    p_mo = handle.query_dn(org_dn)
-    if not p_mo:
-        log.info("Sub-Org <%s> not found!" %org_name)
-    else:
-        policy_dn= org_dn + "/boot-policy-" + name
-        mo = handle.query_dn(policy_dn)
-        if not mo:
-            log.info("Boot Policy <%s> not found.Nothing to remove" % name)
+    dn = parent_dn + "/boot-policy-" + name
+    mo = handle.query_dn(dn)
+    if mo is None:
+        raise ValueError("boot policy '%s' does not exist" % dn)
+
+    handle.remove_mo(mo)
+    handle.commit()
+
+
+def boot_policy_exist(handle, name, reboot_on_update="yes",
+                      enforce_vnic_name="yes", boot_mode="legacy",descr="",
+                      parent_dn="org-root"):
+    """
+    checks if boot policy exist
+
+    Args:
+        handle (UcsHandle)
+        name (string): Name of the boot policy.
+        reboot_on_update (string): "yes" or "no"
+        enforce_vnic_name (string): "yes" or "no"
+        boot_mode (string): "legacy" or "uefi"
+        parent_dn (string): Org DN.
+        descr (string): Basic description.
+
+    Returns:
+        True/False: Boolean
+
+    Example:
+        boot_policy_exist(handle,
+                        name="sample_boot",
+                        reboot_on_update="yes",
+                        boot_mode="legacy",
+                        parent_dn="org-root/org-finance")
+    """
+
+    dn = parent_dn + "/boot-policy-" + name
+    mo = handle.query_dn(dn)
+    if mo:
+        if ((boot_mode and mo.boot_mode != boot_mode)
+            and
+            (reboot_on_update and mo.reboot_on_update != reboot_on_update)
+            and
+            (enforce_vnic_name and mo.enforce_vnic_name != enforce_vnic_name)):
+            return False
+        return True
+    return False
+
+
+def _add_device(handle, parent_mo, boot_device):
+    count = 0
+    children = handle.query_children(parent_mo)
+    for child in children:
+        if hasattr(child, 'order'):
+            order = getattr(child, 'order')
+            if not order in boot_device:
+                log.debug("Deleting boot device from boot policy: %s", child.dn)
+                handle.remove_mo(child)
+				
+    for k in boot_device.keys():
+        log.debug("Add boot device: order=%s, %s", k, boot_device[k])
+        if boot_device[k] in ["cdrom-local","cdrom"]:
+            _add_cdrom_local(handle, parent_mo , k)
+        elif boot_device[k] == "cdrom-cimc":
+            _add_cdrom_cimc(handle,parent_mo,k)
+        elif boot_device[k] == "cdrom-remote":
+            _add_cdrom_remote(handle,parent_mo,k)
+        elif boot_device[k] in ["lun","local-disk","sd-card","usb-internal",
+                                "usb-external"]:
+            if count == 0:
+                mo = LsbootStorage(parent_mo_or_dn=parent_mo, order=k)
+                mo_1 = LsbootLocalStorage(parent_mo_or_dn=mo, )
+                count +=1
+            if boot_device[k] == "lun":
+                _add_local_lun(handle,mo_1,k)
+            elif boot_device[k] == "local-disk":
+                _add_local_disk(handle,mo_1,k)
+            elif boot_device[k] == "sd-card":
+                _add_sd_card(handle,mo_1,k)
+            elif boot_device[k] == "usb-internal":
+                _add_usb_internal(handle,mo_1,k)
+            elif boot_device[k] == "usb-external":
+                _add_usb_external(handle,mo_1,k)
+        elif boot_device[k] in ["floppy","floppy-local"]:
+            _add_floppy_local(handle,parent_mo,k)
+        elif boot_device[k] == "floppy-external":
+            _add_floppy_remote(handle,parent_mo,k)
+        elif boot_device[k] == "virtual-drive":
+            _add_virtual_drive(handle,parent_mo,k)
         else:
-            handle.remove_mo(mo)
-            handle.commit()
+            log.debug("Option <%s> not recognized." % boot_device[k])
 
 
-def boot_policy_add_device(handle, name, parent_dn):
-    "Need to add code to this method"
-    pass
+def _add_cdrom_local(handle,parent_mo,order):
+    mo = LsbootVirtualMedia(parent_mo_or_dn=parent_mo, access="read-only-local",
+                            order=order)
+
+
+def _add_cdrom_remote(handle,parent_mo,order):
+    mo = LsbootVirtualMedia(parent_mo_or_dn=parent_mo, access="read-only-remote",
+                            order=order)
+
+def _add_cdrom_cimc(handle,parent_mo,order):
+    mo = LsbootVirtualMedia(parent_mo_or_dn=parent_mo, access="read-only-remote-cimc",
+                            order=order)
+
+def _add_floppy_local(handle,parent_mo,order):
+    mo = LsbootVirtualMedia(parent_mo_or_dn=parent_mo, access="read-write-local",
+                            order=order)
+
+
+def _add_floppy_remote(handle,parent_mo,order):
+    mo = LsbootVirtualMedia(parent_mo_or_dn=parent_mo,
+                            access="read-write-remote",
+                            order=order)
+
+
+def _add_virtual_drive(handle,parent_mo,order):
+    mo = LsbootVirtualMedia(parent_mo_or_dn=parent_mo,
+                            access="read-write-drive",
+                            order=order)
+
+
+def _add_local_disk(handle,parent_mo,order):
+    mo_1_1 = LsbootDefaultLocalImage(parent_mo_or_dn=parent_mo, order=order)
+
+
+def _add_local_lun(handle,parent_mo,order):
+    mo_1_1 = LsbootLocalHddImage(parent_mo_or_dn=parent_mo, order=order)
+
+
+def _add_sd_card(handle,parent_mo,order):
+    mo_1_1 = LsbootUsbFlashStorageImage(parent_mo_or_dn=parent_mo, order=order)
+
+
+def _add_usb_internal(handle,parent_mo,order):
+    mo_1_1 = LsbootUsbInternalImage(parent_mo_or_dn=parent_mo, order=order)
+
+
+def _add_usb_external(handle,parent_mo,order):
+    mo_1_1 = LsbootUsbExternalImage(parent_mo_or_dn=parent_mo, order=order)

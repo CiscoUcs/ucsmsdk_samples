@@ -11,9 +11,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import logging
-log = logging.getLogger('ucs')
-
 
 def org_create(handle, name, descr="",parent_dn="org-root"):
 
@@ -24,10 +21,10 @@ def org_create(handle, name, descr="",parent_dn="org-root"):
         handle (UcsHandle)
         name (string): Name of the organization
         descr (string): Basic description about the org.
-        parent_dn (string):
+        parent_dn (string): org dn
 
     Returns:
-        OrgOrg: managed object
+        OrgOrg: Managed Object
 
     Example:
         org_create(handle, name="sample_org")
@@ -35,13 +32,18 @@ def org_create(handle, name, descr="",parent_dn="org-root"):
 
     from ucsmsdk.mometa.org.OrgOrg import OrgOrg
 
+    obj = handle.query_dn(parent_dn)
+    if not obj:
+        raise ValueError("org '%s' does not exist")
+
     mo = OrgOrg(parent_mo_or_dn=parent_dn, name=name, descr=descr)
     handle.add_mo(mo, modify_present=True)
     handle.commit()
+
     return mo
 
 
-def org_modify(handle,name, descr=None, parent_dn="org-root"):
+def org_modify(handle, name, descr=None, parent_dn="org-root"):
     """
     This method modifies sub organization.
 
@@ -49,26 +51,70 @@ def org_modify(handle,name, descr=None, parent_dn="org-root"):
         handle (UcsHandle)
         name (string): Name of the organization
         descr (string): Basic description about the org.
+        parent_dn (string): org dn
+
+    Returns:
+        OrgOrg: Managed Object
+
+    Example:
+        org_modify(handle, name="sample_org", descr="My Org")
+    """
+
+    dn = parent_dn + "/org-" + name
+    mo = handle.query_dn(dn)
+    if not mo:
+        raise ValueError("org '%s' does not exist" % dn)
+
+    if descr is not None:
+        mo.descr = descr
+
+    handle.set_mo(mo)
+    handle.commit()
+
+    return mo
+
+
+def org_remove_by_dn(handle, org_dn):
+    """
+    This method removes sub organization by DN.
+
+    Args:
+        handle (UcsHandle)
+        org_dn (string): DN of the organization
+
+    Returns:
+        None
+
+    Example:
+        org_remove(handle, org_dn="org-root/org-sample")
+    """
+    mo = handle.query_dn(org_dn)
+    if not mo:
+        raise ValueError("org '%s' does not exist" % org_dn)
+    handle.remove_mo(mo)
+    handle.commit()
+
+def org_remove(handle, name, parent_dn="org-root"):
+    """
+    This method removes sub organization.
+
+    Args:
+        handle (UcsHandle)
+        name (string): Name of the organization
         parent_dn (string):
 
     Returns:
         None
 
     Example:
-        org_modify(handle, name="sample_org", descr="My Org")
+        org_remove(handle, name="sample_org")
     """
+
     dn = parent_dn + "/org-" + name
-    mo = handle.query_dn(dn)
-    if mo is not None:
-        if descr is not None:
-            mo.descr = descr
-        handle.set_mo(mo)
-        handle.commit()
-    else:
-        log.info("Sub-Org <%s> not found" %name)
+    org_remove_by_dn(handle, dn)
 
 
-def org_remove(handle,name,parent_dn="org-root"):
+def org_exists(handle, name, descr="", parent_dn="org-root"):
     """
     This method removes sub organization.
 
@@ -86,8 +132,8 @@ def org_remove(handle,name,parent_dn="org-root"):
 
     dn = parent_dn + "/org-" + name
     mo = handle.query_dn(dn)
-    if not mo:
-        log.info("Sub-Org <%s> not found.Nothing to remove." %name)
-    else:
-        handle.remove_mo(mo)
-        handle.commit()
+    if mo:
+        if (descr and mo.descr != descr):
+            return False
+        return True
+    return False

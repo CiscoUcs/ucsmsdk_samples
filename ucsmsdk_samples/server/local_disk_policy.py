@@ -33,6 +33,9 @@ def local_disk_policy_create(handle, name, mode="any-configuration",
     Returns:
         StorageLocalDiskConfigPolicy: Managed Object
 
+    Raises:
+        ValueError: If OrgOrg is not present
+
     Example:
         local_disk_policy_create(handle, name="sample_l_disk",
                                 parent_dn="org-root/org-sub")
@@ -54,7 +57,6 @@ def local_disk_policy_create(handle, name, mode="any-configuration",
               mode=mode)
     handle.add_mo(mo, modify_present=True)
     handle.commit()
-
     return mo
 
 
@@ -77,6 +79,9 @@ def local_disk_policy_modify(handle, name, mode=None, flex_flash_state=None,
 
     Returns:
         StorageLocalDiskConfigPolicy: Managed Object
+
+    Raises:
+        ValueError: If StorageLocalDiskConfigPolicy is not present
 
     Example:
         local_disk_policy_modify(handle, name="sample_l_disk",
@@ -101,6 +106,7 @@ def local_disk_policy_modify(handle, name, mode=None, flex_flash_state=None,
 
     handle.set_mo(mo)
     handle.commit()
+    return mo
 
 
 def local_disk_policy_remove(handle, name, parent_dn="org-root"):
@@ -116,6 +122,9 @@ def local_disk_policy_remove(handle, name, parent_dn="org-root"):
     Returns:
         None
 
+    Raises:
+        ValueError: If StorageLocalDiskConfigPolicy is not present
+
     Example:
         local_disk_policy_remove(handle, name="sample_l_disk")
     """
@@ -127,6 +136,7 @@ def local_disk_policy_remove(handle, name, parent_dn="org-root"):
 
     handle.remove_mo(mo)
     handle.commit()
+
 
 def local_disk_policy_exist(handle, name, mode="any-configuration",
                             flex_flash_state="enable",

@@ -29,6 +29,9 @@ def maintenance_policy_create(handle, name,
     Returns:
         LsmaintMaintPolicy: Managed Object
 
+    Raises:
+        ValueError: If OrgOrg is not present
+
     Example:
         maintenance_policy_create(handle, name="sample_maint",
                                     uptime_disr="user-ack",
@@ -46,7 +49,6 @@ def maintenance_policy_create(handle, name,
                             uptime_disr=uptime_disr, descr=descr)
     handle.add_mo(mo, modify_present=True)
     handle.commit()
-
     return mo
 
 
@@ -65,6 +67,9 @@ def maintenance_policy_modify(handle, name, uptime_disr=None, descr=None,
 
     Returns:
         LsmaintMaintPolicy: Managed Object
+
+    Raises:
+        ValueError: If LsmaintMaintPolicy is not present
 
     Example:
         maintenance_policy_modify(handle, name="sample_maint",
@@ -85,7 +90,6 @@ def maintenance_policy_modify(handle, name, uptime_disr=None, descr=None,
 
     handle.set_mo(mo)
     handle.commit()
-
     return mo
 
 
@@ -100,6 +104,9 @@ def maintenance_policy_remove(handle, name, parent_dn="org-root"):
 
     Returns:
         None
+
+    Raises:
+        ValueError: If LsmaintMaintPolicy is not present
 
     Example:
         maintenance_policy_remove(handle, org_name="sample-org",

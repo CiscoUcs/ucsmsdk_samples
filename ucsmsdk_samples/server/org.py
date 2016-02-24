@@ -12,7 +12,7 @@
 # limitations under the License.
 
 
-def org_create(handle, name, descr="",parent_dn="org-root"):
+def org_create(handle, name, descr="", parent_dn="org-root"):
 
     """
     This method creates sub organization.
@@ -25,6 +25,9 @@ def org_create(handle, name, descr="",parent_dn="org-root"):
 
     Returns:
         OrgOrg: Managed Object
+
+    Raises:
+        ValueError: If OrgOrg is not present
 
     Example:
         org_create(handle, name="sample_org")
@@ -39,7 +42,6 @@ def org_create(handle, name, descr="",parent_dn="org-root"):
     mo = OrgOrg(parent_mo_or_dn=parent_dn, name=name, descr=descr)
     handle.add_mo(mo, modify_present=True)
     handle.commit()
-
     return mo
 
 
@@ -56,6 +58,9 @@ def org_modify(handle, name, descr=None, parent_dn="org-root"):
     Returns:
         OrgOrg: Managed Object
 
+    Raises:
+        ValueError: If OrgOrg is not present
+
     Example:
         org_modify(handle, name="sample_org", descr="My Org")
     """
@@ -70,7 +75,6 @@ def org_modify(handle, name, descr=None, parent_dn="org-root"):
 
     handle.set_mo(mo)
     handle.commit()
-
     return mo
 
 
@@ -85,9 +89,13 @@ def org_remove_by_dn(handle, org_dn):
     Returns:
         None
 
+    Raises:
+        ValueError: If OrgOrg is not present
+
     Example:
         org_remove(handle, org_dn="org-root/org-sample")
     """
+
     mo = handle.query_dn(org_dn)
     if not mo:
         raise ValueError("org '%s' does not exist" % org_dn)
@@ -105,6 +113,9 @@ def org_remove(handle, name, parent_dn="org-root"):
 
     Returns:
         None
+
+    Raises:
+        ValueError: If OrgOrg is not present
 
     Example:
         org_remove(handle, name="sample_org")

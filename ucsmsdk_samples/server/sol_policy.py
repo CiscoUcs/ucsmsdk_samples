@@ -28,6 +28,9 @@ def sol_policy_create(handle, name, admin_state, speed="9600", descr="",
     Returns:
         SolPolicy: Managed Object
 
+    Raises:
+        ValueError: If OrgOrg is not present
+
     Example:
         sol_policy_create(handle, name="sample_SoL", admin_state="enable",
                          speed="9600", parent_dn="org-root/org-sub")
@@ -44,7 +47,6 @@ def sol_policy_create(handle, name, admin_state, speed="9600", descr="",
                    admin_state=admin_state, speed=speed, descr=descr)
     handle.add_mo(mo, modify_present=True)
     handle.commit()
-
     return mo
 
 
@@ -63,6 +65,9 @@ def sol_policy_modify(handle, name, admin_state=None, speed=None, descr=None,
 
     Returns:
         SolPolicy: Managed Object
+
+    Raises:
+        ValueError: If SolPolicy is not present
 
     Example:
         sol_policy_modify(handle, name="sample_SoL", admin_state="enable",
@@ -84,7 +89,6 @@ def sol_policy_modify(handle, name, admin_state=None, speed=None, descr=None,
 
     handle.set_mo(mo)
     handle.commit()
-
     return mo
 
 
@@ -100,6 +104,9 @@ def sol_policy_remove(handle, name, parent_dn="org-root"):
     Returns:
         None
 
+    Raises:
+        ValueError: If SolPolicy is not present
+
     Example:
         sol_policy_remove(handle, name="sample_SoL",
                             parent_dn="org-root/org-sub")
@@ -112,6 +119,7 @@ def sol_policy_remove(handle, name, parent_dn="org-root"):
 
     handle.remove_mo(mo)
     handle.commit()
+
 
 def sol_policy_exist(handle, name, admin_state, speed="9600", descr="",
                      parent_dn="org-root"):

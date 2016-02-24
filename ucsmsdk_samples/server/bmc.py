@@ -17,9 +17,26 @@ import time
 log = logging.getLogger('ucs')
 
 def get_cimc_addresses(handle, phys_mo):
+	"""
+	Get cimc ip addresses
+
+	Args:
+		handle (UcsHandle)
+		phys_mo(Managed Object): ComputeBlade
+
+	Returns:
+		dict: {'addr' : "ip address",
+			   'version' : "version",
+			   'access' : "access"}
+
+	Example:
+		get_cimc_addresses(handle, phys_mo)
+	"""
+
 	log.debug('Get CIMC management IP addresses')
 	from ucsmsdk.mometa.vnic.VnicIpV4PooledAddr import VnicIpV4PooledAddr
-	mos = handle.query_children(in_mo=phys_mo, class_id="MgmtController", hierarchy=True)
+	mos = handle.query_children(in_mo=phys_mo, class_id="MgmtController",
+								hierarchy=True)
 	bmc_addrs = []
 
 	# IP v4 addresses
@@ -39,9 +56,9 @@ def get_cimc_addresses(handle, phys_mo):
 			bmc_addrs.append(addr)
 
 	# IP v6 addresses
-	ipv6AddrSet = [x for x in mos if x._class_id  == 'VnicIpV6MgmtPooledAddr' or
-									x._class_id == 'VnicIpV6MgmtPooledAddr' or
-									x._class_id == 'VnicIpV6StaticAddr']
+	ipv6AddrSet = [x for x in mos if x._class_id  == 'VnicIpV6MgmtPooledAddr'
+								   or x._class_id == 'VnicIpV6MgmtPooledAddr'
+								   or x._class_id == 'VnicIpV6StaticAddr']
 	for mo in ipv6AddrSet:
 		if mo.addr != '::':
 			log.debug("CIMC IP address: dn=%s, addr=%s, class=%s",
@@ -51,9 +68,11 @@ def get_cimc_addresses(handle, phys_mo):
 			else:
 				access = 'oob'
 			addr = {'addr': mo.addr, 'version': 6, 'access':access}
-			log.debug("Server %s. CIMC address: %s, access: %s", phys_mo.dn, mo.addr, access)
+			log.debug("Server %s. CIMC address: %s, access: %s", phys_mo.dn,
+					  mo.addr, access)
 			bmc_addrs.append(addr)
 	return bmc_addrs
+
 
 def is_reachable(hostname, retries=10):
 	import os
@@ -64,15 +83,19 @@ def is_reachable(hostname, retries=10):
 		time.sleep(1)
 	return False
 
+
 def set_inband_profile(handle, vlan_name, ip_pool_name, vlan_group_name):
     """
     Configures CIMC inband profile
 
     Args:
         handle (UcsHandle)
-		vlan_name(string): the name of the VLAN used for inband CIMC connectivity
-		ip_pool_name(string): the name of the IP pool used to assign inband IP addresses to CIMC
-		vlan_group_name(string): the name of the VLAN group used for CIMC connectivity
+		vlan_name(string): the name of the VLAN used for inband CIMC
+		                   connectivity
+		ip_pool_name(string): the name of the IP pool used to assign inband IP
+		                      addresses to CIMC
+		vlan_group_name(string): the name of the VLAN group used for CIMC
+		                         connectivity
 
     Returns:
         MgmtInbandProfile: Managed object
@@ -81,14 +104,18 @@ def set_inband_profile(handle, vlan_name, ip_pool_name, vlan_group_name):
         ValueError: If Inband profile does not exist
 
     Example:
-        mo = set_inband_profile(handle=handle, vlan_name="inband_vlan", ip_pool_name="inband-ip-pool", vlan_group_name="inband-group")
+        mo = set_inband_profile(handle=handle, vlan_name="inband_vlan",
+                                ip_pool_name="inband-ip-pool",
+                                vlan_group_name="inband-group")
     """
+
     from ucsmsdk.mometa.mgmt.MgmtInbandProfile import MgmtInbandProfile
 
     inband_profile_dn = "fabric/lan/ib-profile"
     mo = handle.query_dn(inband_profile_dn)
     if mo is None:
-        raise ValueError("Inband Profile '%s' does not exist" % inband_profile_dn)
+        raise ValueError("Inband Profile '%s' does not exist" %
+						 inband_profile_dn)
 
     mo.default_vlan_name = vlan_name
     mo.pool_name = ip_pool_name

@@ -28,7 +28,10 @@ def hfp_create(handle, name, blade_bundle_version,
         parent_dn (string): Parent of Org
 
     Returns:
-        None
+        FirmwareComputeHostPack: Managed Object
+
+    Raises:
+        ValueError: If OrgOrg is not present
 
     Example:
         hfp_create(handle, name="sample_fp", rack_bundle_version="",
@@ -51,6 +54,7 @@ def hfp_create(handle, name, blade_bundle_version,
                                  )
     handle.add_mo(mo, modify_present=True)
     handle.commit()
+    return mo
 
 
 def hfp_modify(handle, name, blade_bundle_version=None,
@@ -69,7 +73,10 @@ def hfp_modify(handle, name, blade_bundle_version=None,
         parent_dn (string): Parent of Org
 
     Returns:
-        None
+        FirmwareComputeHostPack: Managed Object
+
+    Raises:
+        ValueError: If FirmwareComputeHostPack is not present
 
     Example:
         hfp_modify(handle, name="sample_fp", rack_bundle_version="",
@@ -92,6 +99,7 @@ def hfp_modify(handle, name, blade_bundle_version=None,
 
     handle.set_mo(mo)
     handle.commit()
+    return mo
 
 
 def hfp_remove(handle, name, parent_dn="org-root"):
@@ -106,6 +114,9 @@ def hfp_remove(handle, name, parent_dn="org-root"):
 
     Returns:
         None
+
+    Raises:
+        ValueError: If FirmwareComputeHostPack is not present
 
     Example:
         hfp_remove(handle, name="sample_fp", parent_dn="org-root/org-sub")

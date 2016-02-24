@@ -30,6 +30,9 @@ def scrub_policy_create(handle, name, flex_flash_scrub="no",
     Returns:
         ComputeScrubPolicy: Managed Object
 
+    Raises:
+        ValueError: If OrgOrg is not present
+
     Example:
         scrub_policy_create(handle, name="sample_scrub",
                             flex_flash_scrub="yes", bios_settings_scrub="no",
@@ -51,7 +54,6 @@ def scrub_policy_create(handle, name, flex_flash_scrub="no",
                             disk_scrub=disk_scrub)
     handle.add_mo(mo, modify_present=True)
     handle.commit()
-
     return mo
 
 
@@ -72,6 +74,9 @@ def scrub_policy_modify(handle, org_name, name, flex_flash_scrub=None,
 
     Returns:
         ComputeScrubPolicy: Managed Object
+
+    Raises:
+        ValueError: If ComputeScrubPolicy is not present
 
     Example:
         scrub_policy_modify(handle, name="sample_scrub",
@@ -96,7 +101,6 @@ def scrub_policy_modify(handle, org_name, name, flex_flash_scrub=None,
 
     handle.set_mo(mo)
     handle.commit()
-
     return mo
 
 
@@ -112,6 +116,9 @@ def scrub_policy_remove(handle, name, parent_dn="org-root"):
     Returns:
         None
 
+    Raises:
+        ValueError: If ComputeScrubPolicy is not present
+
     Example:
         scrub_policy_remove(handle, name="sample_scrub",
                             parent_dn="org-root/org-sub")
@@ -124,6 +131,7 @@ def scrub_policy_remove(handle, name, parent_dn="org-root"):
 
     handle.remove_mo(mo)
     handle.commit()
+
 
 def scrub_policy_exist(handle, name, flex_flash_scrub="no",
                        bios_settings_scrub="no", disk_scrub="no", descr="",

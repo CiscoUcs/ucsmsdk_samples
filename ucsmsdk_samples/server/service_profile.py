@@ -70,6 +70,9 @@ def sp_template_create(handle, name, type, resolve_remote, descr="",
     Returns:
         Service Profile: Managed Object
 
+    Raises:
+        ValueError: If OrgOrg is not present
+
     Example:
         sp_template_create(handle, name="sample_temp", type="initial-template",
             resolve_remote="yes",local_disk_policy="sample_local")
@@ -113,7 +116,7 @@ def sp_template_create(handle, name, type, resolve_remote, descr="",
                                 lan_conn_policy_name=lan_conn_policy_name,
                                 san_conn_policy_name=san_conn_policy_name)
 
-    handle.add_mo(mo, modify_present=True)
+    handle.add_mo(mo, True)
     handle.commit()
     return mo
 
@@ -165,12 +168,16 @@ def sp_template_modify(handle, name, type=None, resolve_remote=None,
         parent_dn= Parent DN
     
     Returns:
-        Service Profile: Managed Object
+        LsServer: Managed Object
+
+    Raises:
+        ValueError: If LsServer is not present
 
     Example:
         sp_template_modify(handle, name="sample_temp",
                 local_disk_policy="sample_local1")
     """
+
     dn = parent_dn + "/ls-" + name
     mo = handle.query_dn(dn)
     if not mo:
@@ -231,25 +238,66 @@ def sp_template_modify(handle, name, type=None, resolve_remote=None,
 
 
 def set_inband_mgmt(handle, sp_dn, vlan_name):
+    """
+    Set mgmt interface mode to "in-band"
 
-	from ucsmsdk.mometa.mgmt.MgmtInterface import MgmtInterface
-	from ucsmsdk.mometa.mgmt.MgmtVnet import MgmtVnet
-	from ucsmsdk.mometa.vnic.VnicIpV4MgmtPooledAddr import VnicIpV4MgmtPooledAddr
+    Args:
+        handle (UcsHandle)
+        sp_dn (string): dn of service profile
+        vlan_name (string): name of vlan
 
-	obj = handle.query_dn(sp_dn)
-	if not obj:
-		raise ValueError("SP '%s' does not exist" % sp_dn)
+    Returns:
+        MgmtInterface: Managed Object
 
-	mo = MgmtInterface(parent_mo_or_dn=obj, mode="in-band")
-	mo1 = MgmtVnet(parent_mo_or_dn=mo, name=vlan_name)
-	mo2 = VnicIpV4MgmtPooledAddr(parent_mo_or_dn=mo1, name="hyperflex")
+    Raises:
+        ValueError: If LsServer is not present
 
-	handle.add_mo(mo, modify_present=True)
-	handle.commit()
-	return mo
+    Example:
+        set_inband_mgmt(handle, "org-root/ls-testsp", "test_vlan")
+    """
+
+    from ucsmsdk.mometa.mgmt.MgmtInterface import MgmtInterface
+    from ucsmsdk.mometa.mgmt.MgmtVnet import MgmtVnet
+    from ucsmsdk.mometa.vnic.VnicIpV4MgmtPooledAddr import \
+        VnicIpV4MgmtPooledAddr
+
+    obj = handle.query_dn(sp_dn)
+    if not obj:
+        raise ValueError("SP '%s' does not exist" % sp_dn)
+
+    mo = MgmtInterface(parent_mo_or_dn=obj, mode="in-band")
+    mo_1 = MgmtVnet(parent_mo_or_dn=mo, name=vlan_name)
+    mo_2 = VnicIpV4MgmtPooledAddr(parent_mo_or_dn=mo1, name="hyperflex")
+
+    handle.add_mo(mo, True)
+    handle.commit()
+    return mo
+
 
 def sp_vcon_assign_vnic(handle, sp_name, vnic_name, admin_vcon, order,
                         transport="ethernet", parent_dn="org-root"):
+    """
+    Assign vnic to service profile
+
+    Args:
+        handle (UcsHandle)
+        sp_name (string): dn of service profile
+        vnic_name (string): name of vnic
+        admin_vcon (string): ["1", "2", "3", "4", "any"]
+        order (string): ["unspecified"], ["0-256"]
+        transport (string): transport medium
+        parent_dn (string): org dn
+
+    Returns:
+        LsVConAssign
+
+    Raises:
+        ValueError: If LsServer is not present
+
+    Example:
+        sp_vcon_assign_vnic(handle, sp_name="testsp", vnic_name="testvnic",
+                            admin_vcon="1", order="100")
+    """
 
     from ucsmsdk.mometa.ls.LsVConAssign import LsVConAssign
 
@@ -266,9 +314,29 @@ def sp_vcon_assign_vnic(handle, sp_name, vnic_name, admin_vcon, order,
     return mo
 
 
-def sp_vcon_deassign_vnic(handle, org_name, sp_name, vnic_name,
-                        transport="ethernet",
-                        parent_dn="org-root"):
+def sp_vcon_deassign_vnic(handle, sp_name, vnic_name,
+                          transport="ethernet",
+                          parent_dn="org-root"):
+    """
+    Deassign vnic from service profile
+
+    Args:
+        handle (UcsHandle)
+        sp_name (string): dn of service profile
+        vnic_name (string): name of vnic
+        transport (string): transport medium
+        parent_dn (string): org dn
+
+    Returns:
+        LsVConAssign
+
+    Raises:
+        ValueError: If LsServer is not present
+
+    Example:
+        sp_vcon_deassign_vnic(handle, sp_name="testsp", vnic_name="testvnic",
+                            transport="ethernet")
+    """
 
     from ucsmsdk.mometa.ls.LsVConAssign import LsVConAssign
 
@@ -308,6 +376,9 @@ def sp_create_from_template(handle,
     Returns:
         None or List of LsServer Objects
 
+    Raises:
+        ValueError: If LsServer is not present
+
     Example:
         sp_create_from_template(handle, org_name="sample-org",
                      naming_prefix="sample_sp",name_suffix_starting_number="1",
@@ -327,17 +398,17 @@ def sp_create_from_template(handle,
     dn_set = DnSet()
     for num in range(int(name_suffix_starting_number),
                      int(number_of_instance) +
-                     int(name_suffix_starting_number)):
+                             int(name_suffix_starting_number)):
         dn = Dn()
         sp_name = naming_prefix + str(num)
         dn.attr_set("value", sp_name)
         dn_set.child_add(dn)
 
     elem = ls_instantiate_n_named_template(cookie=handle.cookie,
-                                   dn=sp_template_dn,
-                                   in_error_on_existing=in_error_on_existing,
-                                   in_name_set=dn_set,
-                                   in_target_org=parent_dn)
+                                           dn=sp_template_dn,
+                                           in_error_on_existing=in_error_on_existing,
+                                           in_name_set=dn_set,
+                                           in_target_org=parent_dn)
     return handle.process_xml_elem(elem)
 
 
@@ -354,6 +425,9 @@ def sp_delete(handle, sp_name, parent_dn="org-root"):
     Returns:
         None
 
+    Raises:
+        ValueError: If LsServer is not present
+
     Example:
         a. If service profile or template is under some Sub-Org
             sp_delete(handle, org_name="sample-org",sp_name="sample_sp")
@@ -368,4 +442,3 @@ def sp_delete(handle, sp_name, parent_dn="org-root"):
 
     handle.remove_mo(mo)
     handle.commit()
-

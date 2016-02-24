@@ -20,25 +20,38 @@ end_script = False
 
 
 def _operation_callback(mce):
+    """
+    Callback for Flex Controller
+    """
+
     global end_script
 	# TODO
-    if mce.mo.fsm_status == StorageFlexFlashControllerFsmStageConsts.STAGE_STATUS_SUCCESS:
+    if mce.mo.fsm_status == \
+            StorageFlexFlashControllerFsmStageConsts.STAGE_STATUS_SUCCESS:
         log.debug("Operation Successful. FSM State: " + mce.mo.stage_state)
-    elif mce.mo.fsm_status == StorageFlexFlashControllerFsmStageConsts.OPERATING_MODEFAIL:
+    elif mce.mo.fsm_status == \
+            StorageFlexFlashControllerFsmStageConsts.OPERATING_MODEFAIL:
         log.debug("Operation Failed. FSM State: " + mce.mo.stage_state)
     end_script = True
 
 
-def _operation_monitor(handle,event_handle, mo):
-    fsm_mo= handle.query_classid(class_id="storageFlexFlashControllerFsmStage",
-                                 filter_str="(dn,'" + mo.dn + "')")
+def _operation_monitor(handle, event_handle, mo):
+    """
+    Adds an event handler to monitor the Flex Controller.
+    """
+
+    fsm_mo = handle.query_classid(
+                                class_id="storageFlexFlashControllerFsmStage",
+                                filter_str="(dn,'" + mo.dn + "')")
     event_handle.add(managed_object=fsm_mo[0], prop="stage_status",
-                     success_value=[StorageFlexFlashControllerFsmStageConsts.STAGE_STATUS_SUCCESS],
-                     failure_value=[StorageFlexFlashControllerFsmStageConsts.STAGE_STATUS_FAIL],
-                     timeout_sec=600, call_back=_operation_callback)
+     success_value=[
+         StorageFlexFlashControllerFsmStageConsts.STAGE_STATUS_SUCCESS],
+     failure_value=[
+         StorageFlexFlashControllerFsmStageConsts.STAGE_STATUS_FAIL],
+     timeout_sec=600, call_back=_operation_callback)
 
 
-def configure_storage_flex_flash_controller(handle, parent_dn,flex_id,
+def configure_storage_flex_flash_controller(handle, parent_dn, flex_id,
                                             operation_request,
                                             admin_slot_number="NA",
                                             wait_operation_completion=True):
@@ -56,6 +69,9 @@ def configure_storage_flex_flash_controller(handle, parent_dn,flex_id,
     Returns:
         None
 
+    Raises:
+        ValueError: If StorageFlexFlashController is not present
+
     Example:
         a. To Reset the SD Card.
         configure_storage_flex_flash_controller(handle,flex_id="1",
@@ -71,8 +87,8 @@ def configure_storage_flex_flash_controller(handle, parent_dn,flex_id,
                                                 operation_request="pair",
                                                 admin_slot_number="1")
 
-
     """
+
     from ucsmsdk.mometa.storage.StorageFlexFlashController import \
         StorageFlexFlashController
 

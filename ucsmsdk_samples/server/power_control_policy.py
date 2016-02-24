@@ -27,6 +27,9 @@ def power_control_policy_create(handle, name, prio="no-cap", descr="",
     Returns:
         PowerPolicy: Managed Object
 
+    Raises:
+        ValueError: If OrgOrg is not present
+
     Example:
         power_control_policy_create(handle, name="sample_power",
                                    prio="no-cap", parent_dn="org-root/org-sub")
@@ -42,7 +45,6 @@ def power_control_policy_create(handle, name, prio="no-cap", descr="",
                      descr=descr)
     handle.add_mo(mo, modify_present=True)
     handle.commit()
-
     return mo
 
 
@@ -60,6 +62,9 @@ def power_control_policy_modify(handle,  name, prio=None, descr=None,
 
     Returns:
         PowerPolicy: Managed Object
+
+    Raises:
+        ValueError: If PowerPolicy is not present
 
     Example:
         power_control_policy_modify(handle, name="sample_power",
@@ -79,7 +84,6 @@ def power_control_policy_modify(handle,  name, prio=None, descr=None,
 
     handle.set_mo(mo)
     handle.commit()
-
     return mo
 
 
@@ -94,6 +98,9 @@ def power_control_policy_remove(handle, name, parent_dn="org-root"):
 
     Returns:
         None
+
+    Raises:
+        ValueError: If PowerPolicy is not present
 
     Example:
         power_control_policy_remove(handle, name="sample_power",

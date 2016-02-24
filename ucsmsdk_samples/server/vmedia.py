@@ -33,12 +33,13 @@ def vmedia_policy_create(handle, org_dn, name, retry_on_mount_fail="yes",
         CimcvmediaMountConfigPolicy: Managed object
 
     Raises:
-        ValueError: If org does not exist
+        ValueError: If OrgOrg does not exist
 
     Example:
         mo = vmedia_policy_create(handle=handle, org_dn="org-root",
                                     name="demo_policy")
     """
+
     from ucsmsdk.mometa.cimcvmedia.CimcvmediaMountConfigPolicy import \
         CimcvmediaMountConfigPolicy
 
@@ -83,6 +84,9 @@ def vmedia_mount_add(handle, vmedia_policy_dn, mapping_name, device_type,
 
     Returns:
         CimcvmediaConfigMountEntry: Managed Object
+
+    Raises:
+        ValueError: If CimcvmediaMountConfigPolicy does not exist
 
     Example:
         mo = vmedia_mount_add(handle, vmedia_policy_dn,
@@ -132,7 +136,7 @@ def vmedia_mount_remove(handle, vmedia_policy_dn, mapping_name):
         None
 
     Raises:
-        ValueError: if vmedia mount entry does not exist
+        ValueError: if CimcvmediaConfigMountEntry does not exist
 
     Example:
         mo = vmedia_mount_remove(handle=handle, vmedia_policy_dn=policy_dn,
@@ -160,7 +164,7 @@ def vmedia_policy_delete(handle, org_dn, name):
         None
 
     Raises:
-        ValueError: if vmedia policy does not exist
+        ValueError: If CimcvmediaMountConfigPolicy does not exist
 
     Example:
         mo = vmedia_policy_delete(handle=handle, org_dn="org-root",
@@ -188,7 +192,7 @@ def vmedia_sp_attach(handle, sp_dn, vmedia_policy_name):
         LsServer: Managed object
 
     Raises:
-        ValueError: if vmedia policy does not exist
+        ValueError: If CimcvmediaMountConfigPolicy or LsServer does not exist
 
     Example:
         mo = vmedia_sp_attach(handle=handle, sp_dn="org-root/ls-demo_sp",
@@ -224,7 +228,7 @@ def vmedia_sp_detach(handle, sp_dn):
         LsServer: Managed object
 
     Raises:
-        ValueError: if service profile does not exist
+        ValueError: if LsServer does not exist
 
     Example:
         mo = vmedia_sp_detach(handle=handle, sp_dn="org-root/ls-demo_sp")
@@ -248,10 +252,15 @@ def vmedia_mount_state(handle, sp_dn):
         sp_dn (string): the dn of the service profile
 
     Returns:
-        Mount entry array object
+        List of CimcvmediaConfigMountEntry Managed Objects
 
     Raises:
-        ValueError
+        ValueError: If LsServer does not exist Or
+                    LsServer.assoc_state != "associated" Or
+                    associated ComputeBlade does not exist Or
+                    MgmtController does not exist Or
+                    CimcvmediaMountConfigPolicy does not exist Or
+                    CimcvmediaConfigMountEntry
 
     Example:
         mount_entries_array = vmedia_mount_state(handle=handle,

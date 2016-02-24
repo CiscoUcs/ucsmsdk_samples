@@ -51,13 +51,14 @@ def mcast_policy_create(handle, name, querier_state, snooping_state,
                                              snooping_state=snooping_state,
                                              policy_owner="local")
 
-        handle.add_mo(mcast_policy)
+        handle.add_mo(mcast_policy, modify_present=True)
         handle.commit()
     else:
         raise ValueError(parent_dn + " MO is not available")
 
 
-def mcast_policy_exists(handle, name, parent_dn="org-root"):
+def mcast_policy_exists(handle, name, snooping_state=None, querier_state=None,
+                        querier_ip_addr=None, descr=None, parent_dn="org-root"):
     """
     Checks if the mcast policy object exists
 
@@ -76,6 +77,11 @@ def mcast_policy_exists(handle, name, parent_dn="org-root"):
     dn = parent_dn + '/mc-policy-' + name
     mo = handle.query_dn(dn)
     if mo:
+        if ((snooping_state and mo.snooping_state != snooping_state) and
+                (querier_state and mo.querier_state != querier_state) and
+                (querier_ip_addr and mo.querier_ip_addr != querier_ip_addr) and
+                (descr and mo.descr != descr)):
+            return False
         return True
     return False
 

@@ -14,12 +14,9 @@
 """
 This module contains the methods required for creating LAN Connectivity Policy.
 """
-import logging
-log = logging.getLogger('ucs')
 
 
 def lan_conn_policy_create(handle, name, descr="", parent_dn="org-root"):
-
     """
     Creates LAN Connectivity Policy
 
@@ -30,27 +27,28 @@ def lan_conn_policy_create(handle, name, descr="", parent_dn="org-root"):
         parent_dn (String) :
 
     Returns:
-        None
+        VnicLanConnPolicy: Managed Object
 
     Example:
         lan_conn_policy_create(handle, "samp_conn_pol2")
-        add_vnic(handle, "org-root/lan-conn-pol-samp_conn_pol2", "test_vnic", "vinbs_nw", "ANY",
+        add_vnic(handle, "org-root/lan-conn-pol-samp_conn_pol2",
+                "test_vnic", "vinbs_nw", "ANY",
                 "any", "default", "wqdwq", "A", "", "1500")
     """
 
     from ucsmsdk.mometa.vnic.VnicLanConnPolicy import VnicLanConnPolicy
 
     obj = handle.query_dn(parent_dn)
-    if obj:
-        mo = VnicLanConnPolicy(parent_mo_or_dn=obj,
-                               policy_owner="local",
-                               name=name,
-                               descr=descr)
+    if obj is None:
+        raise ValueError("Org %s not found" % parent_dn)
+    mo = VnicLanConnPolicy(parent_mo_or_dn=obj,
+                           policy_owner="local",
+                           name=name,
+                           descr=descr)
 
-        handle.add_mo(mo, modify_present=True)
-        handle.commit()
-    else:
-        log.info(parent_dn + " MO is not available")
+    handle.add_mo(mo, modify_present=True)
+    handle.commit()
+    return mo
 
 
 def lan_conn_policy_delete(handle, name, parent_dn="org-root"):
@@ -96,10 +94,13 @@ def lan_conn_policy_exists(handle, name, descr=None, parent_dn="org-root"):
         return True
     return False
 
-def add_vnic(handle, parent_dn,  name, nw_ctrl_policy_name="", admin_host_port="ANY",
-             admin_vcon="any", stats_policy_name="default", admin_cdn_name="",
-             switch_id="A", pin_to_group_name="", mtu="1500", qos_policy_name="",
-             adaptor_profile_name="", ident_pool_name="", order="1", nw_templ_name="", addr="derived"):
+
+def add_vnic(handle, parent_dn,  name, nw_ctrl_policy_name="",
+             admin_host_port="ANY",admin_vcon="any",
+             stats_policy_name="default", admin_cdn_name="",
+             switch_id="A", pin_to_group_name="", mtu="1500",
+             qos_policy_name="", adaptor_profile_name="",
+             ident_pool_name="", order="1", nw_templ_name="", addr="derived"):
 
     """
     Adds vNIC to LAN Connectivity Policy
@@ -124,7 +125,7 @@ def add_vnic(handle, parent_dn,  name, nw_ctrl_policy_name="", admin_host_port="
         addr
 
     Returns:
-        None
+        VnicEther: Managed Object
 
     Example:
         add_vnic(handle, "org-root/lan-conn-pol-samp_conn_pol2", "test_vnic", "vinbs_nw", "ANY",
@@ -155,7 +156,7 @@ def add_vnic(handle, parent_dn,  name, nw_ctrl_policy_name="", admin_host_port="
         handle.add_mo(mo_1, modify_present=True)
         handle.commit()
     else:
-        log.info(parent_dn + " MO is not available")
+        raise ValueError(parent_dn + " MO is not available")
 
 
 def remove_vnic(handle, name, parent_dn):
@@ -180,12 +181,15 @@ def remove_vnic(handle, name, parent_dn):
         raise ValueError("vNIC Mo is not present")
 
 
-def vnic_exists(handle, parent_dn,  name, nw_ctrl_policy_name=None, admin_host_port=None,
-             admin_vcon=None, stats_policy_name=None, admin_cdn_name=None,
-             switch_id=None, pin_to_group_name=None, mtu=None, qos_policy_name=None,
-             adaptor_profile_name=None, ident_pool_name=None, order=None, nw_templ_name=None, addr=None):
+def vnic_exists(handle, parent_dn,  name, nw_ctrl_policy_name=None,
+                admin_host_port=None,admin_vcon=None, stats_policy_name=None,
+                admin_cdn_name=None, switch_id=None, pin_to_group_name=None,
+                mtu=None, qos_policy_name=None, adaptor_profile_name=None,
+                ident_pool_name=None, order=None, nw_templ_name=None,
+                addr=None):
     """
-    Checks if the given vNIC already exists with the same params under a given Lan Connectivity Policy
+    Checks if the given vNIC already exists with the same params under a
+    given Lan Connectivity Policy
     Args:
         handle
         parent_dn
@@ -207,8 +211,9 @@ def vnic_exists(handle, parent_dn,  name, nw_ctrl_policy_name=None, admin_host_p
     Returns:
         True/False (Boolean)
     Example:
-        vnic_exists(handle, "org-root/lan-conn-pol-samp_conn_pol2", "test_vnic", "vinbs_nw", "ANY",
-                "any", "default", "wqdwq", "A", "", "1500")
+        vnic_exists(handle, "org-root/lan-conn-pol-samp_conn_pol2",
+                    "test_vnic", "vinbs_nw", "ANY",
+                    "any", "default", "wqdwq", "A", "", "1500")
     """
     dn = parent_dn + '/ether-' + name
     mo = handle.query_dn(dn)
@@ -232,10 +237,12 @@ def vnic_exists(handle, parent_dn,  name, nw_ctrl_policy_name=None, admin_host_p
 
 
 def add_vnic_iscsi(handle, parent_dn, name, addr="derived", admin_host_port="ANY",
-                     admin_vcon="any", stats_policy_name="default", admin_cdn_name="",
-                     switch_id="A", pin_to_group_name="", vnic_name="", qos_policy_name="",
-                     adaptor_profile_name="", ident_pool_name="", order="unspecified",
-                     nw_templ_name="", vlan_name="default"):
+                   admin_vcon="any", stats_policy_name="default",
+                   admin_cdn_name="",
+                   switch_id="A", pin_to_group_name="", vnic_name="",
+                   qos_policy_name="",adaptor_profile_name="",
+                   ident_pool_name="", order="unspecified",
+                   nw_templ_name="", vlan_name="default"):
 
     """
     Adds iSCSI vNIC to LAN Connectivity Policy
@@ -292,7 +299,7 @@ def add_vnic_iscsi(handle, parent_dn, name, addr="derived", admin_host_port="ANY
         handle.add_mo(mo_1)
         handle.commit()
     else:
-        log.info(parent_dn + " MO is not available")
+        raise ValueError(parent_dn + " MO is not available")
 
 
 def remove_vnic_iscsi(handle, name, parent_dn):
@@ -301,11 +308,12 @@ def remove_vnic_iscsi(handle, name, parent_dn):
     Args:
         handle (UcsHandle)
         name (string)
-        parent_dn (String) :
+        parent_dn (String)
     Returns:
         None
     Example:
-        remove_vnic_iscsi(handle, "sample-vnic-iscsi","org-root/lan-conn-pol-samp_conn_pol")
+        remove_vnic_iscsi(handle, "sample-vnic-iscsi",
+                    "org-root/lan-conn-pol-samp_conn_pol")
     """
 
     dn = parent_dn + '/iscsi-' + name
@@ -318,12 +326,15 @@ def remove_vnic_iscsi(handle, name, parent_dn):
 
 
 def vnic_iscsi_exists(handle, parent_dn, name, addr=None, admin_host_port=None,
-                     admin_vcon=None, stats_policy_name=None, admin_cdn_name=None,
-                     switch_id=None, pin_to_group_name=None, vnic_name=None, qos_policy_name=None,
-                     adaptor_profile_name=None, ident_pool_name=None, order=None,
-                     nw_templ_name=None, vlan_name=None):
+                      admin_vcon=None, stats_policy_name=None,
+                      admin_cdn_name=None, switch_id=None,
+                      pin_to_group_name=None, vnic_name=None,
+                      qos_policy_name=None, adaptor_profile_name=None,
+                      ident_pool_name=None, order=None,nw_templ_name=None,
+                      vlan_name=None):
     """
-    Checks if the given iSCSI vNIC already exists with the same params under a given Lan Connectivity Policy
+    Checks if the given iSCSI vNIC already exists with the same params
+    under a given Lan Connectivity Policy
     Args:
         handle
         parent_dn
@@ -345,7 +356,8 @@ def vnic_iscsi_exists(handle, parent_dn, name, addr=None, admin_host_port=None,
     Returns:
         True/False (Boolean)
     Example:
-        vnic_iscsi_exists(handle, "org-root/lan-conn-pol-samp_conn_pol2", "test_iscsi_vnic")
+        vnic_iscsi_exists(handle, "org-root/lan-conn-pol-samp_conn_pol2",
+                        "test_iscsi_vnic")
     """
     dn = parent_dn + '/iscsi-' + name
     mo = handle.query_dn(dn)

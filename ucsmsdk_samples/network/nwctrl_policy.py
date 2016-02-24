@@ -14,12 +14,11 @@
 """
 This module contains methods required for creating network control policies.
 """
-import logging
-log = logging.getLogger('ucs')
 
 
-def nw_control_policy_create(handle, name, cdp, mac_register_mode, uplink_fail_action,
-                             forge, lldp_transmit, lldp_receive, descr="", parent_dn="org-root"):
+def nw_control_policy_create(handle, name, cdp, mac_register_mode,
+                             uplink_fail_action,forge, lldp_transmit,
+                             lldp_receive, descr="", parent_dn="org-root"):
     """
     Creates Network Control Policy
 
@@ -39,8 +38,9 @@ def nw_control_policy_create(handle, name, cdp, mac_register_mode, uplink_fail_a
         None
 
     Example:
-        nw_control_policy_create(handle, "sample_nwcontrol_policy", "enabled", "all-host-vlans",
-                                 "link-down", "allow", "disabled", "disabled")
+        nw_control_policy_create(handle, "sample_nwcontrol_policy",
+                                "enabled", "all-host-vlans",
+                                "link-down", "allow", "disabled", "disabled")
     """
     from ucsmsdk.mometa.nwctrl.NwctrlDefinition import NwctrlDefinition
     from ucsmsdk.mometa.dpsec.DpsecMac import DpsecMac
@@ -65,7 +65,7 @@ def nw_control_policy_create(handle, name, cdp, mac_register_mode, uplink_fail_a
         handle.add_mo(mo, modify_present=True)
         handle.commit()
     else:
-        log.info(parent_dn + " MO is not available")
+        raise ValueError("Org %s is not available" %parent_dn)
 
 
 def nw_control_policy_delete(handle, name, parent_dn="org-root"):
@@ -91,8 +91,10 @@ def nw_control_policy_delete(handle, name, parent_dn="org-root"):
         raise ValueError("Network Control policy Mo is not present")
 
 
-def nw_control_policy_exists(handle, name, cdp=None, mac_register_mode=None, uplink_fail_action=None,
-                             forge=None, lldp_transmit=None, lldp_receive=None, descr=None, parent_dn="org-root"):
+def nw_control_policy_exists(handle, name, cdp=None, mac_register_mode=None,
+                             uplink_fail_action=None,forge=None,
+                             lldp_transmit=None, lldp_receive=None,
+                             descr=None, parent_dn="org-root"):
     """
     Checks if the given Network Control Policy already exists with the same params
     Args:
@@ -109,8 +111,10 @@ def nw_control_policy_exists(handle, name, cdp=None, mac_register_mode=None, upl
     Returns:
         True/False (Boolean)
     Example:
-        bool_var = nw_control_policy_exists(handle, "sample_nwcontrol_policy", "enabled", "all-host-vlans",
-                                 "link-down", "allow", "disabled", "disabled")
+        bool_var = nw_control_policy_exists(handle, "sample_nwcontrol_policy",
+                                            "enabled", "all-host-vlans",
+                                            "link-down", "allow", "disabled",
+                                            "disabled")
     """
     dn = parent_dn + '/nwctrl-' + name
     mo = handle.query_dn(dn)

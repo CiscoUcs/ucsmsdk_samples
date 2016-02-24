@@ -53,7 +53,7 @@ def hfp_create(handle, org_dn, name,
     if org is None:
         raise ValueError("Org '%s' does not exist" % org_dn)
 
-    mo = FirmwareComputeHostPack(parent_mo_or_dn="org-root",
+    mo = FirmwareComputeHostPack(parent_mo_or_dn=org,
                                  name=name,
                                  blade_bundle_version=blade_bundle_version,
                                  rack_bundle_version=rack_bundle_version,

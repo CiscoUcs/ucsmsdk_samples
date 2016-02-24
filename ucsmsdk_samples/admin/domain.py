@@ -95,6 +95,9 @@ def domain_modify(handle, name, refresh_period=None, session_timeout=None,
     Returns:
         AaaDomain : Managed Object
 
+    Raises:
+        ValueError: If AaaDomain is not present
+
     Example:
         domain_modify(handle, name="ciscoucs", descr="modified")
     """
@@ -127,6 +130,9 @@ def domain_delete(handle, name):
     Returns:
         None
 
+    Raises:
+        ValueError: If AaaDomain is not present
+
     Example:
         domain_delete(handle, name="ciscoucs")
     """
@@ -156,6 +162,9 @@ def domain_realm_configure(handle, domain_name, realm, provider_group="",
 
     Returns:
         AaaDomainAuth : Managed Object
+
+    Raises:
+        ValueError: If AaaDomain is not present
 
     Example:
         domain_realm_configure(handle, domain_name="ciscoucs", realm="ldap")
@@ -200,7 +209,10 @@ def native_authentication_configure(handle, def_role_policy=None,
         descr (string): description
 
     Returns:
-        AaaDomainAuth : Managed Object
+        AaaAuthRealm : Managed Object
+
+    Raises:
+        ValueError: If AaaAuthRealm is not present
 
     Example:
         native_authentication_configure(handle, descr="modified")
@@ -243,7 +255,10 @@ def native_authentication_default(handle, realm=None, session_timeout=None,
         descr (string): description
 
     Returns:
-        AaaDomainAuth : Managed Object
+        AaaDefaultAuth : Managed Object
+
+    Raises:
+        ValueError: If AaaDefaultAuth is not present
 
     Example:
         native_authentication_default(handle, descr="modified")
@@ -286,7 +301,10 @@ def native_authentication_console(handle, realm=None, provider_group=None,
         descr (string): description
 
     Returns:
-        AaaDomainAuth : Managed Object
+        AaaConsoleAuth : Managed Object
+
+    Raises:
+        ValueError: If AaaConsoleAuth is not present
 
     Example:
         native_authentication_console(handle, descr="modified")

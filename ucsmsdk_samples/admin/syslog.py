@@ -23,7 +23,10 @@ def syslog_local_console_enable(handle, severity="emergencies"):
                            ["alerts", "critical", "emergencies"]
 
     Returns:
-        CommSyslogConsole Object
+        CommSyslogConsole: Managed Object
+
+    Raises:
+        ValueError: If CommSyslogConsole is not present
 
     Example:
         syslog_local_console_enable(handle, severity="alert")
@@ -51,7 +54,10 @@ def syslog_local_console_disable(handle):
         handle (UcsHandle)
 
     Returns:
-        CommSyslogConsole Object
+        CommSyslogConsole: Managed Object
+
+    Raises:
+        ValueError: If CommSyslogConsole is not present
 
     Example:
         syslog_local_console_enable(handle)
@@ -81,7 +87,10 @@ def syslog_local_monitor_enable(handle, severity="emergencies"):
                         "errors", "information", "notifications", "warnings"]
 
     Returns:
-        CommSyslogMonitor
+        CommSyslogMonitor: Managed Object
+
+    Raises:
+        ValueError: If CommSyslogMonitor is not present
 
     Example:
         syslog_local_monitor_enable(handle, severity="alert")
@@ -110,7 +119,10 @@ def syslog_local_monitor_disable(handle):
         handle (UcsHandle)
 
     Returns:
-        CommSyslogMonitor
+        CommSyslogMonitor: Managed Object
+
+    Raises:
+        ValueError: If CommSyslogMonitor is not present
 
     Example:
         mo = syslog_local_monitor_disable(handle)
@@ -143,6 +155,9 @@ def syslog_local_file_enable(handle, name, severity="emergencies", size="40000")
     Returns:
         CommSyslogFile: Managed object
 
+    Raises:
+        ValueError: If CommSyslogFile is not present
+
     Example:
         syslog_local_file_enable(handle, severity="alert", size="435675",
                                 name="sys_log")
@@ -173,7 +188,10 @@ def syslog_local_file_disable(handle):
         handle (UcsHandle)
 
     Returns:
-        CommSyslogFile
+        CommSyslogFile: Managed Object
+
+    Raises:
+        ValueError: If CommSyslogFile is not present
 
     Example:
         syslog_local_file_disable(handle)
@@ -212,6 +230,9 @@ def syslog_remote_enable(handle, name, hostname,
     Returns:
         CommSyslogClient Object
 
+    Raises:
+        ValueError: If CommSyslogClient is not present
+
     Example:
         syslog_remote(handle, name="primary", hostname="192.168.1.2",
                     severity="alert")
@@ -245,7 +266,10 @@ def syslog_remote_disable(handle, name):
                             "primary" or "secondary" or "tertiary"
 
     Returns:
-        CommSyslogClient Object
+        CommSyslogClient: Managed Object
+
+    Raises:
+        ValueError: If CommSyslogClient is not present
 
     Example:
         syslog_remote_disable(handle, name="primary")
@@ -277,6 +301,9 @@ def syslog_source(handle, faults=None, audits=None, events=None):
 
     Returns:
         CommSyslogSource: Managed object
+
+    Raises:
+        ValueError: If CommSyslogSource is not present
 
     Example:
             syslog_source(handle, faults="enabled", audits="disabled",

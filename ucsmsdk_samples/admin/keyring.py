@@ -110,6 +110,9 @@ def key_ring_modify(handle, name, descr=None, policy_owner=None, tp=None,
     Returns:
         PkiKeyRing Object
 
+    Raises:
+        ValueError: If PkiKeyRing is not present
+
     Example:
         key_ring = key_ring_modify(handle, name="mykeyring")
     """
@@ -193,6 +196,9 @@ def certificate_request_add(handle, name, dns="", locality="", state="",
 
     Returns:
         PkiCertReq: Managed object
+
+    Raises:
+        ValueError: If PkiKeyRing is not present
 
     Example:
         key_ring = key_ring_create(handle, name="mykeyring")
@@ -318,6 +324,9 @@ def certificate_request_modify(handle, name, dns=None, locality=None,
     Returns:
         PkiCertReq Object
 
+    Raises:
+        ValueError: If PkiCertReq is not present
+
     Example:
         key_ring = key_ring_create(handle, name="mykeyring")
 
@@ -377,7 +386,7 @@ def certificate_request_remove(handle, name):
         None
 
     Raises:
-        ValueError: If PkiCertReq Mo is not present
+        ValueError: If PkiCertReq is not present
 
     Example:
         key_ring = key_ring_create(handle, name="mykeyring")

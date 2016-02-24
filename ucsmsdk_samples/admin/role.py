@@ -28,7 +28,7 @@ def role_create(handle, name, priv, descr="", policy_owner="local"):
         policy_owner (string): policy owner
 
     Returns:
-        AaaRole Object
+        AaaRole: Managed Object
 
     Example:
         role_create(handle, name="testrole", priv="read-only")
@@ -44,7 +44,7 @@ def role_create(handle, name, priv, descr="", policy_owner="local"):
                  policy_owner=policy_owner)
     handle.add_mo(mo, True)
     handle.commit()
-    return AaaRole
+    return mo
 
 
 def role_exists(handle, name, priv, descr="", policy_owner="local"):
@@ -88,7 +88,10 @@ def role_modify(handle, name, priv=None, descr=None, policy_owner=None):
         policy_owner (string): policy owner
 
     Returns:
-        AaaRole Object
+        AaaRole: Managed Object
+
+    Raises:
+        ValueError: If AaaRole is not present
 
     Example:
         role_modify(handle, name="testrole", priv="read-only")
@@ -122,6 +125,9 @@ def role_delete(handle, name):
     Returns:
         None
 
+    Raises:
+        ValueError: If AaaRole is not present
+
     Example:
         role_delete(handle, name="testrole")
     """
@@ -133,5 +139,3 @@ def role_delete(handle, name):
 
     handle.remove_mo(mo)
     handle.commit()
-
-

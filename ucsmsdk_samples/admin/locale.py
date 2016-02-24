@@ -25,6 +25,7 @@ def locale_create(handle, name, descr="", policy_owner="local"):
         name (string): name of ldap provider
         descr (string): descr
         policy_owner (string): policy_owner
+
     Returns:
         AaaLocale : Managed Object
 
@@ -52,6 +53,7 @@ def locale_exists(handle, name, descr="", policy_owner="local"):
         name (string): name of ldap provider
         descr (string): descr
         policy_owner (string): policy_owner
+
     Returns:
         True/False
 
@@ -78,8 +80,12 @@ def locale_modify(handle, name, descr="", policy_owner="local"):
         name (string): name of ldap provider
         descr (string): descr
         policy_owner (string): policy_owner
+
     Returns:
         AaaLocale : Managed Object
+
+    Raises:
+        ValueError: If AaaLocale is not present
 
     Example:
         locale_modify(handle, name="test_locale")
@@ -111,6 +117,9 @@ def locale_delete(handle, name):
     Returns:
         None
 
+    Raises:
+        ValueError: If AaaLocale is not present
+
     Example:
         locale_delete(handle, name="test_locale")
     """
@@ -137,6 +146,9 @@ def locale_assign_org(handle, locale_name, name, org_dn="org-root", descr=""):
 
     Returns:
         AaaOrg : Managed Object
+
+    Raises:
+        ValueError: If AaaLocale is not present
 
     Example:
         locale_assign_org(handle, name="test_locale")
@@ -168,6 +180,9 @@ def locale_deassign_org(handle, locale_name, name):
 
     Returns:
         None
+
+    Raises:
+        ValueError: If AaaOrg is not present
 
     Example:
         locale_deassign_org(handle, locale_name="test_locale,

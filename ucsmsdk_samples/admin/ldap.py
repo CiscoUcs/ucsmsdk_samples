@@ -143,6 +143,9 @@ def ldap_provider_modify(handle, name, order=None, rootdn=None, basedn=None,
     Returns:
         AaaLdapProvider : Managed Object
 
+    Raises:
+        ValueError: If AaaLdapProvider is not present
+
     Example:
         ldap_provider_modify(handle, name="test_ldap_provider")
     """
@@ -192,6 +195,9 @@ def ldap_provider_delete(handle, name):
 
     Returns:
         None
+
+    Raises:
+        ValueError: If AaaLdapProvider is not present
 
     Example:
         ldap_provider_delete(handle, name="test_ldap_provider")
@@ -316,6 +322,9 @@ def ldap_group_map_delete(handle, name):
     Returns:
         None
 
+    Raises:
+        ValueError: If AaaLdapGroup is not present
+
     Example:
         ldap_group_map_delete(handle, name="test_ldap_group_map")
     """
@@ -402,6 +411,9 @@ def ldap_group_map_remove_role(handle, ldap_group_map_name, name):
     Returns:
         None
 
+    Raises:
+        ValueError: If AaaUserRole is not present
+
     Example:
         ldap_group_map_remove_role(handle,
                                 ldap_group_map_name="test_ldap_group_map",
@@ -481,6 +493,9 @@ def ldap_provider_group_delete(handle, name):
     Returns:
         True/False
 
+    Raises:
+        ValueError: If AaaProviderGroup is not present
+
     Example:
         ldap_provider_group_delete(handle, name="test_ldap_group_map")
     """
@@ -508,6 +523,9 @@ def ldap_provider_group_add_provider(handle, group_name, name, order,
 
     Returns:
         AaaProviderRef : Managed Object
+
+    Raises:
+        ValueError: If AaaProviderGroup or AaaProvider is not present
 
     Example:
         ldap_provider_group_add_provider(handle,
@@ -585,6 +603,9 @@ def ldap_provider_group_modify_provider(handle, group_name, name,
     Returns:
         True/False
 
+    Raises:
+        ValueError: If AaaProviderRef is not present
+
     Example:
         ldap_provider_group_modify_provider(handle,
                                         group_name="test_ldap_provider_group",
@@ -619,6 +640,9 @@ def ldap_provider_group_remove_provider(handle, group_name, name):
 
     Returns:
         None
+
+    Raises:
+        ValueError: If AaaProviderRef is not present
 
     Example:
         ldap_provider_group_modify_provider(handle,

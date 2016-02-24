@@ -43,6 +43,9 @@ def call_home_config(handle, contact=None, phone=None, email=None,
     Returns:
         None
 
+    Raises:
+        ValueError: If CallhomeSource or CallhomeSmtp is not present
+
     Example:
         from ucsmsdk.mometa.callhome.CallhomeSource import \
             CallhomeSourceConsts
@@ -119,6 +122,9 @@ def call_home_enable(handle, alert_throttling_admin_state=None, name="",
     Returns:
         CallhomeEp : ManagedObject
 
+    Raises:
+        ValueError: If CallhomeEp is not present
+
     Example:
         call_home_state_enable(handle)
     """
@@ -148,6 +154,9 @@ def call_home_disable(handle):
     Returns:
         CallhomeEp : ManagedObject
 
+    Raises:
+        ValueError: If CallhomeEp is not present
+
     Example:
         call_home_state_disable(handle)
     """
@@ -173,6 +182,9 @@ def anonymous_reporting_enable(handle):
     Returns:
         CallhomeAnonymousReporting : ManagedObject
 
+    Raises:
+        ValueError: If CallhomeAnonymousReporting is not present
+
     Example:
         anonymous_reporting_enable(handle)
     """
@@ -197,6 +209,9 @@ def anonymous_reporting_disable(handle):
 
     Returns:
         CallhomeAnonymousReporting : ManagedObject
+
+    Raises:
+        ValueError: If CallhomeAnonymousReporting is not present
 
     Example:
         anonymous_reporting_disable(handle)

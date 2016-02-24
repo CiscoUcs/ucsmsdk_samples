@@ -43,7 +43,7 @@ def user_create(handle, name, first_name, last_name, descr, clear_pwd_history,
         role_descr (string): role_descr
 
     Returns:
-        AaaUser Object
+        AaaUser: Managed Object
 
     Example:
         user_create(handle, name="test", first_name="firstname",
@@ -161,7 +161,10 @@ def user_modify(handle, name, first_name=None, last_name=None, descr=None,
         account_status (string): account_status
 
     Returns:
-        AaaUser Object
+        AaaUser: Managed Object
+
+    Raises:
+        ValueError: If AaaUser is not present
 
     Example:
         user_modify(handle, name="test", first_name="firstname",
@@ -221,6 +224,9 @@ def user_delete(handle, name):
     Returns:
         None
 
+    Raises:
+        ValueError: If AaaUser is not present
+
     Example:
         user_modify(handle, name="test")
     """
@@ -245,7 +251,10 @@ def user_add_role(handle, user_name, name, descr=""):
         descr (string): descr
 
     Returns:
-        AaaUserRole object
+        AaaUserRole: Managed object
+
+    Raises:
+        ValueError: If AaaUser is not present
 
     Example:
         user_add_role(handle, user_name="test", name="admin")
@@ -303,6 +312,9 @@ def user_remove_role(handle, user_name, name):
     Returns:
         None
 
+    Raises:
+        ValueError: If AaaUserRole is not present
+
     Example:
         user_remove_role(handle, user_name="test", name="admin")
     """
@@ -328,7 +340,10 @@ def user_add_locale(handle, user_name, name, descr=""):
         descr (string): descr
 
     Returns:
-        AaaUserLocale Object
+        AaaUserLocale: Managed Object
+
+    Raises:
+        ValueError: If AaaUser is not present
 
     Example:
         user_add_locale(handle, user_name="test", name="testlocale")
@@ -386,6 +401,9 @@ def user_remove_locale(handle, user_name, name):
     Returns:
         None
 
+    Raises:
+        ValueError: If AaaUserLocale is not present
+
     Example:
 
     """
@@ -410,7 +428,7 @@ def password_strength_check(handle, descr="", policy_owner="local"):
         policy_owner (string): ["local", "pending-policy", "policy"]
 
     Returns:
-        AaaUserEp Object
+        AaaUserEp: Managed Object
 
     Example:
         password_strength_check(handle)
@@ -433,7 +451,7 @@ def password_strength_uncheck(handle):
         handle (UcsHandle)
 
     Returns:
-        AaaUserEp Object
+        AaaUserEp: Managed Object
 
     Example:
         password_strength_uncheck(handle)
@@ -466,7 +484,10 @@ def password_profile_modify(handle, change_interval=None,
         policy_owner (string): ["local", "pending-policy", "policy"]
 
     Returns:
-        AaaPwdProfile
+        AaaPwdProfile: Managed Object
+
+    Raises:
+        ValueError: If AaaPwdProfile is not present
 
     Example:
         password_profile_modify(handle, change_count="2")

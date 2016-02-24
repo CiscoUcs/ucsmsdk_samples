@@ -35,7 +35,7 @@ def snmp_enable(handle, community=None, sys_contact=None, sys_location=None,
         CommSnmp: Managed object
 
     Raises:
-        ValueError: If CommSvcEp Mo is not present
+        ValueError: If CommSnmp Mo is not present
 
     Example:
         mo = snmp_enable(handle,
@@ -81,7 +81,7 @@ def snmp_disable(handle):
         handle (UcsHandle)
 
     Returns:
-        CommSnmp Object
+        CommSnmp: Managed Object
 
     Raises:
         ValueError: If CommSnmp Mo is not present
@@ -120,7 +120,7 @@ def snmp_trap_add(handle, hostname, community, port, version="v3",
             Required only for version "v3"
 
     Returns:
-        CommSnmpTrap Object
+        CommSnmpTrap: Managed Object
 
     Example:
         snmp_trap_add(handle, hostname="10.10.10.10",
@@ -200,7 +200,10 @@ def snmp_trap_modify(handle, hostname, community=None, port=None, version=None,
             Required only for version "v3"
 
     Returns:
-        CommSnmpTrap Object
+        CommSnmpTrap: Managed Object
+
+    Raises:
+        ValueError: If CommSnmpTrap Mo is not present
 
     Example:
         snmp_trap_modify(handle, hostname="10.10.10.10",
@@ -243,6 +246,9 @@ def snmp_trap_remove(handle, hostname):
     Returns:
         None
 
+    Raises:
+        ValueError: If CommSnmpTrap Mo is not present
+
     Example:
         snmp_trap_remove(handle, hostname="10.10.10.10")
 
@@ -272,7 +278,7 @@ def snmp_user_add(handle, name, descr, pwd, privpwd, auth="md5",
         use_aes (string): "yes", "no"
 
     Returns:
-        CommSnmpUser Object
+        CommSnmpUser: Managed Object
 
     Example:
         snmp_user_add(handle, name="snmpuser", descr="", pwd="password",
@@ -345,7 +351,10 @@ def snmp_user_modify(handle, name, descr=None, pwd=None, privpwd=None,
         use_aes (string): "yes", "no"
 
     Returns:
-        CommSnmpUser Object
+        CommSnmpUser: Managed Object
+
+    Raises:
+        ValueError: If CommSnmpUser Mo is not present
 
     Example:
         snmp_user_modify(handle, name="snmpuser", descr="",
@@ -385,6 +394,9 @@ def snmp_user_remove(handle, name):
 
     Returns:
         None
+
+    Raises:
+        ValueError: If CommSnmpUser Mo is not present
 
     Example:
         snmp_user_remove(handle, name="snmpuser")

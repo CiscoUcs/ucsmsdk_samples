@@ -29,7 +29,10 @@ def tftp_core_exporter_enable(handle,
 
 
     Returns:
-        SysdebugAutoCoreFileExportTarget Object
+        SysdebugAutoCoreFileExportTarget: Managed Object
+
+    Raises:
+        ValueError: If SysdebugAutoCoreFileExportTarget is not present
 
     Example:
         To Enable Core Exporter:
@@ -69,7 +72,10 @@ def tftp_core_exporter_disable(handle):
         handle (UcsHandle)
 
     Returns:
-        None
+        SysdebugAutoCoreFileExportTarget: Managed Object
+
+    Raises:
+        ValueError: If SysdebugAutoCoreFileExportTarget is not present
 
     Example:
         To Disable Core Exporter:

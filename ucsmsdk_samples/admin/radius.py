@@ -34,7 +34,7 @@ def radius_provider_create(handle, name, order="lowest-available", key="",
         descr (string): description
 
     Returns:
-        AaaRadiusProvider Object
+        AaaRadiusProvider: Managed Object
 
     Example:
         radius_provider_create(handle, name="test_radius_provider")
@@ -113,7 +113,10 @@ def radius_provider_modify(handle, name, order=None, key=None,
         descr (string): description
 
     Returns:
-        AaaRadiusProvider
+        AaaRadiusProvider: Managed Object
+
+    Raises:
+        ValueError: If AaaRadiusProvider is not present
 
     Example:
         radius_provider_modify(handle, name="test_radius_provider")
@@ -155,6 +158,9 @@ def radius_provider_delete(handle, name):
     Returns:
         None
 
+    Raises:
+        ValueError: If AaaRadiusProvider is not present
+
     Example:
         radius_provider_delete(handle, name="test_radius_provider")
     """
@@ -178,7 +184,7 @@ def radius_provider_group_create(handle, name, descr=""):
         descr (string): description
 
     Returns:
-        AaaProviderGroup Object
+        AaaProviderGroup: Managed Object
 
     Example:
         radius_provider_group_create(handle, name="test_radius_provider_group")
@@ -229,6 +235,9 @@ def radius_provider_group_delete(handle, name):
     Returns:
         None
 
+    Raises:
+        ValueError: If AaaProviderGroup is not present
+
     Example:
         radius_provider_group_delete(handle, name="test_radius_provider_group")
     """
@@ -255,7 +264,10 @@ def radius_provider_group_add_provider(handle, group_name, name, order,
         descr (string): description
 
     Returns:
-        AaaProviderRef Object
+        AaaProviderRef: Managed Object
+
+    Raises:
+        ValueError: If AaaProviderGroup  or AaaProvider is not present
 
     Example:
         radius_provider_group_add_provider(handle,
@@ -299,6 +311,9 @@ def radius_provider_group_provider_exists(handle, group_name, name, order,
     Returns:
         True/False
 
+    Raises:
+        ValueError: If AaaProviderGroup  or AaaProvider is not present
+
     Example:
         radius_provider_group_provider_exists(handle,
                                     group_name="test_radius_provider_group",
@@ -336,7 +351,10 @@ def radius_provider_group_modify_provider(handle, group_name, name,
         descr (string): description
 
     Returns:
-        AaaProviderRef Object
+        AaaProviderRef: Managed Object
+
+    Raises:
+        ValueError: If AaaProviderRef is not present
 
     Example:
         radius_provider_group_modify_provider(handle,
@@ -371,6 +389,9 @@ def radius_provider_group_remove_provider(handle, group_name, name):
 
     Returns:
         None
+
+    Raises:
+        ValueError: If AaaProviderRef is not present
 
     Example:
         radius_provider_group_remove_provider(handle,

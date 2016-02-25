@@ -40,10 +40,11 @@ def hfp_create(handle, org_dn, name,
         FirmwareComputeHostPack: Managed object
 
     Raises:
-        ValueError: If org does not exist
+        ValueError: If OrgOrg does not exist
 
     Example:
-
+        hfp_create(handle, name="sample_fp", rack_bundle_version="",
+                    blade_bundle_version="", org_dn="org-root")
     """
 
     from ucsmsdk.mometa.firmware.FirmwareComputeHostPack import \
@@ -65,7 +66,6 @@ def hfp_create(handle, org_dn, name,
                                  descr=descr)
     handle.add_mo(mo, modify_present=True)
     handle.commit()
-
     return mo
 
 
@@ -93,10 +93,11 @@ def hfp_modify(handle, org_dn, name, blade_bundle_version=None,
         FirmwareComputeHostPack: Managed object
 
     Raises:
-        ValueError: If org does not exist
+        ValueError: If FirmwareComputeHostPack does not exist
 
     Example:
-
+        hfp_modify(handle, name="sample_fp", rack_bundle_version="",
+                    blade_bundle_version="", org_dn="org-root")
     """
 
     dn = org_dn + "fw-host-pack-" + name
@@ -123,7 +124,6 @@ def hfp_modify(handle, org_dn, name, blade_bundle_version=None,
 
     handle.set_mo(mo)
     handle.commit()
-
     return mo
 
 
@@ -140,10 +140,10 @@ def hfp_delete(handle, org_dn, name):
         None
 
     Raises:
-        ValueError: if  host firmware pack policy does not exist
+        ValueError: if  FirmwareComputeHostPack does not exist
 
     Example:
-
+        hfp_delete(handle, name="sample_fp", org_dn="org-root/org-sub")
     """
 
     dn = org_dn + "/fw-host-pack-" + name
@@ -173,10 +173,13 @@ def hfp_firmware_pack_item_add(handle, org_dn, hfp_name, hw_vendor, hw_model,
         FirmwarePackItem: Managed object
 
     Raises:
-        ValueError: If org does not exist
+        ValueError: If FirmwareComputeHostPack not exist
 
     Example:
-
+        hfp_firmware_pack_item_add(handle, org_dn="org-root",
+                                   hfp_name="testhfp", hw_vendor="test",
+                                   hw_model="model", type="adaptor",
+                                   version="1.0.0.1")
     """
 
     from ucsmsdk.mometa.firmware.FirmwarePackItem import FirmwarePackItem
@@ -192,7 +195,6 @@ def hfp_firmware_pack_item_add(handle, org_dn, hfp_name, hw_vendor, hw_model,
                           version=version)
     handle.add_mo(mo)
     handle.commit()
-
     return mo
 
 def hfp_firmware_pack_item_remove(handle, org_dn, hfp_name, hw_vendor,
@@ -209,13 +211,15 @@ def hfp_firmware_pack_item_remove(handle, org_dn, hfp_name, hw_vendor,
         type (string): type
 
     Returns:
-        FirmwarePackItem: Managed object
+        None
 
     Raises:
-        ValueError: If org does not exist
+        ValueError: If FirmwarePackItem not exist
 
     Example:
-
+        hfp_firmware_pack_item_add(handle, org_dn="org-root",
+                                   hfp_name="testhfp", hw_vendor="test",
+                                   hw_model="model", type="adaptor")
     """
 
     hfp_dn = org_dn + "/fw-host-pack-" + hfp_name
@@ -226,12 +230,11 @@ def hfp_firmware_pack_item_remove(handle, org_dn, hfp_name, hw_vendor,
 
     handle.remove_mo(mo)
     handle.commit()
-    return mo
 
 
 def hfp_sp_attach(handle, sp_dn, hfp_name):
     """
-    Attaches a vMedia policy to the specified service profile
+    Attaches a hfp policy to the specified service profile
 
     Args:
         handle (UcsHandle)
@@ -269,7 +272,7 @@ def hfp_sp_attach(handle, sp_dn, hfp_name):
 
 def hfp_sp_detach(handle, sp_dn):
     """
-    Detaches vMedia policy from the specified service profile
+    Detaches hfp policy from the specified service profile
 
     Args:
         handle (UcsHandle)

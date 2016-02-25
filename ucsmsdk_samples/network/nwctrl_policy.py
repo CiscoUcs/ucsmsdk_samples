@@ -31,17 +31,21 @@ def nw_control_policy_create(handle, name, cdp, mac_register_mode,
         forge (string) : ["allow", "deny"]
         lldp_transmit (String) : ["disabled", "enabled"]
         lldp_receive (String) : ["disabled", "enabled"]
-        descr (String) :
-        parent_dn (String) :
+        descr (String) : description
+        parent_dn (String) : org dn
 
     Returns:
-        None
+        NwctrlDefinition: Managed Object
+
+    Raises:
+        ValueError: If OrgOrg is not present
 
     Example:
         nw_control_policy_create(handle, "sample_nwcontrol_policy",
                                 "enabled", "all-host-vlans",
                                 "link-down", "allow", "disabled", "disabled")
     """
+
     from ucsmsdk.mometa.nwctrl.NwctrlDefinition import NwctrlDefinition
     from ucsmsdk.mometa.dpsec.DpsecMac import DpsecMac
 
@@ -64,6 +68,7 @@ def nw_control_policy_create(handle, name, cdp, mac_register_mode,
 
         handle.add_mo(mo, modify_present=True)
         handle.commit()
+        return mo
     else:
         raise ValueError("Org %s is not available" %parent_dn)
 
@@ -71,12 +76,18 @@ def nw_control_policy_create(handle, name, cdp, mac_register_mode,
 def nw_control_policy_delete(handle, name, parent_dn="org-root"):
     """
     Deletes a Network Control Policy
+
     Args:
         handle (UcsHandle)
-        name (string)
-        parent_dn (String) :
+        name (string): name of network control policy
+        parent_dn (String) : ord dn
+
     Returns:
         None
+
+    Raises:
+        ValueError: If NwctrlDefinition is not present
+
     Example:
         nw_control_policy_delete(handle, "my_nw_policy")
         nw_control_policy_delete(handle, "my_nw_policy", "org-root/org-demo")
@@ -96,7 +107,9 @@ def nw_control_policy_exists(handle, name, cdp=None, mac_register_mode=None,
                              lldp_transmit=None, lldp_receive=None,
                              descr=None, parent_dn="org-root"):
     """
-    Checks if the given Network Control Policy already exists with the same params
+    Checks if the given Network Control Policy already exists with the
+    same params
+
     Args:
         handle (UcsHandle)
         name (String) : Network Control Policy Name
@@ -106,22 +119,27 @@ def nw_control_policy_exists(handle, name, cdp=None, mac_register_mode=None,
         forge (string) : ["allow", "deny"]
         lldp_transmit (String) : ["disabled", "enabled"]
         lldp_receive (String) : ["disabled", "enabled"]
-        descr (String) :
-        parent_dn (String) :
+        descr (String) : description
+        parent_dn (String) : org dn
+
     Returns:
         True/False (Boolean)
+
     Example:
         bool_var = nw_control_policy_exists(handle, "sample_nwcontrol_policy",
                                             "enabled", "all-host-vlans",
                                             "link-down", "allow", "disabled",
                                             "disabled")
     """
+
     dn = parent_dn + '/nwctrl-' + name
     mo = handle.query_dn(dn)
     if mo:
         if ((cdp and mo.cdp != cdp) and
-            (mac_register_mode and mo.mac_register_mode != mac_register_mode) and
-            (uplink_fail_action and mo.uplink_fail_action != uplink_fail_action) and
+            (mac_register_mode and mo.mac_register_mode
+                != mac_register_mode) and
+            (uplink_fail_action and mo.uplink_fail_action
+                != uplink_fail_action) and
             (forge and mo.forge != forge) and
             (lldp_transmit and mo.lldp_transmit != lldp_transmit) and
             (lldp_receive and mo.lldp_receive != lldp_receive) and

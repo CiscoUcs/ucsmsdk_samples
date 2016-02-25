@@ -16,9 +16,9 @@ This module contains the methods required for creating vNIC templates.
 """
 
 
-def vnic_template_create(handle, name, vlans=[],con_policy_type=None,
-                         con_policy_name=None,mtu=1500, qos_policy_name="",
-                         target="", ident_pool_name="",nw_ctrl_policy_name="",
+def vnic_template_create(handle, name, vlans=[], con_policy_type=None,
+                         con_policy_name=None, mtu=1500, qos_policy_name="",
+                         target="", ident_pool_name="", nw_ctrl_policy_name="",
                          pin_to_group_name="", switch_id="A",
                          stats_policy_name="default",
                          templ_type="initial-template",
@@ -30,31 +30,41 @@ def vnic_template_create(handle, name, vlans=[],con_policy_type=None,
         handle (UcsHandle)
         name (String) : vNIC Template name
         vlans (List) : List of tuples - [(vlan_name, native_vlan)]
-        con_policy_type (String) : Connection Policy Type ["dynamic-vnic","usnic","vmq"]
+        con_policy_type (String) : Connection Policy Type
+                                   ["dynamic-vnic","usnic","vmq"]
         con_policy_name (String) : Connection Policy name
         mtu (String)
         qos_policy_name (String) : QoS Policy name
-        target (String) : ((vm|adaptor|defaultValue),){0,2}(vm|adaptor|defaultValue){0,1}
+        target (String) : ((vm|adaptor|defaultValue),){0,2}
+                            (vm|adaptor|defaultValue){0,1}
         ident_pool_name (String) : MAC Address Pool name
         nw_ctrl_policy_name (String) : Network Control Policy name
         pin_to_group_name (String) : Pin Group name
         switch_id (String) : ["A", "A-B", "B", "B-A", "NONE"]
         stats_policy_name (String) : Stats Threshold Policy name
         templ_type (String) : ["initial-template", "updating-template"]
-        descr (String) :
-        parent_dn (String) :
+        descr (String) : description
+        parent_dn (String) : org dn
 
     Returns:
-        None
+        VnicLanConnTempl: Managed Object
+
+    Raises:
+        ValueError: If con_policy_type is not in ["dynamic-vnic","usnic","vmq"]
+                    Or
+                    If OrgOrg is not present
 
     Example:
-        sample_vlans = [("my_vlan","yes"),("lab_vlan","no"),("sample_vlan","no")]
-        vnic_template_create(handle, "sample_vnic_template", sample_vlans, "usnic",
-                            "sample_usnic_policy", "1500", "samp_qos_policy",
-                            "adaptor,vm", "samp_mac_pool")
+        sample_vlans = [("my_vlan","yes"),("lab_vlan","no"),
+                        ("sample_vlan","no")]
+        vnic_template_create(handle, "sample_vnic_template", sample_vlans,
+                             "usnic", "sample_usnic_policy", "1500",
+                             "samp_qos_policy", "adaptor,vm", "samp_mac_pool")
     """
+
     from ucsmsdk.mometa.vnic.VnicLanConnTempl import VnicLanConnTempl
-    from ucsmsdk.mometa.vnic.VnicDynamicConPolicyRef import VnicDynamicConPolicyRef
+    from ucsmsdk.mometa.vnic.VnicDynamicConPolicyRef import \
+        VnicDynamicConPolicyRef
     from ucsmsdk.mometa.vnic.VnicUsnicConPolicyRef import VnicUsnicConPolicyRef
     from ucsmsdk.mometa.vnic.VnicVmqConPolicyRef import VnicVmqConPolicyRef
 
@@ -105,23 +115,32 @@ def vnic_template_create(handle, name, vlans=[],con_policy_type=None,
                 vlan_name = vlan[0]
                 is_native_vlan = vlan[1]
                 # TODO: Query to check if VnicEtherIf exists
-                vlan_mo.append(VnicEtherIf(parent_mo_or_dn=mo, name=vlan_name, default_net=is_native_vlan))
+                vlan_mo.append(VnicEtherIf(parent_mo_or_dn=mo,
+                                           name=vlan_name,
+                                           default_net=is_native_vlan))
 
         handle.add_mo(mo, modify_present=True)
         handle.commit()
     else:
         raise ValueError(parent_dn + " MO is not available")
+    return mo
 
 
 def vnic_template_delete(handle, name, parent_dn="org-root"):
     """
     Deletes a vNIC Template
+
     Args:
         handle (UcsHandle)
-        name (string)
+        name (string): vnic template name
         parent_dn (String) :
+
     Returns:
         None
+
+    Raises:
+        ValueError: If VnicLanConnTempl is not present
+
     Example:
         vnic_template_delete(handle, "samp-vnic-tmpl")
     """
@@ -132,10 +151,10 @@ def vnic_template_delete(handle, name, parent_dn="org-root"):
         handle.remove_mo(mo)
         handle.commit()
     else:
-        raise ValueError("vNIC Template Mo is not present")
+        raise ValueError("vNIC Template '%s' is not present" % dn)
 
 
-def vnic_template_exists(handle, name, vlans=None,con_policy_type=None,
+def vnic_template_exists(handle, name, vlans=None, con_policy_type=None,
                          con_policy_name=None, mtu=None, qos_policy_name=None,
                          target=None, ident_pool_name=None,
                          nw_ctrl_policy_name=None, pin_to_group_name=None,
@@ -148,29 +167,35 @@ def vnic_template_exists(handle, name, vlans=None,con_policy_type=None,
         handle (UcsHandle)
         name (String) : vNIC Template name
         vlans (List) : List of tuples - [(vlan_name, native_vlan)]
-        con_policy_type (String) : Connection Policy Type ["dynamic-vnic","usnic","vmq"]
+        con_policy_type (String) : Connection Policy Type
+                                   ["dynamic-vnic","usnic","vmq"]
         con_policy_name (String) : Connection Policy name
         mtu (String)
         qos_policy_name (String) : QoS Policy name
-        target (String) : ((vm|adaptor|defaultValue),){0,2}(vm|adaptor|defaultValue){0,1}
+        target (String) : ((vm|adaptor|defaultValue),){0,2}
+                           (vm|adaptor|defaultValue){0,1}
         ident_pool_name (String) : MAC Address Pool name
         nw_ctrl_policy_name (String) : Network Control Policy name
         pin_to_group_name (String) : Pin Group name
         switch_id (String) : ["A", "A-B", "B", "B-A", "NONE"]
         stats_policy_name (String) : Stats Threshold Policy name
         templ_type (String) : ["initial-template", "updating-template"]
-        descr (String) :
-        parent_dn (String) :
+        descr (String) : description
+        parent_dn (String) : org dn
+
     Returns:
         True/False (Boolean)
+
     Example:
-        sample_vlans = [("my_vlan","yes"),("lab_vlan","no"),("sample_vlan","no")]
+        sample_vlans = [("my_vlan","yes"),("lab_vlan","no"),
+                          ("sample_vlan","no")],
                             bool_var = vnic_template_exists(handle,
                             "sample_vnic_template",
                             sample_vlans, "usnic",
                             "sample_usnic_policy", "1500", "samp_qos_policy",
                             "adaptor,vm", "samp_mac_pool")
     """
+
     dn = parent_dn + '/lan-conn-templ-' + name
     mo = handle.query_dn(dn)
     #TODO: Compare vlans associated with the vnic template
@@ -181,10 +206,13 @@ def vnic_template_exists(handle, name, vlans=None,con_policy_type=None,
             (qos_policy_name and mo.qos_policy_name != qos_policy_name) and
             (target and mo.target != target) and
             (ident_pool_name and mo.ident_pool_name != ident_pool_name) and
-            (nw_ctrl_policy_name and mo.nw_ctrl_policy_name != nw_ctrl_policy_name) and
-            (pin_to_group_name and mo.pin_to_group_name != pin_to_group_name) and
+            (nw_ctrl_policy_name and mo.nw_ctrl_policy_name
+                != nw_ctrl_policy_name) and
+            (pin_to_group_name and mo.pin_to_group_name
+                != pin_to_group_name) and
             (switch_id and mo.switch_id != switch_id) and
-            (stats_policy_name and mo.stats_policy_name != stats_policy_name) and
+            (stats_policy_name and mo.stats_policy_name
+                != stats_policy_name) and
             (templ_type and mo.templ_type != templ_type) and
             (descr and mo.descr != descr)):
             return False

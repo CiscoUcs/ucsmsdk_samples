@@ -31,7 +31,10 @@ def mac_pool_create(handle, name, assignment_order,
         parent_dn (String) :
 
     Returns:
-        None
+        MacpoolPool: Managed Object
+
+    Raises:
+        ValueError: If OrgOrg is not present
 
     Example:
         mac_pool_create(handle, "sample_mac_pool", "default",
@@ -53,52 +56,62 @@ def mac_pool_create(handle, name, assignment_order,
 
         handle.add_mo(mo, modify_present=True)
         handle.commit()
+        return mo
     else:
-        raise ValueError("MAC Pool %s is not available")
+        raise ValueError("org '%s' is not available" % parent_dn)
 
 
 def mac_pool_remove(handle, name, parent_dn="org-root"):
     """
     Removes the specified MAC Pool
+
     Args:
         handle (UcsHandle)
         name (String) : MAC Pool Name
         parent_dn (String) : Dn of the Org in which the MAC Pool should reside
+
     Returns:
         None
+
     Raises:
-        ValueError: If the MAC Pool is not found
+        ValueError: If MacpoolPool is not present
+
     Example:
         mac_pool_remove(handle, "sample_mac", parent_dn="org-root")
         mac_pool_remove(handle, "demo_mac_pool", parent_dn="org-root/org-demo")
     """
+
     dn = parent_dn + '/mac-pool-' + name
     mo = handle.query_dn(dn)
     if mo:
         handle.remove_mo(mo)
         handle.commit()
     else:
-        raise ValueError("Org %s is not available" % parent_dn)
+        raise ValueError("Macpool %s is not available" % dn)
 
 
 def mac_pool_exists(handle, name, assignment_order=None,
                     r_from=None, to=None, descr=None, parent_dn="org-root"):
     """
     Checks if the given MAC Pool already exists with the same params
+
     Args:
         handle (UcsHandle)
         name (String) : Network Control Policy Name
         assignment_order (String) : ["default", "sequential"]
         r_from (String) : Beginning MAC Address
         to (String) : Ending MAC Address
-        descr (String) :
-        parent_dn (String) :
+        descr (String) : description
+        parent_dn (String) : org dn
+
     Returns:
         True/False (Boolean)
+
     Example:
         bool_var = mac_pool_exists(handle, "sample_mac_pool", "default",
                         "00:25:B5:00:00:00", "00:25:B5:00:00:03")
     """
+
     dn = parent_dn + '/mac-pool-' + name
     mo = handle.query_dn(dn)
     if mo:

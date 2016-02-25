@@ -23,7 +23,8 @@ def qos_class_enable(handle, priority, weight="normal", mtu="normal",
 
     Args:
         handle (UcsHandle)
-        priority (String) : ["best-effort", "bronze", "fc", "gold", "platinum", "silver"]
+        priority (String) : ["best-effort", "bronze", "fc", "gold",
+                             "platinum", "silver"]
         cos (String): ["any"], ["0-6", "255-255"]
         drop (String) : ["drop", "no-drop"]
         weight (String) : ["best-effort", "none"], ["0-10"]
@@ -34,11 +35,13 @@ def qos_class_enable(handle, priority, weight="normal", mtu="normal",
         QosclassEthClassified: Managed object
 
     Raises:
-        ValueError: When the Qos class is not present
+        ValueError: If QosclassEthClassified is not present
+
     Example:
         qos_class_enable(handle, "platinum", "enabled", "6", "drop",
                         "9", "fc", "yes")
     """
+
     from ucsmsdk.mometa.qosclass.QosclassEthClassified import \
         QosclassEthClassified
     from ucsmsdk.mometa.qosclass.QosclassEthBE import QosclassEthBE
@@ -69,7 +72,7 @@ def qos_class_enable(handle, priority, weight="normal", mtu="normal",
                                   priority=priority,
                                   admin_state="enabled")
 
-    handle.set_mo(qos_class)
+    handle.add_mo(qos_class, True)
     handle.commit()
     return qos_class
 
@@ -80,17 +83,19 @@ def qos_class_disable(handle, priority):
 
     Args:
         handle (UcsHandle)
-        priority (String) : ["best-effort", "bronze", "fc", "gold", "platinum", "silver"]
+        priority (String) : ["best-effort", "bronze", "fc", "gold",
+                             "platinum", "silver"]
 
     Returns:
         QosclassEthClassified: Managed object
 
     Raises:
-        ValueError: When the Qos class is not present
+        ValueError: If QosclassEthClassified is not present
 
     Example:
         qos_class_disable(handle, "platinum")
     """
+
     qos_class = handle.query_dn("fabric/lan/classes/class-" + priority)
     if qos_class:
         qos_class.admin_state = "disabled"
@@ -102,14 +107,16 @@ def qos_class_disable(handle, priority):
     return qos_class
 
 
-def qos_class_conf_drift(handle, priority, admin_state=None, cos=None, drop=None,
-                         weight=None, mtu=None, multicast_optimize=None):
+def qos_class_conf_drift(handle, priority, admin_state=None, cos=None,
+                         drop=None, weight=None, mtu=None,
+                         multicast_optimize=None):
     """
     Detects configuration drift for Qos Class
 
     Args:
         handle (UcsHandle)
-        priority (String) : ["best-effort", "bronze", "fc", "gold", "platinum", "silver"]
+        priority (String) : ["best-effort", "bronze", "fc", "gold",
+                             "platinum", "silver"]
         admin_state (String) : ["disabled", "enabled"]
         cos (String): ["any"], ["0-6", "255-255"]
         drop (String) : ["drop", "no-drop"]
@@ -118,12 +125,13 @@ def qos_class_conf_drift(handle, priority, admin_state=None, cos=None, drop=None
         multicast_optimize (String) : ["false", "no", "true", "yes"]
 
     Returns:
-        True/False - bool
+        True/False(bool)
 
     Example:
         bool_var = qos_class_conf_drift(handle, "platinum", "enabled", "6",
                     "drop", "9", "fc", "yes")
     """
+
     dn = "fabric/lan/classes/class-" + priority
     mo = handle.query_dn(dn)
     if mo:
@@ -142,10 +150,12 @@ def qos_class_conf_drift(handle, priority, admin_state=None, cos=None, drop=None
                 (drop and mo.drop != drop) or
                 (weight and mo.weight != weight) or
                 (mtu and mo.mtu != mtu) or
-                (multicast_optimize and mo.multicast_optimize != multicast_optimize)):
+                (multicast_optimize and mo.multicast_optimize
+                    != multicast_optimize)):
                 # configuration drift detected
                 return True
-            # passed prop:val and mo[prop:val] are same. No configuration drift detected
+            # passed prop:val and mo[prop:val] are same.
+            # No configuration drift detected
             return False
 
         # the mo is present and not enabled. Need to act
@@ -163,18 +173,19 @@ def qos_policy_add(handle, name, prio, burst, rate,
     Args:
         handle (UcsHandle)
         name (String) : QoS Policy Name
-        priority (String) : ["best-effort", "bronze", "fc", "gold", "platinum", "silver"]
-        burst (uint):
+        priority (String) : ["best-effort", "bronze", "fc", "gold",
+                             "platinum", "silver"]
+        burst (uint): 0-65535
         rate (String) : ["line-rate"], ["8-40000000"]
         host_control (string) : ["full", "full-with-exception", "none"]
-        descr (String) :
-        parent_dn (String) :
+        descr (String) : description
+        parent_dn (String) : org dn
 
     Returns:
         EpqosDefinition: Managed object
 
     Raises:
-        ValueError: If EpqosDefinition is not present
+        ValueError: If OrgOrg is not present
 
     Example:
         mo = qos_policy_create(handle, "sample_qos", "platinum", 10240,
@@ -200,7 +211,7 @@ def qos_policy_add(handle, name, prio, burst, rate,
         handle.commit()
         return mo
     else:
-        raise ValueError(parent_dn + " MO is not available")
+        raise ValueError("org '%s' is not available" % parent_dn)
 
 
 def qos_policy_remove(handle, name, parent_dn="org-root"):
@@ -216,12 +227,14 @@ def qos_policy_remove(handle, name, parent_dn="org-root"):
         None
 
     Raises:
-        ValueError: If the policy is not found
+        ValueError: If EpqosDefinition is not present
 
     Example:
         qos_policy_remove(handle, "sample_qos", parent_dn="org-root")
-        qos_policy_remove(handle, "demo_qos_policy", parent_dn="org-root/org-demo")
+        qos_policy_remove(handle, "demo_qos_policy",
+                          parent_dn="org-root/org-demo")
     """
+
     dn = parent_dn + '/ep-qos-' + name
     mo = handle.query_dn(dn)
     if mo:
@@ -239,19 +252,22 @@ def qos_policy_exists(handle, name, priority=None, burst=None, rate=None,
     Args:
         handle (UcsHandle)
         name (String) : QoS Policy Name
-        priority (String) : ["best-effort", "bronze", "fc", "gold", "platinum", "silver"]
-        burst (uint):
+        priority (String) : ["best-effort", "bronze", "fc", "gold",
+                             "platinum", "silver"]
+        burst (uint): 0-65535
         rate (String) : ["line-rate"], ["8-40000000"]
         host_control (string) : ["full", "full-with-exception", "none"]
-        descr (String) :
-        parent_dn (String) :
+        descr (String) : description
+        parent_dn (String) : org dn
 
     Returns:
-        True/False (Boolean)
+        True/False(Boolean)
 
     Example:
-        bool_var = qos_policy_exists(handle, "sample_qos", "platinum", 10240, "line-rate", "full")
+        bool_var = qos_policy_exists(handle, "sample_qos", "platinum", 10240,
+                                     "line-rate", "full")
     """
+
     dn = parent_dn + '/ep-qos-' + name
     mo = handle.query_dn(dn)
     if mo:

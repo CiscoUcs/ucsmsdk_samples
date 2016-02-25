@@ -72,18 +72,18 @@ def get_firmware_bundles(handle, bundle_type=None):
         get_firmware_bundles(handle, bundle_type="b-series-bundle")
     """
 
-	filter_str = None
-	if bundle_type is not None:
-		filter_str = '(type, %s, type="eq")' % bundle_type
-	bundles = handle.query_classid(
+    filter_str = None
+    if bundle_type is not None:
+        filter_str = '(type, %s, type="eq")' % bundle_type
+    bundles = handle.query_classid(
                 class_id="FirmwareDistributable", filter_str=filter_str)
-	return bundles
+    return bundles
 
 
 # ##########################################################
 # Return the image firmware versions given the bundle version
 def get_infra_firmware_version(handle, bundle_version,
-				image_types = ['system', 'switch-kernel', 'switch-software']):
+                image_types = ['system', 'switch-kernel', 'switch-software']):
     """
     Return the image firmware versions given the bundle version
 
@@ -99,51 +99,51 @@ def get_infra_firmware_version(handle, bundle_version,
         get_infra_firmware_version(handle, bundle_version="1.0.1.0")
     """
 
-	bundles = get_firmware_bundles(handle,
-								   bundle_type = 'infrastructure-bundle')
-	firmware_map = {}
-	for image_type in image_types:
-		firmware_map[image_type] = { 'image_name' : None, 'version' : None }
+    bundles = get_firmware_bundles(handle,
+                                   bundle_type = 'infrastructure-bundle')
+    firmware_map = {}
+    for image_type in image_types:
+        firmware_map[image_type] = { 'image_name' : None, 'version' : None }
 
-	for bundle in bundles:
-		#log.debug("Bundle type: %s, version: %s. Bundle version: %s",
-		          # bundle.type, bundle.version, bundle_version)
-		if bundle.type == 'infrastructure-bundle' and \
-				bundle.version.startswith(bundle_version):
-			dist_images = handle.query_children(in_mo=bundle,
-												class_id="FirmwareDistImage")
-			for dist_image in dist_images:
-				for image_type in image_types:
-					if dist_image.type == image_type:
-						firmware_map[image_type]['image_name'] = \
-							dist_image.name
-						log.debug('Bundle version %s, infra firmware image '
-								  'name: %s', bundle_version, dist_image.name)
-			break
+    for bundle in bundles:
+        #log.debug("Bundle type: %s, version: %s. Bundle version: %s",
+                  # bundle.type, bundle.version, bundle_version)
+        if bundle.type == 'infrastructure-bundle' and \
+                bundle.version.startswith(bundle_version):
+            dist_images = handle.query_children(in_mo=bundle,
+                                                class_id="FirmwareDistImage")
+            for dist_image in dist_images:
+                for image_type in image_types:
+                    if dist_image.type == image_type:
+                        firmware_map[image_type]['image_name'] = \
+                            dist_image.name
+                        log.debug('Bundle version %s, infra firmware image '
+                                  'name: %s', bundle_version, dist_image.name)
+            break
 
-	filter_str = None
-	for image_type in image_types:
-		if firmware_map[image_type]['image_name'] is None:
-			raise Exception("Infra image type '%s' version '%s' is not "
-							"present", image_type, bundle_version)
-		else:
-			str = '(name, %s, type="eq")' % (firmware_map[image_type]
-											 ['image_name'])
-			if filter_str is None:
-				filter_str = str
-			else:
-				filter_str = filter_str + " or " + str
+    filter_str = None
+    for image_type in image_types:
+        if firmware_map[image_type]['image_name'] is None:
+            raise Exception("Infra image type '%s' version '%s' is not "
+                            "present", image_type, bundle_version)
+        else:
+            str = '(name, %s, type="eq")' % (firmware_map[image_type]
+                                             ['image_name'])
+            if filter_str is None:
+                filter_str = str
+            else:
+                filter_str = filter_str + " or " + str
 
-	firmware_images = handle.query_classid(
+    firmware_images = handle.query_classid(
                 class_id="FirmwareImage", filter_str=filter_str)
-	for firmware_image in firmware_images:
-		for image_type in image_types:
-			if firmware_image.name == firmware_map[image_type]['image_name']:
-				log.debug("Found bundle/image version mapping. Image type: %s,"
-						  " img version: %s, bundle: %s",
-						 image_type, firmware_image.version, bundle_version)
-				firmware_map[image_type]['version'] = firmware_image.version
-	return firmware_map
+    for firmware_image in firmware_images:
+        for image_type in image_types:
+            if firmware_image.name == firmware_map[image_type]['image_name']:
+                log.debug("Found bundle/image version mapping. Image type: %s,"
+                          " img version: %s, bundle: %s",
+                         image_type, firmware_image.version, bundle_version)
+                firmware_map[image_type]['version'] = firmware_image.version
+    return firmware_map
 
 
 def has_firmware_bundle(handle, version):
@@ -176,7 +176,7 @@ def firmware_download(image_name, username, password, download_dir,
     Downloads the firmware image from cco
 
     Args:
-    	image_name (string): firmware image name
+        image_name (string): firmware image name
         username (string): cec username
         password (string): cec password
         download_dir (string): path of download directory
@@ -187,12 +187,12 @@ def firmware_download(image_name, username, password, download_dir,
         None
 
     Raises:
-    	ValueError if firmware image not available on cco
+        ValueError if firmware image not available on cco
 
     Example:
         firmware_download(image_name="ucs-k9-bundle-c-series.2.2.5b.C.bin",
-        				  username="user", password="passwd",
-        				  download_dir="/home/imagedir")
+                          username="user", password="passwd",
+                          download_dir="/home/imagedir")
     """
 
     images = get_ucs_cco_image_list(username=username, password=password,
@@ -216,18 +216,18 @@ def firmware_add_local(handle, image_dir, image_name, timeout=10*60):
 
     Args:
         image_dir (string): path of download directory
-    	image_name (string): firmware image name
+        image_name (string): firmware image name
         timeout (number): timeout in seconds
 
     Returns:
         FirmwareDownloader: Managed Object
 
     Raises:
-    	ValueError if download fail or timeout
+        ValueError if download fail or timeout
 
     Example:
         firmware_add_local(image_dir="/home/imagedir",
-        				   image_name="ucs-k9-bundle-c-series.2.2.5b.C.bin")
+                           image_name="ucs-k9-bundle-c-series.2.2.5b.C.bin")
     """
 
     from ucsmsdk.ucseventhandler import UcsEventHandle
@@ -258,12 +258,12 @@ def firmware_add_local(handle, image_dir, image_name, timeout=10*60):
 
     start = datetime.datetime.now()
     while not firmware_downloader.transfer_state == \
-			FirmwareDownloaderConsts.TRANSFER_STATE_DOWNLOADED:
+            FirmwareDownloaderConsts.TRANSFER_STATE_DOWNLOADED:
         firmware_downloader = handle.query_dn(firmware_downloader.dn)
         if firmware_downloader.transfer_state == \
-				FirmwareDownloaderConsts.TRANSFER_STATE_FAILED:
+                FirmwareDownloaderConsts.TRANSFER_STATE_FAILED:
             raise Exception("Download of '%s' failed. Error: %s" %
-				(image_name, firmware_downloader.fsm_rmt_inv_err_descr))
+                (image_name, firmware_downloader.fsm_rmt_inv_err_descr))
         if (datetime.datetime.now() - start).total_seconds() > timeout:
             raise Exception("Download of '%s' timed out" % image_name)
 
@@ -276,7 +276,7 @@ def firmware_add_remote(handle, file_name, remote_path, protocol, server,
     Downloads the firmware image on ucsm from remote server
 
     Args:
-    	handle (UcsHandle)
+        handle (UcsHandle)
         file_name (string): firmware image name
         remote_path (string): path of image directory
         protocol (string): protocol
@@ -288,14 +288,14 @@ def firmware_add_remote(handle, file_name, remote_path, protocol, server,
         FirmwareDownloader: Managed Object
 
     Raises:
-    	ValueError if image not available or incorrect credential
+        ValueError if image not available or incorrect credential
 
     Example:
         firmware_add_remote(handle,
-        					file_name="ucs-k9-bundle-c-series.2.2.5b.C.bin",
-        					remote_path="/home/imagedir",
-        					protocol="nfs",
-        					server="10.65.1.2,
+                            file_name="ucs-k9-bundle-c-series.2.2.5b.C.bin",
+                            remote_path="/home/imagedir",
+                            protocol="nfs",
+                            server="10.65.1.2,
                             user="user", pwd="pwd")
     """
 
@@ -334,18 +334,18 @@ def firmware_remove(handle, image_name):
     Removes firmware image from  ucsm
 
     Args:
-    	handle (UcsHandle)
+        handle (UcsHandle)
         image_name (string): firmware image name
 
     Returns:
         None
 
     Raises:
-    	ValueError if image not available on ucsm
+        ValueError if image not available on ucsm
 
     Example:
         firmware_add_remote(handle,
-        					file_name="ucs-k9-bundle-c-series.2.2.5b.C.bin")
+                            file_name="ucs-k9-bundle-c-series.2.2.5b.C.bin")
     """
 
     top_system = TopSystem()
@@ -369,45 +369,45 @@ def validate_connection(handle, timeout=15*60):
     Montiors UCSM Connection, if connection exists return True else False
 
     Args:
-    	handle (UcsHandle)
+        handle (UcsHandle)
         timeout (number): timeout in seconds
 
     Returns:
         True/False(bool)
 
     Raises:
-    	Exception if unable to connect to UCSM
+        Exception if unable to connect to UCSM
 
     Example:
-	    firmware_add_remote(handle,
-	    					file_name="ucs-k9-bundle-c-series.2.2.5b.C.bin")
-	"""
+        firmware_add_remote(handle,
+                            file_name="ucs-k9-bundle-c-series.2.2.5b.C.bin")
+    """
 
-	connected = False
-	start = datetime.datetime.now()
-	while not connected:
-		try:
-			# If the session is already established,
-			# this will validate the session
-			connected = handle.login()
-		except Exception as e:
-			# UCSM may been in the middle of activation,
-			# hence connection would fail
-			log.debug("Login to UCSM failed: %s", str(e))
+    connected = False
+    start = datetime.datetime.now()
+    while not connected:
+        try:
+            # If the session is already established,
+            # this will validate the session
+            connected = handle.login()
+        except Exception as e:
+            # UCSM may been in the middle of activation,
+            # hence connection would fail
+            log.debug("Login to UCSM failed: %s", str(e))
 
-		if not connected:
-			try:
-				log.debug("Login to UCS Manager, elapsed time %ds",
-						  (datetime.datetime.now() - start).total_seconds())
-				handle.login(force=True)
-				log.debug ("Login successful")
-				connected = True
-			except:
-				log.debug("Login failed. Sleeping for 60 seconds")
-				time.sleep(60)
-			if (datetime.datetime.now() - start).total_seconds() > timeout:
-				raise Exception("Unable to login to UCS Manager")
-	return connected
+        if not connected:
+            try:
+                log.debug("Login to UCS Manager, elapsed time %ds",
+                          (datetime.datetime.now() - start).total_seconds())
+                handle.login(force=True)
+                log.debug ("Login successful")
+                connected = True
+            except:
+                log.debug("Login failed. Sleeping for 60 seconds")
+                time.sleep(60)
+            if (datetime.datetime.now() - start).total_seconds() > timeout:
+                raise Exception("Unable to login to UCS Manager")
+    return connected
 
 
 def _get_running_firmware_version(handle, subject="system"):
@@ -415,53 +415,53 @@ def _get_running_firmware_version(handle, subject="system"):
     Gets Running Firmware version
 
     Args:
-    	handle (UcsHandle)
+        handle (UcsHandle)
         subject (string): subject
 
     Returns:
         list of FirmwareRunning Managed Objects
 
     Raises:
-    	Exception if unable to connect to UCSM
+        Exception if unable to connect to UCSM
 
     Example:
-	    _get_running_firmware_version(handle)
-	"""
+        _get_running_firmware_version(handle)
+    """
 
-	running_firmware_list = []
-	mgmt_controllers = handle.query_classid(class_id="MgmtController",
-						filter_str='(subject, ' + subject + ', type="eq")')
+    running_firmware_list = []
+    mgmt_controllers = handle.query_classid(class_id="MgmtController",
+                        filter_str='(subject, ' + subject + ', type="eq")')
 
-	if len(mgmt_controllers) == 0:
-		raise Exception("No Mgmt Controller Object with subject %s", subject)
+    if len(mgmt_controllers) == 0:
+        raise Exception("No Mgmt Controller Object with subject %s", subject)
 
-	for mgmt_controller in mgmt_controllers:
-		list = handle.query_children(in_mo=mgmt_controller,
-											 class_id="FirmwareRunning")
-		if len(list) == 0:
-			raise Exception("No FirmwareRunning Object with subject %s",
-							subject)
-		for running_firmware in list:
-			running_firmware_list.append(running_firmware)
+    for mgmt_controller in mgmt_controllers:
+        list = handle.query_children(in_mo=mgmt_controller,
+                                             class_id="FirmwareRunning")
+        if len(list) == 0:
+            raise Exception("No FirmwareRunning Object with subject %s",
+                            subject)
+        for running_firmware in list:
+            running_firmware_list.append(running_firmware)
 
-	return running_firmware_list
+    return running_firmware_list
 
 
 def wait_for_firmware_activation(handle, bundle_version,
-						subject,
-						image_types,
-						wait_for_upgrade_completion,
-						acknowledge_reboot,
-						timeout,
-						observer=None):
-	"""
+                        subject,
+                        image_types,
+                        wait_for_upgrade_completion,
+                        acknowledge_reboot,
+                        timeout,
+                        observer=None):
+    """
     Returns True if firmware is already running at the specified version
-	If not running at the desired version, optionally wait until activation
-	has completed and UCS came back online.
+    If not running at the desired version, optionally wait until activation
+    has completed and UCS came back online.
 
     Args:
-    	handle (UcsHandle)
-    	bundle_version(string): version
+        handle (UcsHandle)
+        bundle_version(string): version
         subject (string): subject
         image_types (list): image types
         wait_for_upgrade_completion (bool): True/False
@@ -473,131 +473,131 @@ def wait_for_firmware_activation(handle, bundle_version,
         True/False(bool)
 
     Raises:
-    	Exception if running version not available ot ucsm is not running at
-    	desired version
+        Exception if running version not available ot ucsm is not running at
+        desired version
 
     Example:
-	    wait_for_firmware_activation(handle,
-	    							version="1.0.1.0", subject="system",
-									image_types=['system'],
-									wait_for_upgrade_completion=True,
-									acknowledge_reboot=False,
-									timeout=600)
-	"""
+        wait_for_firmware_activation(handle,
+                                    version="1.0.1.0", subject="system",
+                                    image_types=['system'],
+                                    wait_for_upgrade_completion=True,
+                                    acknowledge_reboot=False,
+                                    timeout=600)
+    """
 
-	is_running_desired_version = False	
-	start = datetime.datetime.now()
-	while not is_running_desired_version:
-		validate_connection(handle, timeout)
+    is_running_desired_version = False    
+    start = datetime.datetime.now()
+    while not is_running_desired_version:
+        validate_connection(handle, timeout)
 
-		try:
-			is_running_desired_version = True
-			running_firmware_list = _get_running_firmware_version(handle,
-															bundle_version,
-															subject)
+        try:
+            is_running_desired_version = True
+            running_firmware_list = _get_running_firmware_version(handle,
+                                                            bundle_version,
+                                                            subject)
 
-			firmware_map = get_infra_firmware_version(handle, bundle_version)
+            firmware_map = get_infra_firmware_version(handle, bundle_version)
 
-			for image_type in image_types:
-				found_image_type_match = False
-				for running_firmware in running_firmware_list:
-					if running_firmware.type == image_type:
-						found_image_type_match = True
-						expected_version = firmware_map[image_type]['version']
-						log.debug("UCS %s is running version %s, expected: %s,"
-								  " bundle: %s",
-							running_firmware.dn, running_firmware.version,
-								  expected_version, bundle_version)
-						if running_firmware.version != expected_version:
-							is_running_desired_version = False
-				if not found_image_type_match:
-					raise Exception("No FirmwareRunning object of type %s",
-									image_type)
+            for image_type in image_types:
+                found_image_type_match = False
+                for running_firmware in running_firmware_list:
+                    if running_firmware.type == image_type:
+                        found_image_type_match = True
+                        expected_version = firmware_map[image_type]['version']
+                        log.debug("UCS %s is running version %s, expected: %s,"
+                                  " bundle: %s",
+                            running_firmware.dn, running_firmware.version,
+                                  expected_version, bundle_version)
+                        if running_firmware.version != expected_version:
+                            is_running_desired_version = False
+                if not found_image_type_match:
+                    raise Exception("No FirmwareRunning object of type %s",
+                                    image_type)
 
-			if not is_running_desired_version:
-				if not wait_for_upgrade_completion:
-					log.debug("UCS %s is not running at desired version",
-							  subject)
-					break
-				else:
-					log.debug("UCS %s is not running at desired version. "
-							  "Waiting for activation completion", subject)
-					#if observer: observer.fw_observer_cb("UCS %s is not
-					# running at desired version. Waiting for activation
-					# completion", subject)
-					time.sleep(60)
+            if not is_running_desired_version:
+                if not wait_for_upgrade_completion:
+                    log.debug("UCS %s is not running at desired version",
+                              subject)
+                    break
+                else:
+                    log.debug("UCS %s is not running at desired version. "
+                              "Waiting for activation completion", subject)
+                    #if observer: observer.fw_observer_cb("UCS %s is not
+                    # running at desired version. Waiting for activation
+                    # completion", subject)
+                    time.sleep(60)
 
-					# Check if there is a pending switch reboot
-					firmware_ack = handle.query_dn('sys/fw-system/ack')
-					log.debug("Firmware ack: oper_state: %s, scheduler:%s",
-						firmware_ack.oper_state, firmware_ack.scheduler)
-					if firmware_ack.oper_state == 'waiting-for-user' and \
-							acknowledge_reboot:
-						log.debug("Acknowledging switch reboot")
-						if observer: observer.fw_observer_cb('Acknowledging '
-									'UCS primary Fabric Interconnect reboot')
-						firmware_ack.adminState = \
-							FirmwareAckConsts.ADMIN_STATE_TRIGGER_IMMEDIATE
-						handle.set_mo(firmware_ack)
-						handle.commit()
-		except Exception as e:
-			# Login session may become invalid during upgrade because UCSM will
-			# restart, or FIs will reboot.
-			log.exception("Script lost connectivity to UCSM during upgrade. "
-						  "This is expected")
-			time.sleep(30)
+                    # Check if there is a pending switch reboot
+                    firmware_ack = handle.query_dn('sys/fw-system/ack')
+                    log.debug("Firmware ack: oper_state: %s, scheduler:%s",
+                        firmware_ack.oper_state, firmware_ack.scheduler)
+                    if firmware_ack.oper_state == 'waiting-for-user' and \
+                            acknowledge_reboot:
+                        log.debug("Acknowledging switch reboot")
+                        if observer: observer.fw_observer_cb('Acknowledging '
+                                    'UCS primary Fabric Interconnect reboot')
+                        firmware_ack.adminState = \
+                            FirmwareAckConsts.ADMIN_STATE_TRIGGER_IMMEDIATE
+                        handle.set_mo(firmware_ack)
+                        handle.commit()
+        except Exception as e:
+            # Login session may become invalid during upgrade because UCSM will
+            # restart, or FIs will reboot.
+            log.exception("Script lost connectivity to UCSM during upgrade. "
+                          "This is expected")
+            time.sleep(30)
 
-		if (datetime.datetime.now() - start).total_seconds() > timeout:
-			log.warning("UCS %s activation timeout. Elapsed time: %ds",
-						subject,
-						(datetime.datetime.now() - start).total_seconds())
-			break
+        if (datetime.datetime.now() - start).total_seconds() > timeout:
+            log.warning("UCS %s activation timeout. Elapsed time: %ds",
+                        subject,
+                        (datetime.datetime.now() - start).total_seconds())
+            break
 
-	return is_running_desired_version
+    return is_running_desired_version
 
 
 def wait_for_ucsm_activation(handle, version,
-						wait_for_upgrade_completion=True,
-						timeout=20*60):
-	"""
-	Returns True if UCSM is already running at the specified version.
-	If not running at the desired version, optionally wait until activation
-	has completed and UCS came back online.
-	"""
+                        wait_for_upgrade_completion=True,
+                        timeout=20*60):
+    """
+    Returns True if UCSM is already running at the specified version.
+    If not running at the desired version, optionally wait until activation
+    has completed and UCS came back online.
+    """
 
-	log.debug("Wait for UCSM firmware activation")
-	return wait_for_firmware_activation(handle, version, subject="system",
-					image_types=['system'],
-					wait_for_upgrade_completion=wait_for_upgrade_completion,
-					acknowledge_reboot=False,
-					timeout=timeout)
+    log.debug("Wait for UCSM firmware activation")
+    return wait_for_firmware_activation(handle, version, subject="system",
+                    image_types=['system'],
+                    wait_for_upgrade_completion=wait_for_upgrade_completion,
+                    acknowledge_reboot=False,
+                    timeout=timeout)
 
 
 def wait_for_fi_activation(handle, version,
-						wait_for_upgrade_completion=True,
+                        wait_for_upgrade_completion=True,
                         timeout=60*60,
-						observer=None):
-	"""
-	Returns True if the FIs are already running at the specified version
-	"""
+                        observer=None):
+    """
+    Returns True if the FIs are already running at the specified version
+    """
 
-	log.debug("Wait for FI firmware activation")
-	return wait_for_firmware_activation(handle, version, subject="switch",
-					image_types=['switch-software', 'switch-kernel'],
-					wait_for_upgrade_completion=wait_for_upgrade_completion,
-					acknowledge_reboot=True,
-					timeout=timeout,
-					observer=observer)
+    log.debug("Wait for FI firmware activation")
+    return wait_for_firmware_activation(handle, version, subject="switch",
+                    image_types=['switch-software', 'switch-kernel'],
+                    wait_for_upgrade_completion=wait_for_upgrade_completion,
+                    acknowledge_reboot=True,
+                    timeout=timeout,
+                    observer=observer)
 
 
 def firmware_activate_infra(handle, version="2.2(2c)",
-							require_user_confirmation=True, observer=None):
-	"""
+                            require_user_confirmation=True, observer=None):
+    """
     Activate Infra bundle on UCSM
 
     Args:
-    	handle (UcsHandle)
-    	version: version
+        handle (UcsHandle)
+        version: version
         require_user_confirmation (bool): True/False
         observer (Thread): observer
 
@@ -605,69 +605,69 @@ def firmware_activate_infra(handle, version="2.2(2c)",
         None
 
     Raises:
-    	Exception if FI bundle is not available
+        Exception if FI bundle is not available
 
     Example:
-	    firmware_activate_infra(handle)
-	"""
+        firmware_activate_infra(handle)
+    """
 
-	infra_bundle_version=version + "A"
-	bundle_available = has_firmware_bundle(handle,
-										   version=infra_bundle_version)
-	if not bundle_available:
-		raise Exception("Bundle %s is not available on Fabric Interconnect",
-						infra_bundle_version)
+    infra_bundle_version=version + "A"
+    bundle_available = has_firmware_bundle(handle,
+                                           version=infra_bundle_version)
+    if not bundle_available:
+        raise Exception("Bundle %s is not available on Fabric Interconnect",
+                        infra_bundle_version)
 
-	if observer: observer.fw_observer_cb('Querying UCS Manager version')
-	ucsm_has_desired_version = wait_for_ucsm_activation(handle, version,
-											wait_for_upgrade_completion=False)
-	if observer: observer.fw_observer_cb('Querying UCS switch firmware '
-										 'version')
-	fis_have_desired_version = wait_for_fi_activation(handle, version,
-											wait_for_upgrade_completion=False)
+    if observer: observer.fw_observer_cb('Querying UCS Manager version')
+    ucsm_has_desired_version = wait_for_ucsm_activation(handle, version,
+                                            wait_for_upgrade_completion=False)
+    if observer: observer.fw_observer_cb('Querying UCS switch firmware '
+                                         'version')
+    fis_have_desired_version = wait_for_fi_activation(handle, version,
+                                            wait_for_upgrade_completion=False)
 
-	need_activation = not ucsm_has_desired_version or not \
-		fis_have_desired_version
-	if not need_activation:
-		log.debug("No infra firmware activation required")
-		return
-	if require_user_confirmation:
-		set_flag = False
-		set_str = raw_input("Are you sure want to proceed? This will reboot "
-							"theFabric Interconnects. Enter 'yes' to proceed.")
-		if set_str.strip().lower() == "yes":
-			set_flag = True
+    need_activation = not ucsm_has_desired_version or not \
+        fis_have_desired_version
+    if not need_activation:
+        log.debug("No infra firmware activation required")
+        return
+    if require_user_confirmation:
+        set_flag = False
+        set_str = raw_input("Are you sure want to proceed? This will reboot "
+                            "theFabric Interconnects. Enter 'yes' to proceed.")
+        if set_str.strip().lower() == "yes":
+            set_flag = True
 
-		if not set_flag:
-			log.debug("Abort activate firmware version.")
-			return
+        if not set_flag:
+            log.debug("Abort activate firmware version.")
+            return
 
-	firmware_infra_pack = handle.query_classid(class_id="FirmwareInfraPack")[0]
-	connected = True
-	if firmware_infra_pack.infra_bundle_version != infra_bundle_version:
-		firmware_infra_pack.infra_bundle_version = infra_bundle_version
+    firmware_infra_pack = handle.query_classid(class_id="FirmwareInfraPack")[0]
+    connected = True
+    if firmware_infra_pack.infra_bundle_version != infra_bundle_version:
+        firmware_infra_pack.infra_bundle_version = infra_bundle_version
 
-		handle.set_mo(firmware_infra_pack)
-		handle.commit()
-		if not ucsm_has_desired_version:
-			handle.logout()
+        handle.set_mo(firmware_infra_pack)
+        handle.commit()
+        if not ucsm_has_desired_version:
+            handle.logout()
 
-	if observer: observer.fw_observer_cb('Activating UCS Manager version %s',
-										 version)
-	ucsm_has_desired_version = wait_for_ucsm_activation(handle, version,
-											wait_for_upgrade_completion=True)
+    if observer: observer.fw_observer_cb('Activating UCS Manager version %s',
+                                         version)
+    ucsm_has_desired_version = wait_for_ucsm_activation(handle, version,
+                                            wait_for_upgrade_completion=True)
 
-	if ucsm_has_desired_version:
-		log.debug("UCS Manager successfully updated to version '%s'" % version)
-	else:
-		log.debug("UCS Manager not updated to version '%s'" % version)
-		raise Exception("UCS Manager not updated to version %s", version)
+    if ucsm_has_desired_version:
+        log.debug("UCS Manager successfully updated to version '%s'" % version)
+    else:
+        log.debug("UCS Manager not updated to version '%s'" % version)
+        raise Exception("UCS Manager not updated to version %s", version)
 
-	if observer: observer.fw_observer_cb('Activating UCS switch firmware '
-										 'version %s', version)
-	fis_have_desired_version = wait_for_fi_activation(handle, version,
-											wait_for_upgrade_completion=True,
-													  observer=observer)
+    if observer: observer.fw_observer_cb('Activating UCS switch firmware '
+                                         'version %s', version)
+    fis_have_desired_version = wait_for_fi_activation(handle, version,
+                                            wait_for_upgrade_completion=True,
+                                                      observer=observer)
 
 
 def firmware_activate_blade(handle, version):
@@ -675,15 +675,15 @@ def firmware_activate_blade(handle, version):
     Activate blade bundle on UCSM
 
     Args:
-    	handle (UcsHandle)
-    	version: version
+        handle (UcsHandle)
+        version: version
 
     Returns:
         None
 
     Example:
-	    firmware_activate_blade(handle, version="2.2.5b")
-	"""
+        firmware_activate_blade(handle, version="2.2.5b")
+    """
 
     blade_bundle = version + "B"
     rack_bundle = version + "C"
@@ -750,24 +750,24 @@ def firmware_activate_blade(handle, version):
 
 
 def get_firmware_file_names(version, extension="bin"):
-	"""
-	create version string
-	"""
+    """
+    create version string
+    """
 
-	ver_split = version.split('(')
-	version_bundle = ver_split[0] + "." + ver_split[1].strip(')')
+    ver_split = version.split('(')
+    version_bundle = ver_split[0] + "." + ver_split[1].strip(')')
 
-	# create firmware file name for the respective version
-	aseries_bundle = "ucs-k9-bundle-infra." + version_bundle + ".A." + \
-					 extension
-	bseries_bundle = "ucs-k9-bundle-b-series." + version_bundle + ".B." + \
-					 extension
-	cseries_bundle = "ucs-k9-bundle-c-series." + version_bundle + ".C." + \
-					 extension
+    # create firmware file name for the respective version
+    aseries_bundle = "ucs-k9-bundle-infra." + version_bundle + ".A." + \
+                     extension
+    bseries_bundle = "ucs-k9-bundle-b-series." + version_bundle + ".B." + \
+                     extension
+    cseries_bundle = "ucs-k9-bundle-c-series." + version_bundle + ".C." + \
+                     extension
 
-	return {"A" : (aseries_bundle, version + "A"),
-			"B" : (bseries_bundle, version + "B"),
-			"C" : (cseries_bundle, version + "C"),
+    return {"A" : (aseries_bundle, version + "A"),
+            "B" : (bseries_bundle, version + "B"),
+            "C" : (cseries_bundle, version + "C"),
            }
 
 
@@ -776,19 +776,19 @@ def firmware_auto_install(handle, version, image_dir, infra_only=False):
     This will do end-to-end processing to update firmware on ucsm.
 
     Args:
-    	handle (UcsHandle)
-    	version (string): firmware version
-    	image_dir (string): image directory
-    	infra_only (bool): by default False. If set to True, will update
-    					  firmware of FI only
+        handle (UcsHandle)
+        version (string): firmware version
+        image_dir (string): image directory
+        infra_only (bool): by default False. If set to True, will update
+                          firmware of FI only
 
     Returns:
         None
 
     Example:
-	    firmware_auto_install(handle, version="2.2.5b",
-	    					  image_dir="/home/imagedir")
-	"""
+        firmware_auto_install(handle, version="2.2.5b",
+                              image_dir="/home/imagedir")
+    """
 
     from ucsmsdk.ucseventhandler import UcsEventHandle
 
@@ -848,7 +848,7 @@ def firmware_auto_install(handle, version, image_dir, infra_only=False):
 
             else:
                 log.debug("Image file '%s' is already upload available on "
-						  "UCSM" % image)
+                          "UCSM" % image)
 
         # Activate UCSM
         firmware_activate_ucsm(handle, version=version)

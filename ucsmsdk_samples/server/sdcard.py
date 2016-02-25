@@ -25,7 +25,7 @@ def _operation_callback(mce):
     """
 
     global end_script
-	# TODO
+    # TODO
     if mce.mo.fsm_status == \
             StorageFlexFlashControllerFsmStageConsts.STAGE_STATUS_SUCCESS:
         log.debug("Operation Successful. FSM State: " + mce.mo.stage_state)

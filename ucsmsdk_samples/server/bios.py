@@ -80,7 +80,7 @@ def bios_create(handle, parent_org_dn, name, descr="",
 
     obj = handle.query_dn(parent_org_dn)
     if obj is None:
-		raise ValueError("Parent org does not exist.")
+        raise ValueError("Parent org does not exist.")
 
     mo = BiosVProfile(parent_mo_or_dn=obj,
                       name=name, descr=descr,
@@ -328,7 +328,7 @@ def bios_conf_power_loss(handle, name, parent_org_dn,
                             parent_dn="org-root/org-sample",
                             vp_resume_on_ac_power_loss="enabled")
     """
-	
+    
     from ucsmsdk.mometa.bios.BiosVfResumeOnACPowerLoss import \
         BiosVfResumeOnACPowerLoss
     profile_dn = parent_org_dn + "/bios-prof-" + name
@@ -365,7 +365,7 @@ def bios_conf_front_panel_lockout(handle, name, parent_org_dn,
                                     parent_dn="org-root/org-sample",
                                     vp_front_panel_lockout="enabled")
     """
-	
+    
     from ucsmsdk.mometa.bios.BiosVfFrontPanelLockout import \
         BiosVfFrontPanelLockout
 
@@ -382,7 +382,7 @@ def bios_conf_front_panel_lockout(handle, name, parent_org_dn,
 
 def bios_conf_device_name_control(handle, name, parent_org_dn,
                                   vp_cdn_control="platform-default"):
-								  
+                                  
     """
     This method configures front lockout option of Bios Policy.
 
@@ -403,7 +403,7 @@ def bios_conf_device_name_control(handle, name, parent_org_dn,
                                     parent_dn="org-root/org-sample",
                                     vp_cdn_control="enabled")
     """
-	
+    
     from ucsmsdk.mometa.bios.BiosVfConsistentDeviceNameControl import \
        BiosVfConsistentDeviceNameControl
 
@@ -441,7 +441,7 @@ def bios_conf_turbo_boost(handle, name, parent_org_dn,
                                     parent_dn="org-root/org-sample",
                                     vp_intel_turbo_boost_tech="enabled")
     """
-	
+    
     from ucsmsdk.mometa.bios.BiosVfIntelTurboBoostTech import\
         BiosVfIntelTurboBoostTech
 
@@ -460,7 +460,7 @@ def bios_conf_turbo_boost(handle, name, parent_org_dn,
 def bios_conf_intel_speed_step(handle, name, parent_org_dn,
                                vp_enhanced_intel_speed_step_tech=
                                "platform-default"):
-							   
+                               
     """
     This method configures intel speed option of Bios Policy.
 

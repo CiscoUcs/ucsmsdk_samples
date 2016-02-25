@@ -68,62 +68,62 @@ def wait_assoc_completion(handle, sp_dn, server_dn,
     Method to wait until service profile association completes.
     """
 
-	start = datetime.datetime.now()
-	# TODO: This event handle does not work for me....
-	# add a watch on sp
-	#event_handle = UcsEventHandle(handle)
-	#_sp_associate_monitor(event_handle=event_handle, mo=sp)
+    start = datetime.datetime.now()
+    # TODO: This event handle does not work for me....
+    # add a watch on sp
+    #event_handle = UcsEventHandle(handle)
+    #_sp_associate_monitor(event_handle=event_handle, mo=sp)
 
-	sp_mo = handle.query_dn(sp_dn)
-	if sp_mo is None:
-		raise Exception("Service Profile %s does not exist", sp_dn)
-	if sp_mo.config_state == 'failed-to-apply':
-		log.debug("Service Profile %s has config failure: %s", sp_dn,
+    sp_mo = handle.query_dn(sp_dn)
+    if sp_mo is None:
+        raise Exception("Service Profile %s does not exist", sp_dn)
+    if sp_mo.config_state == 'failed-to-apply':
+        log.debug("Service Profile %s has config failure: %s", sp_dn,
                   sp_mo.config_qualifier)
-		ls_issues = handle.query_dn(sp_dn + "/config-issue")
-		qualifier = sp_mo.config_qualifier
-		if ls_issues:
-			qualifier = ""
-			if ls_issues.iscsi_config_issues:
-				qualifier = qualifier + "iSCSI: " + \
+        ls_issues = handle.query_dn(sp_dn + "/config-issue")
+        qualifier = sp_mo.config_qualifier
+        if ls_issues:
+            qualifier = ""
+            if ls_issues.iscsi_config_issues:
+                qualifier = qualifier + "iSCSI: " + \
                             ls_issues.iscsi_config_issues
-			if ls_issues.network_config_issues:
-				if len(qualifier) > 0 : qualifier = qualifier  + ". "
-				qualifier = qualifier + "Network: " + \
+            if ls_issues.network_config_issues:
+                if len(qualifier) > 0 : qualifier = qualifier  + ". "
+                qualifier = qualifier + "Network: " + \
                             ls_issues.network_config_issues
-			if ls_issues.server_config_issues:
-				if len(qualifier) > 0 : qualifier = qualifier  + ". "
-				qualifier = qualifier + "Server: " + \
+            if ls_issues.server_config_issues:
+                if len(qualifier) > 0 : qualifier = qualifier  + ". "
+                qualifier = qualifier + "Server: " + \
                             ls_issues.server_config_issues
-			if ls_issues.storage_config_issues:
-				if len(qualifier) > 0 : qualifier = qualifier  + ". "
-				qualifier = qualifier + "Storage: " + \
+            if ls_issues.storage_config_issues:
+                if len(qualifier) > 0 : qualifier = qualifier  + ". "
+                qualifier = qualifier + "Storage: " + \
                             ls_issues.storage_config_issues
-			if ls_issues.vnic_config_issues:
-				if len(qualifier) > 0 : qualifier = qualifier  + ". "
-				qualifier = qualifier + "vNIC: " + \
+            if ls_issues.vnic_config_issues:
+                if len(qualifier) > 0 : qualifier = qualifier  + ". "
+                qualifier = qualifier + "vNIC: " + \
                             ls_issues.vnic_config_issues
 
-		raise Exception("Service Profile %s config failure: %s qualifier: %s" %
-				(sp_mo.name, sp_mo.config_state, qualifier))
-	physMo = handle.query_dn(server_dn)
-	if physMo == None:
-		raise Exception("Server %s does not exist" % sp_dn)
-	while physMo.association != 'associated':
-		time.sleep(10)
-		if (datetime.datetime.now() - start).total_seconds() > \
+        raise Exception("Service Profile %s config failure: %s qualifier: %s" %
+                (sp_mo.name, sp_mo.config_state, qualifier))
+    physMo = handle.query_dn(server_dn)
+    if physMo == None:
+        raise Exception("Server %s does not exist" % sp_dn)
+    while physMo.association != 'associated':
+        time.sleep(10)
+        if (datetime.datetime.now() - start).total_seconds() > \
                 assoc_completion_timeout:
-			log.error('Server %s has not completed association', server_dn)
-			break
-		log.debug('Server %s fsmStatus: %s, elapsed=%ds', server_dn,
+            log.error('Server %s has not completed association', server_dn)
+            break
+        log.debug('Server %s fsmStatus: %s, elapsed=%ds', server_dn,
                   physMo.fsm_status,
                   (datetime.datetime.now() - start).total_seconds())
-		# Query again to update association state
-		physMo = handle.query_dn(server_dn)
+        # Query again to update association state
+        physMo = handle.query_dn(server_dn)
 
-	if physMo.association == 'associated':
-		log.debug('Server %s has completed association in %d seconds',
-				server_dn, (datetime.datetime.now() - start).total_seconds())	
+    if physMo.association == 'associated':
+        log.debug('Server %s has completed association in %d seconds',
+                server_dn, (datetime.datetime.now() - start).total_seconds())    
 
 
 def sp_associate(handle, sp_dn, server_dn, wait_for_assoc_completion=True,
@@ -185,7 +185,7 @@ def sp_associate(handle, sp_dn, server_dn, wait_for_assoc_completion=True,
     handle.commit()
 
     if wait_for_assoc_completion:
-		wait_assoc_completion(handle, sp_dn=sp_dn, server_dn=server_dn,
+        wait_assoc_completion(handle, sp_dn=sp_dn, server_dn=server_dn,
                             assoc_completion_timeout=assoc_completion_timeout)
 
 
@@ -260,7 +260,7 @@ def sp_disassociate(handle, sp_dn):
 
     while not end_script:
         time.sleep(1)
-	event_handle.cleanup()
+    event_handle.cleanup()
 
 
 

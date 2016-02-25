@@ -204,7 +204,7 @@ def _add_device(handle, parent_mo, boot_device):
                 log.debug("Deleting boot device from boot policy: %s",
                           child.dn)
                 handle.remove_mo(child)
-				
+                
     for k in boot_device.keys():
         log.debug("Add boot device: order=%s, %s", k, boot_device[k])
         if boot_device[k] in ["cdrom-local", "cdrom"]:

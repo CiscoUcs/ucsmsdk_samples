@@ -14,8 +14,6 @@
 """
 This module contains methods required for creating IP Pools.
 """
-import logging
-log = logging.getLogger('ucs')
 
 
 def ip_pool_create(handle, name, assignment_order,
@@ -33,9 +31,13 @@ def ip_pool_create(handle, name, assignment_order,
     Returns:
         IppoolPool : Managed Object
 
+    Raises:
+        ValueError: If OrgOrg is not present
+
     Example:
         ip_pool_create(handle, "sample_ip_pool", "default")
     """
+
     from ucsmsdk.mometa.ippool.IppoolPool import IppoolPool
 
     obj = handle.query_dn(parent_dn)
@@ -47,7 +49,7 @@ def ip_pool_create(handle, name, assignment_order,
                     assignment_order=assignment_order,
                     name=name)
 
-    handle.add_mo(mo,True)
+    handle.add_mo(mo, True)
     handle.commit()
     return mo
 
@@ -70,6 +72,9 @@ def add_ip_block(handle, r_from, to, subnet, default_gw, prim_dns, sec_dns,
     Returns:
         IppoolBlock: Managed object
 
+    Raises:
+        ValueError: If parent dn object is not present
+
     Example:
         add_ip_block(handle, "1.1.1.1", "1.1.1.10", "255.255.255.0",
                     "1.1.1.254")
@@ -81,8 +86,8 @@ def add_ip_block(handle, r_from, to, subnet, default_gw, prim_dns, sec_dns,
     if obj is None:
         raise ValueError("IP pool does not exist: %s", parent_dn)
     else:
-        log.debug("Creating IP block. from %s to %s, gw=%s, subnet=%s, dns1=%s,"
-                  " dns2=%s" %(r_from, to, default_gw, subnet,
+        log.debug("Creating IP block. from %s to %s, gw=%s, subnet=%s, "
+                  "dns1=%s, dns2=%s" % (r_from, to, default_gw, subnet,
                                prim_dns, sec_dns))
         mo = IppoolBlock(parent_mo_or_dn=obj,
                          r_from=r_from,

@@ -12,12 +12,14 @@
 # limitations under the License.
 
 """
-This module performs the operation under LAN -> Policies -> root -> Multicast Policies.
+This module performs the operation under
+LAN -> Policies -> root -> Multicast Policies.
 """
 
 
 def mcast_policy_create(handle, name, querier_state, snooping_state,
-                        querier_ip_addr="0.0.0.0", querier_ip_addr_peer="0.0.0.0",
+                        querier_ip_addr="0.0.0.0",
+                        querier_ip_addr_peer="0.0.0.0",
                         descr="", parent_dn="org-root"):
     """
     Creates Multicast Policy
@@ -33,32 +35,39 @@ def mcast_policy_create(handle, name, querier_state, snooping_state,
         parent_dn (String) :
 
     Returns:
-        None
+        FabricMulticastPolicy: Managed Object
+
+    Raises:
+        ValueError: If OrgOrg is not present
 
     Example:
         mcast_policy_create(handle, "my_mcast", "disabled", "enabled")
     """
-    from ucsmsdk.mometa.fabric.FabricMulticastPolicy import FabricMulticastPolicy
+
+    from ucsmsdk.mometa.fabric.FabricMulticastPolicy import \
+        FabricMulticastPolicy
 
     obj = handle.query_dn(parent_dn)
     if obj:
         mcast_policy = FabricMulticastPolicy(parent_mo_or_dn=obj,
-                                             querier_ip_addr=querier_ip_addr,
-                                             querier_ip_addr_peer=querier_ip_addr_peer,
-                                             name=name,
-                                             descr=descr,
-                                             querier_state=querier_state,
-                                             snooping_state=snooping_state,
-                                             policy_owner="local")
+                                     querier_ip_addr=querier_ip_addr,
+                                     querier_ip_addr_peer=querier_ip_addr_peer,
+                                     name=name,
+                                     descr=descr,
+                                     querier_state=querier_state,
+                                     snooping_state=snooping_state,
+                                     policy_owner="local")
 
         handle.add_mo(mcast_policy, modify_present=True)
         handle.commit()
+        return mo
     else:
         raise ValueError(parent_dn + " MO is not available")
 
 
 def mcast_policy_exists(handle, name, snooping_state=None, querier_state=None,
-                        querier_ip_addr=None, descr=None, parent_dn="org-root"):
+                        querier_ip_addr=None, descr=None,
+                        parent_dn="org-root"):
     """
     Checks if the mcast policy object exists
 
@@ -74,6 +83,7 @@ def mcast_policy_exists(handle, name, snooping_state=None, querier_state=None,
         bool_var = mcast_policy_exists(handle, "demo")
         bool_var = mcast_policy_exists(handle, "demo", "org-root/org-demo")
     """
+
     dn = parent_dn + '/mc-policy-' + name
     mo = handle.query_dn(dn)
     if mo:
@@ -97,6 +107,9 @@ def mcast_policy_delete(handle, name, parent_dn="org-root"):
 
     Returns:
         None
+
+    Raises:
+        ValueError: If FabricMulticastPolicy is not present
 
     Example:
         mcast_policy_delete(handle, "my_mcast")

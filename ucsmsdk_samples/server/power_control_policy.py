@@ -11,12 +11,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import logging
-log = logging.getLogger('ucs')
 
-
-def power_control_policy_create(handle, name, prio="no-cap",
-                                    descr="",parent_dn="org-root"):
+def power_control_policy_create(handle, name, prio="no-cap", descr="",
+                                parent_dn="org-root"):
     """
     This method creates power control policy.
 
@@ -25,92 +22,125 @@ def power_control_policy_create(handle, name, prio="no-cap",
         name (string): Name of the power control policy.
         prio (string): ."no-cap" or "utility"
         descr (string): Basic description.
-        org_parent (string): Parent of Org.
+        parent_dn (string): Parent of Org.
 
     Returns:
-        None
+        PowerPolicy: Managed Object
+
+    Raises:
+        ValueError: If OrgOrg is not present
 
     Example:
-        power_control_policy_create(handle,
-                                name="sample_power", prio="no-cap")
+        power_control_policy_create(handle, name="sample_power",
+                                   prio="no-cap", parent_dn="org-root/org-sub")
     """
+
+    from ucsmsdk.mometa.power.PowerPolicy import PowerPolicy
 
     obj = handle.query_dn(parent_dn)
-    if obj:
-        from ucsmsdk.mometa.power.PowerPolicy import PowerPolicy
+    if not obj:
+        raise ValueError("org '%s' does not exist" % parent_dn)
 
-        mo = PowerPolicy(parent_mo_or_dn=parent_dn,
-                         name=name, prio=prio,
-                         descr=descr)
-        handle.add_mo(mo, modify_present=True)
-        handle.commit()
-    else:
-        log.info("Sub-Org <%s> not found!" %org_name)
+    mo = PowerPolicy(parent_mo_or_dn=obj, name=name, prio=prio,
+                     descr=descr)
+    handle.add_mo(mo, modify_present=True)
+    handle.commit()
+    return mo
 
 
-def power_control_policy_modify(handle, org_name, name, prio=None,
-                                    descr=None,org_parent="org-root"):
+def power_control_policy_modify(handle,  name, prio=None, descr=None,
+                                parent_dn="org-root"):
     """
-    This method creates power control policy.
+    This method modify power control policy.
 
     Args:
         handle (UcsHandle)
-        org_name (string): Name of the organization
         name (string): Name of the power control policy.
         prio (string): ."no-cap" or "utility"
         descr (string): Basic description.
-        org_parent (string): Parent of Org.
+        parent_dn (string): Parent of Org.
 
     Returns:
-        None
+        PowerPolicy: Managed Object
+
+    Raises:
+        ValueError: If PowerPolicy is not present
 
     Example:
-        power_control_policy_create(handle, org_name="sample-org",
-                                name="sample_power", prio="no-cap")
+        power_control_policy_modify(handle, name="sample_power",
+                                    prio="no-cap",
+                                    parent_dn="org-root/org-sub")
     """
 
-    org_dn = org_parent + "/org-" + org_name
-    policy_dn= org_dn + "/power-policy-" + name
-    mo = handle.query_dn(policy_dn)
-    if mo is not None:
-        if prio is not None:
-            mo.prio = prio
-        if descr is not None:
-            mo.descr = descr
+    dn = parent_dn + "/power-policy-" + name
+    mo = handle.query_dn(dn)
+    if not mo:
+        raise ValueError("power control policy '%s' does not exist" % dn)
 
-        handle.set_mo(mo)
-        handle.commit()
-    else:
-        log.info("Power Control Policy <%s> not found." % name)
+    if prio is not None:
+        mo.prio = prio
+    if descr is not None:
+        mo.descr = descr
+
+    handle.set_mo(mo)
+    handle.commit()
+    return mo
 
 
-def power_control_policy_remove(handle,org_name,name, org_parent="org-root"):
+def power_control_policy_remove(handle, name, parent_dn="org-root"):
     """
     This method removes power control policy.
 
     Args:
         handle (UcsHandle)
-        org_name (string): Name of the organization
         name (string): Name of the power control policy.
-        org_parent (string): Parent of Org.
+        parent_dn (string): Parent of Org.
 
     Returns:
         None
 
+    Raises:
+        ValueError: If PowerPolicy is not present
+
     Example:
-        power_control_policy_remove(handle, org_name="sample-org",
-                                name="sample_power")
+        power_control_policy_remove(handle, name="sample_power",
+                                    parent_dn="org-root/org-sub")
     """
-    org_dn = org_parent + "/org-" + org_name
-    p_mo = handle.query_dn(org_dn)
-    if not p_mo:
-        log.info("Sub-Org <%s> not found!" %org_name)
-    else:
-        policy_dn= org_dn + "/power-policy-" + name
-        mo = handle.query_dn(policy_dn)
-        if not mo:
-            log.info("Power Control Policy <%s> not found.Nothing to remove."
-                     %name)
-        else:
-            handle.remove_mo(mo)
-            handle.commit()
+
+    dn = parent_dn + "/power-policy-" + name
+    mo = handle.query_dn(dn)
+    if not mo:
+        raise ValueError("power control policy '%s' does not exist" % dn)
+
+    handle.remove_mo(mo)
+    handle.commit()
+
+
+def power_control_policy_exist(handle, name, prio="no-cap", descr="",
+                               parent_dn="org-root"):
+    """
+    This method checks if power control policy exist.
+
+    Args:
+        handle (UcsHandle)
+        name (string): Name of the power control policy.
+        prio (string): ."no-cap" or "utility"
+        descr (string): Basic description.
+        parent_dn (string): Parent of Org.
+
+    Returns:
+        Boolean: True or False
+
+    Example:
+        power_control_policy_exist(handle, name="sample_power", prio="no-cap",
+                                    parent_dn="org-root/org-sub")
+    """
+
+    dn = parent_dn + "/power-policy-" + name
+    mo = handle.query_dn(dn)
+    if mo:
+        if ((prio and mo.prio != prio) and
+            (descr and mo.descr != descr)):
+            return False
+        return True
+    return False

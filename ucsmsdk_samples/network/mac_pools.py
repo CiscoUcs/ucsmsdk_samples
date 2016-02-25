@@ -14,8 +14,6 @@
 """
 This module contains methods required for creating MAC Pools.
 """
-import logging
-log = logging.getLogger('ucs')
 
 
 def mac_pool_create(handle, name, assignment_order,
@@ -36,7 +34,8 @@ def mac_pool_create(handle, name, assignment_order,
         None
 
     Example:
-        mac_pool_create(handle, "sample_mac_pool", "default", "00:25:B5:00:00:00", "00:25:B5:00:00:03")
+        mac_pool_create(handle, "sample_mac_pool", "default",
+                    "00:25:B5:00:00:00", "00:25:B5:00:00:03")
     """
     from ucsmsdk.mometa.macpool.MacpoolPool import MacpoolPool
     from ucsmsdk.mometa.macpool.MacpoolBlock import MacpoolBlock
@@ -55,7 +54,7 @@ def mac_pool_create(handle, name, assignment_order,
         handle.add_mo(mo, modify_present=True)
         handle.commit()
     else:
-        log.info(parent_dn + " MO is not available")
+        raise ValueError("MAC Pool %s is not available")
 
 
 def mac_pool_remove(handle, name, parent_dn="org-root"):
@@ -79,7 +78,7 @@ def mac_pool_remove(handle, name, parent_dn="org-root"):
         handle.remove_mo(mo)
         handle.commit()
     else:
-        raise ValueError("MAC Pool is not available")
+        raise ValueError("Org %s is not available" % parent_dn)
 
 
 def mac_pool_exists(handle, name, assignment_order=None,
@@ -97,15 +96,16 @@ def mac_pool_exists(handle, name, assignment_order=None,
     Returns:
         True/False (Boolean)
     Example:
-        bool_var = mac_pool_exists(handle, "sample_mac_pool", "default", "00:25:B5:00:00:00", "00:25:B5:00:00:03")
+        bool_var = mac_pool_exists(handle, "sample_mac_pool", "default",
+                        "00:25:B5:00:00:00", "00:25:B5:00:00:03")
     """
     dn = parent_dn + '/mac-pool-' + name
     mo = handle.query_dn(dn)
     if mo:
         if ((assignment_order and mo.assignment_order != assignment_order) and
-            (r_from and mo.r_from != r_from) and
-            (to and mo.to != to) and
-            (descr and mo.descr != descr)):
+                (r_from and mo.r_from != r_from) and
+                (to and mo.to != to) and
+                (descr and mo.descr != descr)):
             return False
         return True
     return False

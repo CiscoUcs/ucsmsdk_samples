@@ -16,7 +16,8 @@ This module contains methods required for configuring QoS.
 """
 
 
-def qos_class_enable(handle, priority, cos, drop, weight, mtu, multicast_optimize):
+def qos_class_enable(handle, priority, weight="normal", mtu="normal",
+                     multicast_optimize="no", cos="any", drop="drop"):
     """
     Enables and configures a QoS System Class
 
@@ -35,11 +36,30 @@ def qos_class_enable(handle, priority, cos, drop, weight, mtu, multicast_optimiz
     Raises:
         ValueError: When the Qos class is not present
     Example:
-        qos_class_enable(handle, "platinum", "enabled", "6", "drop", "9", "fc", "yes")
+        qos_class_enable(handle, "platinum", "enabled", "6", "drop",
+                        "9", "fc", "yes")
     """
-    from ucsmsdk.mometa.qosclass.QosclassEthClassified import QosclassEthClassified
+    from ucsmsdk.mometa.qosclass.QosclassEthClassified import \
+        QosclassEthClassified
+    from ucsmsdk.mometa.qosclass.QosclassEthBE import QosclassEthBE
 
-    qos_class = QosclassEthClassified(parent_mo_or_dn="fabric/lan/classes",
+    if priority == 'best-effort':
+        qos_class = handle.query_dn("fabric/lan/classes/class-" + priority)
+        if qos_class:
+            qos_class.weight = weight
+            qos_class.mtu = mtu
+            qos_class.multicast_optimize = multicast_optimize
+        else:
+            raise ValueError("QoS class %s is not available" % priority)
+    elif priority == 'fc':
+        qos_class = handle.query_dn("fabric/lan/classes/class-" + priority)
+        if qos_class:
+            qos_class.weight = weight
+            qos_class.cos = cos 
+        else:
+            raise ValueError("QoS class %s is not available" % priority)
+    else:
+        qos_class = QosclassEthClassified(parent_mo_or_dn="fabric/lan/classes",
                                   cos=cos,
                                   name="",
                                   weight=weight,
@@ -73,7 +93,7 @@ def qos_class_disable(handle, priority):
     """
     qos_class = handle.query_dn("fabric/lan/classes/class-" + priority)
     if qos_class:
-        qos_class.admin_state = "disabled" 
+        qos_class.admin_state = "disabled"
     else:
         raise ValueError("QoS class is not available")
 
@@ -83,7 +103,7 @@ def qos_class_disable(handle, priority):
 
 
 def qos_class_conf_drift(handle, priority, admin_state=None, cos=None, drop=None,
-                     weight=None, mtu=None, multicast_optimize=None):
+                         weight=None, mtu=None, multicast_optimize=None):
     """
     Detects configuration drift for Qos Class
 
@@ -101,8 +121,8 @@ def qos_class_conf_drift(handle, priority, admin_state=None, cos=None, drop=None
         True/False - bool
 
     Example:
-        bool_var = qos_class_conf_drift(handle, "platinum", "enabled", "6", "drop", "9", "fc", "yes")
-
+        bool_var = qos_class_conf_drift(handle, "platinum", "enabled", "6",
+                    "drop", "9", "fc", "yes")
     """
     dn = "fabric/lan/classes/class-" + priority
     mo = handle.query_dn(dn)
@@ -134,8 +154,9 @@ def qos_class_conf_drift(handle, priority, admin_state=None, cos=None, drop=None
             
     return False
 
-def qos_policy_add(handle, name, priority, burst, rate,
-                      host_control, descr="", parent_dn="org-root"):
+
+def qos_policy_add(handle, name, prio, burst, rate,
+                   host_control, descr="", parent_dn="org-root"):
     """
     Creates QoS Policy
 
@@ -156,7 +177,8 @@ def qos_policy_add(handle, name, priority, burst, rate,
         ValueError: If EpqosDefinition is not present
 
     Example:
-        mo = qos_policy_create(handle, "sample_qos", "platinum", 10240, "line-rate", "full")
+        mo = qos_policy_create(handle, "sample_qos", "platinum", 10240,
+                                "line-rate", "full")
     """
     from ucsmsdk.mometa.epqos.EpqosDefinition import EpqosDefinition
     from ucsmsdk.mometa.epqos.EpqosEgress import EpqosEgress
@@ -171,10 +193,10 @@ def qos_policy_add(handle, name, priority, burst, rate,
                            rate=rate,
                            host_control=host_control,
                            name="",
-                           prio=priority,
+                           prio=prio,
                            burst=burst)
 
-        handle.add_mo(mo)
+        handle.add_mo(mo, modify_present=True)
         handle.commit()
         return mo
     else:

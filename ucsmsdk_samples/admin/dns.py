@@ -34,12 +34,11 @@ def dns_server_add(handle, name, descr=""):
 
     from ucsmsdk.mometa.comm.CommDnsProvider import CommDnsProvider
 
-    dns_server = CommDnsProvider(parent_mo_or_dn="sys/svc-ext/dns-svc",
-                                 name=name,
-                                 descr=descr)
-    handle.add_mo(dns_server, modify_present=True)
+    mo = CommDnsProvider(parent_mo_or_dn="sys/svc-ext/dns-svc", name=name,
+                         descr=descr)
+    handle.add_mo(mo, modify_present=True)
     handle.commit()
-    return dns_server
+    return mo
 
 
 def dns_server_remove(handle, name):
@@ -62,11 +61,12 @@ def dns_server_remove(handle, name):
 
     dn = "sys/svc-ext/dns-svc/dns-" + name
     mo = handle.query_dn(dn)
-    if mo:
-        handle.remove_mo(mo)
-        handle.commit()
-    else:
-        raise ValueError("dns server not found")
+    if not mo:
+        raise ValueError("dns server '%s' not found" % dn)
+
+    handle.remove_mo(mo)
+    handle.commit()
+
 
 def dns_server_exists(handle, name, descr=None):
     """
@@ -82,6 +82,7 @@ def dns_server_exists(handle, name, descr=None):
     Example:
         bool_var = dns_server_exists(handle, "10.10.10.10")
     """
+
     dn = "sys/svc-ext/dns-svc/dns-" + name
     mo = handle.query_dn(dn)
     if mo:

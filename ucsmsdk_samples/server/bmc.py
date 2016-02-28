@@ -1,4 +1,3 @@
-
 # Copyright 2015 Cisco Systems, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,9 +11,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 import logging
 import time
 log = logging.getLogger('ucs')
+
 
 def get_cimc_addresses(handle, phys_mo):
     """
@@ -34,40 +35,41 @@ def get_cimc_addresses(handle, phys_mo):
     """
 
     log.debug('Get CIMC management IP addresses')
-    from ucsmsdk.mometa.vnic.VnicIpV4PooledAddr import VnicIpV4PooledAddr
     mos = handle.query_children(in_mo=phys_mo, class_id="MgmtController",
                                 hierarchy=True)
     bmc_addrs = []
 
     # IP v4 addresses
-    ipv4AddrSet = [x for x in mos if x._class_id == 'VnicIpV4PooledAddr' or
-                                    x._class_id == 'VnicIpV4MgmtPooledAddr' or
-                                    x._class_id == 'VnicIpV4ProfDerivedAddr' or
-                                    x._class_id == 'VnicIpV4StaticAddr']
-    for mo in ipv4AddrSet:
-        if mo._class_id == 'VnicIpV4MgmtPooledAddr':
+    ipv4_addr_set = [x for x in mos if
+                     x.get_class_id() == 'VnicIpV4PooledAddr' or
+                     x.get_class_id() == 'VnicIpV4MgmtPooledAddr' or
+                     x.get_class_id() == 'VnicIpV4ProfDerivedAddr' or
+                     x.get_class_id() == 'VnicIpV4StaticAddr']
+    for mo in ipv4_addr_set:
+        if mo.get_class_id() == 'VnicIpV4MgmtPooledAddr':
             access = 'in-band'
         else:
             access = 'oob'
         if mo.addr != '0.0.0.0':
             addr = {'addr': mo.addr, 'version': 4, 'access': access}
             log.debug("CIMC IP address: dn=%s, addr=%s, class=%s, access=%s",
-                mo.dn, mo.addr, mo._class_id, access)
+                      mo.dn, mo.addr, mo.get_class_id(), access)
             bmc_addrs.append(addr)
 
     # IP v6 addresses
-    ipv6AddrSet = [x for x in mos if x._class_id  == 'VnicIpV6MgmtPooledAddr'
-                                   or x._class_id == 'VnicIpV6MgmtPooledAddr'
-                                   or x._class_id == 'VnicIpV6StaticAddr']
-    for mo in ipv6AddrSet:
+    ipv6_addr_set = [x for x in mos if
+                     x.get_class_id() == 'VnicIpV6MgmtPooledAddr' or
+                     x.get_class_id() == 'VnicIpV6MgmtPooledAddr' or
+                     x.get_class_id() == 'VnicIpV6StaticAddr']
+    for mo in ipv6_addr_set:
         if mo.addr != '::':
             log.debug("CIMC IP address: dn=%s, addr=%s, class=%s",
-                mo.dn, mo.addr, mo._class_id)
-            if mo._class_id == 'VnicIpV6MgmtPooledAddr':
+                      mo.dn, mo.addr, mo.get_class_id())
+            if mo.get_class_id() == 'VnicIpV6MgmtPooledAddr':
                 access = 'in-band'
             else:
                 access = 'oob'
-            addr = {'addr': mo.addr, 'version': 6, 'access':access}
+            addr = {'addr': mo.addr, 'version': 6, 'access': access}
             log.debug("Server %s. CIMC address: %s, access: %s", phys_mo.dn,
                       mo.addr, access)
             bmc_addrs.append(addr)
@@ -76,7 +78,7 @@ def get_cimc_addresses(handle, phys_mo):
 
 def is_reachable(hostname, retries=10):
     import os
-    for retry in range (1, retries):
+    for retry in range(1, retries):
         ret = os.system("ping -c1 -w2 " + hostname + " > /dev/null 2>&1")
         if ret == 0:
             return True
@@ -109,8 +111,6 @@ def set_inband_profile(handle, vlan_name, ip_pool_name, vlan_group_name):
                                 vlan_group_name="inband-group")
     """
 
-    from ucsmsdk.mometa.mgmt.MgmtInbandProfile import MgmtInbandProfile
-
     inband_profile_dn = "fabric/lan/ib-profile"
     mo = handle.query_dn(inband_profile_dn)
     if mo is None:
@@ -124,4 +124,3 @@ def set_inband_profile(handle, vlan_name, ip_pool_name, vlan_group_name):
     handle.add_mo(mo, modify_present=True)
     handle.commit()
     return mo
-

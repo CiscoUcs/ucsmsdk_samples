@@ -12,9 +12,13 @@
 # limitations under the License.
 
 import time
+import logging
+
 from ucsmsdk.ucseventhandler import UcsEventHandle
 from ucsmsdk.mometa.storage.StorageFlexFlashControllerFsmStage import \
     StorageFlexFlashControllerFsmStageConsts
+
+log = logging.getLogger("ucs")
 
 end_script = False
 
@@ -30,7 +34,7 @@ def _operation_callback(mce):
             StorageFlexFlashControllerFsmStageConsts.STAGE_STATUS_SUCCESS:
         log.debug("Operation Successful. FSM State: " + mce.mo.stage_state)
     elif mce.mo.fsm_status == \
-            StorageFlexFlashControllerFsmStageConsts.OPERATING_MODEFAIL:
+            StorageFlexFlashControllerFsmStageConsts.STAGE_STATUS_FAIL:
         log.debug("Operation Failed. FSM State: " + mce.mo.stage_state)
     end_script = True
 
@@ -41,14 +45,18 @@ def _operation_monitor(handle, event_handle, mo):
     """
 
     fsm_mo = handle.query_classid(
-                                class_id="storageFlexFlashControllerFsmStage",
-                                filter_str="(dn,'" + mo.dn + "')")
-    event_handle.add(managed_object=fsm_mo[0], prop="stage_status",
-     success_value=[
-         StorageFlexFlashControllerFsmStageConsts.STAGE_STATUS_SUCCESS],
-     failure_value=[
-         StorageFlexFlashControllerFsmStageConsts.STAGE_STATUS_FAIL],
-     timeout_sec=600, call_back=_operation_callback)
+        class_id="storageFlexFlashControllerFsmStage",
+        filter_str="(dn,'" + mo.dn + "')")
+
+    event_handle.add(
+        managed_object=fsm_mo[0],
+        prop="stage_status",
+        success_value=[
+            StorageFlexFlashControllerFsmStageConsts.STAGE_STATUS_SUCCESS],
+        failure_value=[
+            StorageFlexFlashControllerFsmStageConsts.STAGE_STATUS_FAIL],
+        timeout_sec=600,
+        call_back=_operation_callback)
 
 
 def configure_storage_flex_flash_controller(handle, parent_dn, flex_id,
@@ -95,7 +103,7 @@ def configure_storage_flex_flash_controller(handle, parent_dn, flex_id,
     dn = parent_dn + "/board"
     q_mo = handle.query_dn(dn)
     if q_mo is not None:
-        mo = StorageFlexFlashController(parent_mo_or_dn=dn,id=flex_id,
+        mo = StorageFlexFlashController(parent_mo_or_dn=dn, id=flex_id,
                                         operation_request=operation_request,
                                         admin_slot_number=admin_slot_number)
         handle.add_mo(mo, True)

@@ -39,12 +39,11 @@ def _sp_associate_callback(mce):
     global end_script
     if mce.mo.assoc_state == LsServerConsts.ASSOC_STATE_ASSOCIATED:
         log.debug("SP:" + mce.mo.dn + " Assoc Successful. assoc_state: " +
-               mce.mo.assoc_state)
+                  mce.mo.assoc_state)
     elif mce.mo.assoc_state == LsServerConsts.ASSIGN_STATE_FAILED:
         log.error("SP:" + mce.mo.dn + " Assoc Failed. assoc_state: " +
-               mce.mo.assoc_state)
+                  mce.mo.assoc_state)
     end_script = True
-
 
 
 def _sp_associate_monitor(event_handle, mo):
@@ -58,21 +57,19 @@ def _sp_associate_monitor(event_handle, mo):
                      failure_value=[LsServerConsts.ASSOC_STATE_FAILED],
                      timeout_sec=600, call_back=_sp_associate_callback)
 
-# #########################################################################
-# Wait until the specified physical server has completed the association FSM
-# Return an error if the Service Profile has a config error
-#
+
 def wait_assoc_completion(handle, sp_dn, server_dn,
                           assoc_completion_timeout=20*60):
     """
-    Method to wait until service profile association completes.
+    Wait until the specified physical server has completed the association FSM
+    Return an error if the Service Profile has a config error.
     """
 
     start = datetime.datetime.now()
     # TODO: This event handle does not work for me....
     # add a watch on sp
-    #event_handle = UcsEventHandle(handle)
-    #_sp_associate_monitor(event_handle=event_handle, mo=sp)
+    # event_handle = UcsEventHandle(handle)
+    # _sp_associate_monitor(event_handle=event_handle, mo=sp)
 
     sp_mo = handle.query_dn(sp_dn)
     if sp_mo is None:
@@ -86,44 +83,48 @@ def wait_assoc_completion(handle, sp_dn, server_dn,
             qualifier = ""
             if ls_issues.iscsi_config_issues:
                 qualifier = qualifier + "iSCSI: " + \
-                            ls_issues.iscsi_config_issues
+                    ls_issues.iscsi_config_issues
             if ls_issues.network_config_issues:
-                if len(qualifier) > 0 : qualifier = qualifier  + ". "
+                if len(qualifier) > 0:
+                    qualifier += ". "
                 qualifier = qualifier + "Network: " + \
-                            ls_issues.network_config_issues
+                    ls_issues.network_config_issues
             if ls_issues.server_config_issues:
-                if len(qualifier) > 0 : qualifier = qualifier  + ". "
+                if len(qualifier) > 0:
+                    qualifier += ". "
                 qualifier = qualifier + "Server: " + \
-                            ls_issues.server_config_issues
+                    ls_issues.server_config_issues
             if ls_issues.storage_config_issues:
-                if len(qualifier) > 0 : qualifier = qualifier  + ". "
+                if len(qualifier) > 0:
+                    qualifier += ". "
                 qualifier = qualifier + "Storage: " + \
-                            ls_issues.storage_config_issues
+                    ls_issues.storage_config_issues
             if ls_issues.vnic_config_issues:
-                if len(qualifier) > 0 : qualifier = qualifier  + ". "
+                if len(qualifier) > 0:
+                    qualifier += ". "
                 qualifier = qualifier + "vNIC: " + \
-                            ls_issues.vnic_config_issues
+                    ls_issues.vnic_config_issues
 
         raise Exception("Service Profile %s config failure: %s qualifier: %s" %
-                (sp_mo.name, sp_mo.config_state, qualifier))
-    physMo = handle.query_dn(server_dn)
-    if physMo == None:
+                        (sp_mo.name, sp_mo.config_state, qualifier))
+    phys_mo = handle.query_dn(server_dn)
+    if phys_mo is None:
         raise Exception("Server %s does not exist" % sp_dn)
-    while physMo.association != 'associated':
+    while phys_mo.association != 'associated':
         time.sleep(10)
         if (datetime.datetime.now() - start).total_seconds() > \
                 assoc_completion_timeout:
             log.error('Server %s has not completed association', server_dn)
             break
         log.debug('Server %s fsmStatus: %s, elapsed=%ds', server_dn,
-                  physMo.fsm_status,
+                  phys_mo.fsm_status,
                   (datetime.datetime.now() - start).total_seconds())
         # Query again to update association state
-        physMo = handle.query_dn(server_dn)
+        phys_mo = handle.query_dn(server_dn)
 
-    if physMo.association == 'associated':
+    if phys_mo.association == 'associated':
         log.debug('Server %s has completed association in %d seconds',
-                server_dn, (datetime.datetime.now() - start).total_seconds())    
+                  server_dn, (datetime.datetime.now() - start).total_seconds())
 
 
 def sp_associate(handle, sp_dn, server_dn, wait_for_assoc_completion=True,
@@ -171,13 +172,13 @@ def sp_associate(handle, sp_dn, server_dn, wait_for_assoc_completion=True,
     if sp.assoc_state == LsServerConsts.ASSOC_STATE_ASSOCIATED \
             and sp.pn_dn == server_dn:
         raise ValueError("Service Profile is already associated with Server %s"
-                         "" % (server_dn))
+                         "" % server_dn)
 
     # check if sp already has lsBinding with blade
     binding = handle.query_dn(sp_dn + "/pn")
     if binding is not None and binding.pn_dn == server_dn:
         raise ValueError("Service Profile is already administratively "
-                         "associated with Server %s" % (server_dn))
+                         "associated with Server %s" % server_dn)
 
     mo = LsBinding(parent_mo_or_dn=sp_dn, pn_dn=server_dn,
                    restrict_migration="no")
@@ -185,8 +186,9 @@ def sp_associate(handle, sp_dn, server_dn, wait_for_assoc_completion=True,
     handle.commit()
 
     if wait_for_assoc_completion:
-        wait_assoc_completion(handle, sp_dn=sp_dn, server_dn=server_dn,
-                            assoc_completion_timeout=assoc_completion_timeout)
+        wait_assoc_completion(
+            handle, sp_dn=sp_dn, server_dn=server_dn,
+            assoc_completion_timeout=assoc_completion_timeout)
 
 
 # ###########################################
@@ -201,10 +203,10 @@ def _sp_disassociate_callback(mce):
     global end_script
     if mce.mo.assoc_state == LsServerConsts.ASSOC_STATE_UNASSOCIATED:
         print("SP:" + mce.mo.dn + " Assoc Successful. assoc_state: " +
-               mce.mo.assoc_state)
+              mce.mo.assoc_state)
     elif mce.mo.assoc_state == LsServerConsts.ASSIGN_STATE_FAILED:
         print("SP:" + mce.mo.dn + " Assoc Failed. assoc_state: " +
-               mce.mo.assoc_state)
+              mce.mo.assoc_state)
     end_script = True
 
 
@@ -260,8 +262,4 @@ def sp_disassociate(handle, sp_dn):
 
     while not end_script:
         time.sleep(1)
-    event_handle.cleanup()
-
-
-
-
+    event_handle.clean()

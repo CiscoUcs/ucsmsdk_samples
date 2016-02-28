@@ -103,14 +103,14 @@ def lan_conn_policy_exists(handle, name, descr=None, parent_dn="org-root"):
     dn = parent_dn + '/lan-conn-pol-' + name
     mo = handle.query_dn(dn)
     if mo:
-        if ((descr and mo.descr != descr)):
+        if descr and mo.descr != descr:
             return False
         return True
     return False
 
 
 def add_vnic(handle, parent_dn,  name, nw_ctrl_policy_name="",
-             admin_host_port="ANY",admin_vcon="any",
+             admin_host_port="ANY", admin_vcon="any",
              stats_policy_name="default", admin_cdn_name="",
              switch_id="A", pin_to_group_name="", mtu="1500",
              qos_policy_name="", adaptor_profile_name="",
@@ -154,21 +154,21 @@ def add_vnic(handle, parent_dn,  name, nw_ctrl_policy_name="",
     obj = handle.query_dn(parent_dn)
     if obj:
         mo = VnicEther(parent_mo_or_dn=obj,
-                         nw_ctrl_policy_name=nw_ctrl_policy_name,
-                         name=name,
-                         admin_host_port=admin_host_port,
-                         admin_vcon=admin_vcon,
-                         stats_policy_name=stats_policy_name,
-                         admin_cdn_name=admin_cdn_name,
-                         switch_id=switch_id,
-                         pin_to_group_name=pin_to_group_name,
-                         mtu=mtu,
-                         qos_policy_name=qos_policy_name,
-                         adaptor_profile_name=adaptor_profile_name,
-                         ident_pool_name=ident_pool_name,
-                         order=order,
-                         nw_templ_name=nw_templ_name,
-                         addr=addr)
+                       nw_ctrl_policy_name=nw_ctrl_policy_name,
+                       name=name,
+                       admin_host_port=admin_host_port,
+                       admin_vcon=admin_vcon,
+                       stats_policy_name=stats_policy_name,
+                       admin_cdn_name=admin_cdn_name,
+                       switch_id=switch_id,
+                       pin_to_group_name=pin_to_group_name,
+                       mtu=mtu,
+                       qos_policy_name=qos_policy_name,
+                       adaptor_profile_name=adaptor_profile_name,
+                       ident_pool_name=ident_pool_name,
+                       order=order,
+                       nw_templ_name=nw_templ_name,
+                       addr=addr)
 
         handle.add_mo(mo, modify_present=True)
         handle.commit()
@@ -207,7 +207,7 @@ def remove_vnic(handle, name, parent_dn):
 
 
 def vnic_exists(handle, parent_dn,  name, nw_ctrl_policy_name=None,
-                admin_host_port=None,admin_vcon=None, stats_policy_name=None,
+                admin_host_port=None, admin_vcon=None, stats_policy_name=None,
                 admin_cdn_name=None, switch_id=None, pin_to_group_name=None,
                 mtu=None, qos_policy_name=None, adaptor_profile_name=None,
                 ident_pool_name=None, order=None, nw_templ_name=None,
@@ -251,14 +251,16 @@ def vnic_exists(handle, parent_dn,  name, nw_ctrl_policy_name=None,
              and mo.nw_ctrl_policy_name != nw_ctrl_policy_name) and
             (admin_host_port and mo.admin_host_port != admin_host_port) and
             (admin_vcon and mo.admin_vcon != admin_vcon) and
+            (stats_policy_name and mo.stats_policy_name !=
+                stats_policy_name) and
             (admin_cdn_name and mo.admin_cdn_name != admin_cdn_name) and
             (switch_id and mo.switch_id != switch_id) and
             (pin_to_group_name and mo.pin_to_group_name != pin_to_group_name)
             and
             (mtu and mo.mtu != mtu) and
             (qos_policy_name and mo.qos_policy_name != qos_policy_name) and
-            (adaptor_profile_name and
-                     mo.adaptor_profile_name != adaptor_profile_name) and
+            (adaptor_profile_name and mo.adaptor_profile_name !=
+                adaptor_profile_name) and
             (ident_pool_name and mo.ident_pool_name != ident_pool_name) and
             (order and mo.order != order) and
             (nw_templ_name and mo.nw_templ_name != nw_templ_name) and
@@ -273,7 +275,7 @@ def add_vnic_iscsi(handle, parent_dn, name, addr="derived",
                    admin_vcon="any", stats_policy_name="default",
                    admin_cdn_name="",
                    switch_id="A", pin_to_group_name="", vnic_name="",
-                   qos_policy_name="",adaptor_profile_name="",
+                   qos_policy_name="", adaptor_profile_name="",
                    ident_pool_name="", order="unspecified",
                    nw_templ_name="", vlan_name="default"):
 
@@ -332,8 +334,7 @@ def add_vnic_iscsi(handle, parent_dn, name, addr="derived",
                           nw_templ_name=nw_templ_name,
                           name=name)
 
-        mo_1 = VnicVlan(parent_mo_or_dn=mo, name="",
-                        vlan_name=vlan_name)
+        VnicVlan(parent_mo_or_dn=mo, name="", vlan_name=vlan_name)
 
         handle.add_mo(mo)
         handle.commit()
@@ -376,7 +377,7 @@ def vnic_iscsi_exists(handle, parent_dn, name, addr=None, admin_host_port=None,
                       admin_cdn_name=None, switch_id=None,
                       pin_to_group_name=None, vnic_name=None,
                       qos_policy_name=None, adaptor_profile_name=None,
-                      ident_pool_name=None, order=None,nw_templ_name=None,
+                      ident_pool_name=None, order=None, nw_templ_name=None,
                       vlan_name=None):
     """
     Checks if the given iSCSI vNIC already exists with the same params
@@ -423,8 +424,8 @@ def vnic_iscsi_exists(handle, parent_dn, name, addr=None, admin_host_port=None,
             and
             (vnic_name and mo.vnic_name != vnic_name) and
             (qos_policy_name and mo.qos_policy_name != qos_policy_name) and
-            (adaptor_profile_name and
-                     mo.adaptor_profile_name != adaptor_profile_name) and
+            (adaptor_profile_name and mo.adaptor_profile_name !=
+                adaptor_profile_name) and
             (ident_pool_name and mo.ident_pool_name != ident_pool_name) and
             (order and mo.order != order) and
             (nw_templ_name and mo.nw_templ_name != nw_templ_name) and

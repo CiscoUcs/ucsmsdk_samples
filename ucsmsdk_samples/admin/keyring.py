@@ -16,7 +16,6 @@ This module performs the operation related to key management.
 """
 
 
-
 def key_ring_create(handle, name, descr="", policy_owner="local", tp="",
                     cert="", regen="no", modulus="mod512"):
     """
@@ -236,10 +235,10 @@ def certificate_request_add(handle, name, dns="", locality="", state="",
 
 
 def certificate_request_exists(handle, name, dns="", locality="", state="",
-                            country="", org_name="", org_unit_name="",
-                            email="", pwd="", subj_name="", ip="0.0.0.0",
-                            ip_a="0.0.0.0", ip_b="0.0.0.0", ipv6="::",
-                            ipv6_a="::", ipv6_b="::"):
+                               country="", org_name="", org_unit_name="",
+                               email="", pwd="", subj_name="", ip="0.0.0.0",
+                               ip_a="0.0.0.0", ip_b="0.0.0.0", ipv6="::",
+                               ipv6_a="::", ipv6_b="::"):
     """
     Checks if a certificate request exists
 

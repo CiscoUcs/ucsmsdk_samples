@@ -50,9 +50,9 @@ def mac_pool_create(handle, name, assignment_order,
                          descr=descr,
                          assignment_order=assignment_order,
                          name=name)
-        mo_1 = MacpoolBlock(parent_mo_or_dn=mo,
-                            to=to,
-                            r_from=r_from)
+        MacpoolBlock(parent_mo_or_dn=mo,
+                     to=to,
+                     r_from=r_from)
 
         handle.add_mo(mo, modify_present=True)
         handle.commit()

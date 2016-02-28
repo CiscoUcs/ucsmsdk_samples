@@ -15,6 +15,10 @@
 This module contains methods required for creating IP Pools.
 """
 
+import logging
+
+log = logging.getLogger('ucs')
+
 
 def ip_pool_create(handle, name, assignment_order,
                    descr="", parent_dn="org-root"):
@@ -88,7 +92,7 @@ def add_ip_block(handle, r_from, to, subnet, default_gw, prim_dns, sec_dns,
     else:
         log.debug("Creating IP block. from %s to %s, gw=%s, subnet=%s, "
                   "dns1=%s, dns2=%s" % (r_from, to, default_gw, subnet,
-                               prim_dns, sec_dns))
+                                        prim_dns, sec_dns))
         mo = IppoolBlock(parent_mo_or_dn=obj,
                          r_from=r_from,
                          to=to,

@@ -96,7 +96,6 @@ def tacacsplus_provider_exists(handle, name, order="lowest-available", key="",
     return False
 
 
-
 def tacacsplus_provider_modify(handle, name, order=None, key=None, port=None,
                                timeout=None, retries=None, enc_key=None,
                                descr=None):
@@ -299,7 +298,7 @@ def tacacsplus_provider_group_add_provider(handle, group_name, name, order,
 
 
 def tacacsplus_provider_group_provider_exists(handle, group_name, name, order,
-                                           descr=""):
+                                              descr=""):
     """
     checks if a tacacsplus provider added to a tacacsplus provider  group
 

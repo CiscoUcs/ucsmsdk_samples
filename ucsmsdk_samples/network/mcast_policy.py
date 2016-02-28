@@ -49,16 +49,17 @@ def mcast_policy_create(handle, name, querier_state, snooping_state,
 
     obj = handle.query_dn(parent_dn)
     if obj:
-        mcast_policy = FabricMulticastPolicy(parent_mo_or_dn=obj,
-                                     querier_ip_addr=querier_ip_addr,
-                                     querier_ip_addr_peer=querier_ip_addr_peer,
-                                     name=name,
-                                     descr=descr,
-                                     querier_state=querier_state,
-                                     snooping_state=snooping_state,
-                                     policy_owner="local")
+        mo = FabricMulticastPolicy(
+            parent_mo_or_dn=obj,
+            querier_ip_addr=querier_ip_addr,
+            querier_ip_addr_peer=querier_ip_addr_peer,
+            name=name,
+            descr=descr,
+            querier_state=querier_state,
+            snooping_state=snooping_state,
+            policy_owner="local")
 
-        handle.add_mo(mcast_policy, modify_present=True)
+        handle.add_mo(mo, modify_present=True)
         handle.commit()
         return mo
     else:

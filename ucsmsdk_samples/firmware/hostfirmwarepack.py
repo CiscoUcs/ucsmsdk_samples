@@ -11,6 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 def hfp_create(handle, org_dn, name,
                blade_bundle_version="",
                rack_bundle_version="",
@@ -189,13 +190,15 @@ def hfp_firmware_pack_item_add(handle, org_dn, hfp_name, hw_vendor, hw_model,
     if obj is None:
         raise ValueError("HFP '%s' does not exist" % dn)
 
-    mo = FirmwarePackItem(hw_vendor=hw_vendor,
+    mo = FirmwarePackItem(parent_mo_or_dn=obj,
+                          hw_vendor=hw_vendor,
                           hw_model=hw_model,
                           type=type,
                           version=version)
     handle.add_mo(mo)
     handle.commit()
     return mo
+
 
 def hfp_firmware_pack_item_remove(handle, org_dn, hfp_name, hw_vendor,
                                   hw_model, type):

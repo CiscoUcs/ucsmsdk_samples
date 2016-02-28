@@ -12,7 +12,6 @@
 # limitations under the License.
 
 
-
 def backup_policy_remote_create(handle, hostname, user, pwd, remote_file,
                                 admin_state,
                                 type="full-state",

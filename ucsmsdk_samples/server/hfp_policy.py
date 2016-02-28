@@ -12,9 +12,8 @@
 # limitations under the License.
 
 
-def hfp_create(handle, name, blade_bundle_version,
-                         rack_bundle_version,  mode="staged", descr="",
-                         parent_dn="org-root"):
+def hfp_create(handle, name, blade_bundle_version, rack_bundle_version,
+               mode="staged", descr="", parent_dn="org-root"):
     """
     This method creates Host Firmware pack.
 
@@ -157,9 +156,9 @@ def hfp_exists(handle, name, blade_bundle_version, rack_bundle_version,
     mo = handle.query_dn(dn)
     if mo:
         if ((blade_bundle_version and
-                     mo.blade_bundle_version != blade_bundle_version) and
+                mo.blade_bundle_version != blade_bundle_version) and
             (rack_bundle_version and
-                     mo.rack_bundle_version != rack_bundle_version) and
+                mo.rack_bundle_version != rack_bundle_version) and
             (mode and mo.mode != mode) and
             (descr and mo.descr != descr)):
             return False

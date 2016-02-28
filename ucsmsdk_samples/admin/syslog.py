@@ -12,7 +12,6 @@
 # limitations under the License.
 
 
-
 def syslog_local_console_enable(handle, severity="emergencies"):
     """
     This method enables system logs on local console.
@@ -142,7 +141,8 @@ def syslog_local_monitor_disable(handle):
     return mo
 
 
-def syslog_local_file_enable(handle, name, severity="emergencies", size="40000"):
+def syslog_local_file_enable(handle, name, severity="emergencies",
+                             size="40000"):
     """
     This method configures System Logs on local file storage.
 
@@ -240,7 +240,7 @@ def syslog_remote_enable(handle, name, hostname,
 
     from ucsmsdk.mometa.comm.CommSyslogClient import CommSyslogClientConsts
 
-    dn="sys/svc-ext/syslog/client-" + name
+    dn = "sys/svc-ext/syslog/client-" + name
     mo = handle.query_dn(dn)
     if not mo:
         raise ValueError("Remote Destination '%s' does not exist" % dn)
@@ -277,7 +277,7 @@ def syslog_remote_disable(handle, name):
 
     from ucsmsdk.mometa.comm.CommSyslogClient import CommSyslogClientConsts
 
-    dn="sys/svc-ext/syslog/client-" + name
+    dn = "sys/svc-ext/syslog/client-" + name
     mo = handle.query_dn(dn)
     if not mo:
         raise ValueError("Remote Destination '%s' does not exist" % dn)

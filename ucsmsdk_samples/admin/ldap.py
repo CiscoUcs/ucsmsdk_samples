@@ -338,7 +338,6 @@ def ldap_group_map_delete(handle, name):
     handle.commit()
 
 
-
 def ldap_group_map_add_role(handle, ldap_group_map_name, name, descr=""):
     """
     add role to ldap group map
@@ -369,6 +368,7 @@ def ldap_group_map_add_role(handle, ldap_group_map_name, name, descr=""):
     handle.add_mo(mo, True)
     handle.commit()
     return mo
+
 
 def ldap_group_map_role_exists(handle, ldap_group_map_name, name, descr=""):
     """
@@ -543,7 +543,7 @@ def ldap_provider_group_add_provider(handle, group_name, name, order,
 
     provider_dn = "sys/ldap-ext/provider-" + name
     provider_mo = handle.query_dn(provider_dn)
-    if not provider_mo :
+    if not provider_mo:
         raise ValueError("Ldap Provider does not exist.")
 
     mo = AaaProviderRef(parent_mo_or_dn=group_mo,
@@ -556,7 +556,7 @@ def ldap_provider_group_add_provider(handle, group_name, name, order,
 
 
 def ldap_provider_group_provider_exists(handle, group_name, name, order,
-                                     descr=""):
+                                        descr=""):
     """
     checks if provider added ldap provider group
 
@@ -659,5 +659,3 @@ def ldap_provider_group_remove_provider(handle, group_name, name):
 
     handle.remove_mo(provider_mo)
     handle.commit()
-
-

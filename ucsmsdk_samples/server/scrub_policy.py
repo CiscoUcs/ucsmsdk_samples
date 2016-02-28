@@ -57,7 +57,7 @@ def scrub_policy_create(handle, name, flex_flash_scrub="no",
     return mo
 
 
-def scrub_policy_modify(handle, org_name, name, flex_flash_scrub=None,
+def scrub_policy_modify(handle, name, flex_flash_scrub=None,
                         bios_settings_scrub=None, disk_scrub=None, descr=None,
                         parent_dn="org-root"):
     """
@@ -91,7 +91,7 @@ def scrub_policy_modify(handle, org_name, name, flex_flash_scrub=None,
         raise ValueError("scrub policy '%s' does not exist" % dn)
 
     if flex_flash_scrub is not None:
-        mo.flex_flash_scrub= flex_flash_scrub
+        mo.flex_flash_scrub = flex_flash_scrub
     if bios_settings_scrub is not None:
         mo.bios_settings_scrub = bios_settings_scrub
     if disk_scrub is not None:

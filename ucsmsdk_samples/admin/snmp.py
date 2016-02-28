@@ -16,9 +16,8 @@ This module performs the operation related to snmp server, user and traps.
 """
 
 
-
 def snmp_enable(handle, community=None, sys_contact=None, sys_location=None,
-                   descr=None, is_set_snmp_secure=None):
+                descr=None, is_set_snmp_secure=None):
     """
     Enables SNMP.
 
@@ -70,7 +69,6 @@ def snmp_enable(handle, community=None, sys_contact=None, sys_location=None,
     handle.set_mo(mo)
     handle.commit()
     return mo
-
 
 
 def snmp_disable(handle):
@@ -144,7 +142,7 @@ def snmp_trap_add(handle, hostname, community, port, version="v3",
 
 
 def snmp_trap_exists(handle, hostname, community, port, version="v3",
-                  notification_type="traps", v3_privilege="noauth"):
+                     notification_type="traps", v3_privilege="noauth"):
     """
     checks if snmp trap exists
 
@@ -176,15 +174,16 @@ def snmp_trap_exists(handle, hostname, community, port, version="v3",
         if ((community and mo.community != community) and
             (port and mo.port != port) and
             (version and mo.version != version) and
-            (notification_type and mo.notification_type != notification_type) and
+            (notification_type and
+             mo.notification_type != notification_type) and
             (v3_privilege and mo.v3_privilege != v3_privilege)):
             return False
         return True
     return False
 
 
-def snmp_trap_modify(handle, hostname, community=None, port=None, version=None,
-                        notification_type=None, v3_privilege=None):
+def snmp_trap_modify(handle, hostname, community=None, port=None,
+                     version=None, notification_type=None, v3_privilege=None):
     """
     Modifies snmp trap.
 
@@ -301,7 +300,7 @@ def snmp_user_add(handle, name, descr, pwd, privpwd, auth="md5",
 
 
 def snmp_user_exists(handle, name, descr, pwd, privpwd, auth="md5",
-                  use_aes="yes"):
+                     use_aes="yes"):
     """
     checks if snmp user exists.
 

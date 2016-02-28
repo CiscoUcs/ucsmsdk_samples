@@ -48,13 +48,14 @@ def local_disk_policy_create(handle, name, mode="any-configuration",
     if not mo:
         raise ValueError("org '%s' does not exist" % parent_dn)
 
-    mo = StorageLocalDiskConfigPolicy(parent_mo_or_dn=mo,
-              protect_config=protect_config,
-              name=name,
-              descr=descr,
-              flex_flash_raid_reporting_state=flex_flash_raid_reporting_state,
-              flex_flash_state=flex_flash_state,
-              mode=mode)
+    mo = StorageLocalDiskConfigPolicy(
+        parent_mo_or_dn=mo,
+        protect_config=protect_config,
+        name=name,
+        descr=descr,
+        flex_flash_raid_reporting_state=flex_flash_raid_reporting_state,
+        flex_flash_state=flex_flash_state,
+        mode=mode)
     handle.add_mo(mo, modify_present=True)
     handle.commit()
     return mo
@@ -172,7 +173,7 @@ def local_disk_policy_exist(handle, name, mode="any-configuration",
             (flex_flash_state and mo.flex_flash_state != flex_flash_state)
             and
             (flex_flash_raid_reporting_state and
-            mo.flex_flash_raid_reporting_state !=
+                mo.flex_flash_raid_reporting_state !=
                      flex_flash_raid_reporting_state)
             and
             (protect_config and mo.protect_config != protect_config)

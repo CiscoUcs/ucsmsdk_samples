@@ -50,7 +50,7 @@ def vmedia_policy_create(handle, org_dn, name, retry_on_mount_fail="yes",
     mo = CimcvmediaMountConfigPolicy(parent_mo_or_dn=org,
                                      name=name,
                                      retry_on_mount_fail=retry_on_mount_fail,
-                                     policy_owner="local",
+                                     policy_owner=policy_owner,
                                      descr=descr)
     handle.add_mo(mo, modify_present=True)
     handle.commit()
@@ -283,13 +283,15 @@ def vmedia_mount_state(handle, sp_dn):
     if mgmt_controller is None:
         raise ValueError("Management Controller does not exist.")
 
-    actual_mount_list = handle.query_children(in_mo=mgmt_controller,
-                                        class_id="CimcvmediaActualMountList")
+    actual_mount_list = handle.query_children(
+        in_mo=mgmt_controller,
+        class_id="CimcvmediaActualMountList")
     if not actual_mount_list:
         raise ValueError("Vmedia Mount does not exist.")
 
-    mount_entries = handle.query_children(in_mo=actual_mount_list[0],
-                                        class_id="CimcvmediaActualMountEntry")
+    mount_entries = handle.query_children(
+        in_mo=actual_mount_list[0],
+        class_id="CimcvmediaActualMountEntry")
     if not mount_entries:
         raise ValueError("Vmedia Mount Entries do not exist.")
 

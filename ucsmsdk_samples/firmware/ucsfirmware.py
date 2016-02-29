@@ -320,7 +320,7 @@ def firmware_add_remote(handle, file_name, remote_path, protocol, server,
         FirmwareDownloaderConsts.ADMIN_STATE_RESTART
 
     handle.add_mo(firmware_downloader)
-    handle.set_dump_xml()
+    # handle.set_dump_xml()
     handle.commit()
     return firmware_downloader
 
@@ -356,7 +356,7 @@ def firmware_remove(handle, image_name):
         raise ValueError("Image not available on UCSM.")
 
     handle.remove_mo(mo)
-    handle.set_dump_xml()
+    # handle.set_dump_xml()
     handle.commit()
 
 
@@ -395,7 +395,7 @@ def validate_connection(handle, timeout=15 * 60):
             try:
                 log.debug("Login to UCS Manager, elapsed time %ds",
                           (datetime.datetime.now() - start).total_seconds())
-                handle.set_dump_xml()
+                # handle.set_dump_xml()
                 handle.login(force=True)
                 log.debug("Login successful")
                 connected = True

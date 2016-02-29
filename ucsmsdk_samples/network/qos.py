@@ -44,7 +44,6 @@ def qos_class_enable(handle, priority, weight="normal", mtu="normal",
 
     from ucsmsdk.mometa.qosclass.QosclassEthClassified import \
         QosclassEthClassified
-    from ucsmsdk.mometa.qosclass.QosclassEthBE import QosclassEthBE
 
     if priority == 'best-effort':
         qos_class = handle.query_dn("fabric/lan/classes/class-" + priority)
@@ -62,15 +61,16 @@ def qos_class_enable(handle, priority, weight="normal", mtu="normal",
         else:
             raise ValueError("QoS class %s is not available" % priority)
     else:
-        qos_class = QosclassEthClassified(parent_mo_or_dn="fabric/lan/classes",
-                                  cos=cos,
-                                  name="",
-                                  weight=weight,
-                                  drop=drop,
-                                  multicast_optimize=multicast_optimize,
-                                  mtu=mtu,
-                                  priority=priority,
-                                  admin_state="enabled")
+        qos_class = QosclassEthClassified(
+            parent_mo_or_dn="fabric/lan/classes",
+            cos=cos,
+            name="",
+            weight=weight,
+            drop=drop,
+            multicast_optimize=multicast_optimize,
+            mtu=mtu,
+            priority=priority,
+            admin_state="enabled")
 
     handle.add_mo(qos_class, True)
     handle.commit()
@@ -200,12 +200,12 @@ def qos_policy_add(handle, name, prio, burst, rate,
                              policy_owner="local",
                              name=name,
                              descr=descr)
-        mo_1 = EpqosEgress(parent_mo_or_dn=mo,
-                           rate=rate,
-                           host_control=host_control,
-                           name="",
-                           prio=prio,
-                           burst=burst)
+        EpqosEgress(parent_mo_or_dn=mo,
+                    rate=rate,
+                    host_control=host_control,
+                    name="",
+                    prio=prio,
+                    burst=burst)
 
         handle.add_mo(mo, modify_present=True)
         handle.commit()

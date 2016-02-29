@@ -188,7 +188,9 @@ def boot_policy_exist(handle, name, reboot_on_update="yes",
             and
             (reboot_on_update and mo.reboot_on_update != reboot_on_update)
             and
-            (enforce_vnic_name and mo.enforce_vnic_name != enforce_vnic_name)):
+            (enforce_vnic_name and
+                     mo.enforce_vnic_name != enforce_vnic_name)and
+            (descr and mo.descr != descr)):
             return False
         return True
     return False
@@ -200,7 +202,7 @@ def _add_device(handle, parent_mo, boot_device):
     for child in children:
         if hasattr(child, 'order'):
             order = getattr(child, 'order')
-            if not order in boot_device:
+            if order not in boot_device:
                 log.debug("Deleting boot device from boot policy: %s",
                           child.dn)
                 handle.remove_mo(child)
@@ -208,86 +210,86 @@ def _add_device(handle, parent_mo, boot_device):
     for k in boot_device.keys():
         log.debug("Add boot device: order=%s, %s", k, boot_device[k])
         if boot_device[k] in ["cdrom-local", "cdrom"]:
-            _add_cdrom_local(handle, parent_mo, k)
+            _add_cdrom_local(parent_mo, k)
         elif boot_device[k] == "cdrom-cimc":
-            _add_cdrom_cimc(handle, parent_mo, k)
+            _add_cdrom_cimc(parent_mo, k)
         elif boot_device[k] == "cdrom-remote":
-            _add_cdrom_remote(handle, parent_mo, k)
+            _add_cdrom_remote(parent_mo, k)
         elif boot_device[k] in ["lun", "local-disk", "sd-card", "usb-internal",
                                 "usb-external"]:
             if count == 0:
                 mo = LsbootStorage(parent_mo_or_dn=parent_mo, order=k)
                 mo_1 = LsbootLocalStorage(parent_mo_or_dn=mo)
-                count +=1
+                count += 1
             if boot_device[k] == "lun":
-                _add_local_lun(handle, mo_1, k)
+                _add_local_lun(mo_1, k)
             elif boot_device[k] == "local-disk":
-                _add_local_disk(handle, mo_1, k)
+                _add_local_disk(mo_1, k)
             elif boot_device[k] == "sd-card":
-                _add_sd_card(handle, mo_1, k)
+                _add_sd_card(mo_1, k)
             elif boot_device[k] == "usb-internal":
-                _add_usb_internal(handle, mo_1, k)
+                _add_usb_internal(mo_1, k)
             elif boot_device[k] == "usb-external":
-                _add_usb_external(handle, mo_1, k)
+                _add_usb_external(mo_1, k)
         elif boot_device[k] in ["floppy", "floppy-local"]:
-            _add_floppy_local(handle, parent_mo, k)
+            _add_floppy_local(parent_mo, k)
         elif boot_device[k] == "floppy-external":
-            _add_floppy_remote(handle, parent_mo, k)
+            _add_floppy_remote(parent_mo, k)
         elif boot_device[k] == "virtual-drive":
-            _add_virtual_drive(handle, parent_mo, k)
+            _add_virtual_drive(parent_mo, k)
         else:
             log.debug("Option <%s> not recognized." % boot_device[k])
 
 
-def _add_cdrom_local(handle, parent_mo, order):
-    mo = LsbootVirtualMedia(parent_mo_or_dn=parent_mo,
-                            access="read-only-local",
-                            order=order)
+def _add_cdrom_local(parent_mo, order):
+    LsbootVirtualMedia(parent_mo_or_dn=parent_mo,
+                       access="read-only-local",
+                       order=order)
 
 
-def _add_cdrom_remote(handle, parent_mo ,order):
-    mo = LsbootVirtualMedia(parent_mo_or_dn=parent_mo,
-                            access="read-only-remote",
-                            order=order)
-
-def _add_cdrom_cimc(handle, parent_mo, order):
-    mo = LsbootVirtualMedia(parent_mo_or_dn=parent_mo,
-                            access="read-only-remote-cimc",
-                            order=order)
-
-def _add_floppy_local(handle,parent_mo,order):
-    mo = LsbootVirtualMedia(parent_mo_or_dn=parent_mo,
-                            access="read-write-local",
-                            order=order)
+def _add_cdrom_remote(parent_mo, order):
+    LsbootVirtualMedia(parent_mo_or_dn=parent_mo,
+                       access="read-only-remote",
+                       order=order)
 
 
-def _add_floppy_remote(handle, parent_mo, order):
-    mo = LsbootVirtualMedia(parent_mo_or_dn=parent_mo,
-                            access="read-write-remote",
-                            order=order)
+def _add_cdrom_cimc(parent_mo, order):
+    LsbootVirtualMedia(parent_mo_or_dn=parent_mo,
+                       access="read-only-remote-cimc",
+                       order=order)
 
 
-def _add_virtual_drive(handle, parent_mo, order):
-    mo = LsbootVirtualMedia(parent_mo_or_dn=parent_mo,
-                            access="read-write-drive",
-                            order=order)
+def _add_floppy_local(parent_mo, order):
+    LsbootVirtualMedia(parent_mo_or_dn=parent_mo,
+                       access="read-write-local",
+                       order=order)
 
 
-def _add_local_disk(handle, parent_mo,order):
-    mo_1_1 = LsbootDefaultLocalImage(parent_mo_or_dn=parent_mo, order=order)
+def _add_floppy_remote(parent_mo, order):
+    LsbootVirtualMedia(parent_mo_or_dn=parent_mo, access="read-write-remote",
+                       order=order)
 
 
-def _add_local_lun(handle, parent_mo, order):
-    mo_1_1 = LsbootLocalHddImage(parent_mo_or_dn=parent_mo, order=order)
+def _add_virtual_drive(parent_mo, order):
+    LsbootVirtualMedia(parent_mo_or_dn=parent_mo, access="read-write-drive",
+                       order=order)
 
 
-def _add_sd_card(handle, parent_mo, order):
-    mo_1_1 = LsbootUsbFlashStorageImage(parent_mo_or_dn=parent_mo, order=order)
+def _add_local_disk(parent_mo, order):
+    LsbootDefaultLocalImage(parent_mo_or_dn=parent_mo, order=order)
 
 
-def _add_usb_internal(handle, parent_mo,order):
-    mo_1_1 = LsbootUsbInternalImage(parent_mo_or_dn=parent_mo, order=order)
+def _add_local_lun(parent_mo, order):
+    LsbootLocalHddImage(parent_mo_or_dn=parent_mo, order=order)
 
 
-def _add_usb_external(handle, parent_mo,order):
-    mo_1_1 = LsbootUsbExternalImage(parent_mo_or_dn=parent_mo, order=order)
+def _add_sd_card(parent_mo, order):
+    LsbootUsbFlashStorageImage(parent_mo_or_dn=parent_mo, order=order)
+
+
+def _add_usb_internal(parent_mo, order):
+    LsbootUsbInternalImage(parent_mo_or_dn=parent_mo, order=order)
+
+
+def _add_usb_external(parent_mo, order):
+    LsbootUsbExternalImage(parent_mo_or_dn=parent_mo, order=order)

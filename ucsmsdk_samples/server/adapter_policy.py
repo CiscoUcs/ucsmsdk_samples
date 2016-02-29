@@ -12,8 +12,7 @@
 # limitations under the License.
 
 
-def adapter_policy_create(handle, name, descr="",
-                      parent_dn="org-root"):
+def adapter_policy_create(handle, name, descr="", parent_dn="org-root"):
     """
     This method creates AdaptorHostEthIfProfile policy.
 
@@ -42,6 +41,4 @@ def adapter_policy_create(handle, name, descr="",
     mo = AdaptorHostEthIfProfile(parent_mo_or_dn=obj, name=name, descr=descr)
     handle.add_mo(mo, modify_present=True)
     handle.commit()
-
     return mo
-

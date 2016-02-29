@@ -102,6 +102,7 @@ def org_remove_by_dn(handle, org_dn):
     handle.remove_mo(mo)
     handle.commit()
 
+
 def org_remove(handle, name, parent_dn="org-root"):
     """
     This method removes sub organization.
@@ -144,7 +145,7 @@ def org_exists(handle, name, descr="", parent_dn="org-root"):
     dn = parent_dn + "/org-" + name
     mo = handle.query_dn(dn)
     if mo:
-        if (descr and mo.descr != descr):
+        if descr and mo.descr != descr:
             return False
         return True
     return False

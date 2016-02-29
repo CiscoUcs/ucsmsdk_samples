@@ -13,10 +13,10 @@
 
 
 def tftp_core_exporter_enable(handle,
-                       hostname,
-                       path,
-                       port,
-                       descr=""):
+                              hostname,
+                              path,
+                              port,
+                              descr=""):
     """
     This method configures UCSM tftp core exporter.
 

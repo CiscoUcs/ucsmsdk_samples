@@ -12,11 +12,8 @@
 # limitations under the License.
 
 
-def tftp_core_exporter_enable(handle,
-                       hostname=None,
-                       path=None,
-                       port=None,
-                       descr=None):
+def tftp_core_exporter_enable(handle, hostname=None, path=None, port=None,
+                              descr=None):
     """
     This method enables UCSM tftp core exporter.
 
@@ -40,8 +37,8 @@ def tftp_core_exporter_enable(handle,
                     port="69", path="/root/tftp")
     """
 
-    from ucsmsdk.mometa.sysdebug.SysdebugAutoCoreFileExportTarget import\
-            SysdebugAutoCoreFileExportTargetConsts
+    from ucsmsdk.mometa.sysdebug.SysdebugAutoCoreFileExportTarget import \
+        SysdebugAutoCoreFileExportTargetConsts
 
     dn = "sys/sysdebug/file-export"
     mo = handle.query_dn(dn)
@@ -82,8 +79,8 @@ def tftp_core_exporter_disable(handle):
             tftp_core_exporter_disable(handle)
     """
 
-    from ucsmsdk.mometa.sysdebug.SysdebugAutoCoreFileExportTarget import\
-            SysdebugAutoCoreFileExportTargetConsts
+    from ucsmsdk.mometa.sysdebug.SysdebugAutoCoreFileExportTarget import \
+        SysdebugAutoCoreFileExportTargetConsts
 
     dn = "sys/sysdebug/file-export"
     mo = handle.query_dn(dn)

@@ -15,6 +15,10 @@
 This module performs the operation under LAN -> LAN Cloud.
 """
 
+import logging
+
+log = logging.getLogger("ucs")
+
 
 def vlan_create(handle, name, vlan_id, sharing="none",
                 mcast_policy_name="", compression_type="included",
@@ -48,17 +52,17 @@ def vlan_create(handle, name, vlan_id, sharing="none",
 
     obj = handle.query_dn(parent_dn)
     if obj:
-        vlan = FabricVlan(parent_mo_or_dn=obj,
-                          sharing=sharing,
-                          name=name,
-                          id=vlan_id,
-                          mcast_policy_name=mcast_policy_name,
-                          policy_owner="local",
-                          default_net=default_net,
-                          pub_nw_name=pub_nw_name,
-                          compression_type=compression_type)
+        mo = FabricVlan(parent_mo_or_dn=obj,
+                        sharing=sharing,
+                        name=name,
+                        id=vlan_id,
+                        mcast_policy_name=mcast_policy_name,
+                        policy_owner="local",
+                        default_net=default_net,
+                        pub_nw_name=pub_nw_name,
+                        compression_type=compression_type)
 
-        handle.add_mo(vlan, modify_present=True)
+        handle.add_mo(mo, modify_present=True)
         handle.commit()
         return mo
     else:
@@ -156,21 +160,19 @@ def vlan_group_create(handle, name, native_vlan="", pooled_vlans=[]):
     vlan_group_dn = parent_dn + "/net-group-" + name
 
     log.debug('Creating VLAN Group: %s', vlan_group_dn)
-    obj = handle.query_dn(vlan_group_dn)
-    if obj:
-        obj.native_net = native_vlan
-        handle.add_mo(obj, modify_present=True)
+    mo = handle.query_dn(vlan_group_dn)
+    if mo:
+        mo.native_net = native_vlan
+        handle.add_mo(mo, modify_present=True)
     else:
-        obj = FabricNetGroup(parent_mo_or_dn=parent_dn,
-                             name=name,
-                             native_net=native_vlan)
-        handle.add_mo(obj, modify_present=True)
+        mo = FabricNetGroup(parent_mo_or_dn=parent_dn,
+                            name=name,
+                            native_net=native_vlan)
+        handle.add_mo(mo, modify_present=True)
 
     for pooled_vlan in pooled_vlans:
         log.debug('Creating VLAN Group member: %s', pooled_vlan)
-        pooled_vlan_mo = FabricPooledVlan(parent_mo_or_dn=obj,
-                                          name=pooled_vlan)
+        FabricPooledVlan(parent_mo_or_dn=mo, name=pooled_vlan)
 
     handle.commit()
     return mo
-

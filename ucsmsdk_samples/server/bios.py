@@ -26,7 +26,6 @@ def bios_create(handle, parent_org_dn, name, descr="",
                 vp_legacy_os_redirection="platform-default",
                 vp_putty_key_pad="platform-default",
                 vp_terminal_type="platform-default"):
-
     """
     This method creates the Bios Policy.
 
@@ -82,28 +81,38 @@ def bios_create(handle, parent_org_dn, name, descr="",
     if obj is None:
         raise ValueError("Parent org does not exist.")
 
-    mo = BiosVProfile(parent_mo_or_dn=obj,
-                      name=name, descr=descr,
-                      reboot_on_update=reboot_on_update)
-    mo_1 = BiosVfConsistentDeviceNameControl(parent_mo_or_dn=mo,
-                                             vp_cdn_control=vp_cdn_control)
-    mo_2 = BiosVfFrontPanelLockout(parent_mo_or_dn=mo,
-                                vp_front_panel_lockout=vp_front_panel_lockout)
-    mo_3 = BiosVfPOSTErrorPause(parent_mo_or_dn=mo,
-                                vp_post_error_pause=vp_post_error_pause)
+    mo = BiosVProfile(
+        parent_mo_or_dn=obj, name=name, descr=descr,
+        reboot_on_update=reboot_on_update)
+
+    mo_1 = BiosVfConsistentDeviceNameControl(
+        parent_mo_or_dn=mo,
+        vp_cdn_control=vp_cdn_control)
+
+    mo_2 = BiosVfFrontPanelLockout(
+        parent_mo_or_dn=mo,
+        vp_front_panel_lockout=vp_front_panel_lockout)
+
+    mo_3 = BiosVfPOSTErrorPause(
+        parent_mo_or_dn=mo, vp_post_error_pause=vp_post_error_pause)
+
     mo_4 = BiosVfQuietBoot(parent_mo_or_dn=mo, vp_quiet_boot=vp_quiet_boot)
-    mo_5 = BiosVfResumeOnACPowerLoss(parent_mo_or_dn=mo,
-                                     vp_resume_on_ac_power_loss=
-                                     vp_resume_on_ac_power_loss)
-    mo_6 = BiosVfSerialPortAEnable(parent_mo_or_dn=mo,
-                            vp_serial_port_a_enable=vp_serial_port_a_enable)
-    mo_7 = BiosVfConsoleRedirection(parent_mo_or_dn=mo,
-            vp_baud_rate=vp_baud_rate,
-            vp_console_redirection=vp_console_redirection,
-            vp_flow_control=vp_flow_control,
-            vp_legacy_os_redirection=vp_legacy_os_redirection,
-            vp_putty_key_pad=vp_putty_key_pad,
-            vp_terminal_type=vp_terminal_type)
+
+    mo_5 = BiosVfResumeOnACPowerLoss(
+        parent_mo_or_dn=mo,
+        vp_resume_on_ac_power_loss=vp_resume_on_ac_power_loss)
+
+    mo_6 = BiosVfSerialPortAEnable(
+        parent_mo_or_dn=mo, vp_serial_port_a_enable=vp_serial_port_a_enable)
+
+    mo_7 = BiosVfConsoleRedirection(
+        parent_mo_or_dn=mo,
+        vp_baud_rate=vp_baud_rate,
+        vp_console_redirection=vp_console_redirection,
+        vp_flow_control=vp_flow_control,
+        vp_legacy_os_redirection=vp_legacy_os_redirection,
+        vp_putty_key_pad=vp_putty_key_pad,
+        vp_terminal_type=vp_terminal_type)
 
     handle.add_mo(mo, modify_present=True)
     handle.commit()
@@ -138,13 +147,14 @@ def bios_remove(handle, name, parent_org_dn):
         raise ValueError("Bios policy '%s' not found.Nothing to remove" %
                          profile_dn)
 
+
 def bios_add_token(handle, name, parent_org_dn, token_name, token_value):
     # TODO
     pass
 
+
 def bios_serial_port(handle, name, parent_org_dn,
                      vp_serial_port_a_enable="platform-default"):
-
     """
     This method configures serial port option of Bios Policy.
 
@@ -169,11 +179,13 @@ def bios_serial_port(handle, name, parent_org_dn,
 
     from ucsmsdk.mometa.bios.BiosVfSerialPortAEnable import \
         BiosVfSerialPortAEnable
+
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfSerialPortAEnable(parent_mo_or_dn=obj,
-                            vp_serial_port_a_enable=vp_serial_port_a_enable)
+        mo = BiosVfSerialPortAEnable(
+            parent_mo_or_dn=obj,
+            vp_serial_port_a_enable=vp_serial_port_a_enable)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -182,12 +194,12 @@ def bios_serial_port(handle, name, parent_org_dn,
 
 
 def bios_console_redirection(handle, name, parent_org_dn,
-         vp_baud_rate="platform-default",
-         vp_console_redirection="platform-default",
-         vp_flow_control="platform-default",
-         vp_legacy_os_redirection="platform-default",
-         vp_putty_key_pad="platform-default",
-         vp_terminal_type="platform-default"):
+                             vp_baud_rate="platform-default",
+                             vp_console_redirection="platform-default",
+                             vp_flow_control="platform-default",
+                             vp_legacy_os_redirection="platform-default",
+                             vp_putty_key_pad="platform-default",
+                             vp_terminal_type="platform-default"):
     """
     This method configures console option of Bios Policy.
 
@@ -218,10 +230,12 @@ def bios_console_redirection(handle, name, parent_org_dn,
 
     from ucsmsdk.mometa.bios.BiosVfConsoleRedirection import \
         BiosVfConsoleRedirection
+
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfConsoleRedirection(parent_mo_or_dn=obj,
+        mo = BiosVfConsoleRedirection(
+            parent_mo_or_dn=obj,
             vp_baud_rate=vp_baud_rate,
             vp_console_redirection=vp_console_redirection,
             vp_flow_control=vp_flow_control,
@@ -234,8 +248,9 @@ def bios_console_redirection(handle, name, parent_org_dn,
     else:
         raise ValueError("Bios policy '%s' not found." % profile_dn)
 
+
 def bios_conf_quiet_boot(handle, name, parent_org_dn,
-                              vp_quiet_boot="platform-default"):
+                         vp_quiet_boot="platform-default"):
     """
     This method configures quite boot option of Bios Policy.
 
@@ -294,11 +309,12 @@ def bios_conf_error_pause(handle, name, parent_org_dn,
     """
 
     from ucsmsdk.mometa.bios.BiosVfPOSTErrorPause import BiosVfPOSTErrorPause
+
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfPOSTErrorPause(parent_mo_or_dn=obj,
-                              vp_post_error_pause=vp_post_error_pause)
+        mo = BiosVfPOSTErrorPause(
+            parent_mo_or_dn=obj, vp_post_error_pause=vp_post_error_pause)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -328,14 +344,16 @@ def bios_conf_power_loss(handle, name, parent_org_dn,
                             parent_dn="org-root/org-sample",
                             vp_resume_on_ac_power_loss="enabled")
     """
-    
+
     from ucsmsdk.mometa.bios.BiosVfResumeOnACPowerLoss import \
         BiosVfResumeOnACPowerLoss
+
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfResumeOnACPowerLoss(parent_mo_or_dn=obj,
-                        vp_resume_on_ac_power_loss=vp_resume_on_ac_power_loss)
+        mo = BiosVfResumeOnACPowerLoss(
+            parent_mo_or_dn=obj,
+            vp_resume_on_ac_power_loss=vp_resume_on_ac_power_loss)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -365,24 +383,25 @@ def bios_conf_front_panel_lockout(handle, name, parent_org_dn,
                                     parent_dn="org-root/org-sample",
                                     vp_front_panel_lockout="enabled")
     """
-    
+
     from ucsmsdk.mometa.bios.BiosVfFrontPanelLockout import \
         BiosVfFrontPanelLockout
 
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfFrontPanelLockout(parent_mo_or_dn=obj,
-                                vp_front_panel_lockout=vp_front_panel_lockout)
+        mo = BiosVfFrontPanelLockout(
+            parent_mo_or_dn=obj,
+            vp_front_panel_lockout=vp_front_panel_lockout)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
     else:
         raise ValueError("Bios policy '%s' not found." % profile_dn)
 
+
 def bios_conf_device_name_control(handle, name, parent_org_dn,
                                   vp_cdn_control="platform-default"):
-                                  
     """
     This method configures front lockout option of Bios Policy.
 
@@ -403,15 +422,15 @@ def bios_conf_device_name_control(handle, name, parent_org_dn,
                                     parent_dn="org-root/org-sample",
                                     vp_cdn_control="enabled")
     """
-    
+
     from ucsmsdk.mometa.bios.BiosVfConsistentDeviceNameControl import \
-       BiosVfConsistentDeviceNameControl
+        BiosVfConsistentDeviceNameControl
 
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfConsistentDeviceNameControl(parent_mo_or_dn=obj,
-                                               vp_cdn_control=vp_cdn_control)
+        mo = BiosVfConsistentDeviceNameControl(
+            parent_mo_or_dn=obj, vp_cdn_control=vp_cdn_control)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -441,15 +460,16 @@ def bios_conf_turbo_boost(handle, name, parent_org_dn,
                                     parent_dn="org-root/org-sample",
                                     vp_intel_turbo_boost_tech="enabled")
     """
-    
-    from ucsmsdk.mometa.bios.BiosVfIntelTurboBoostTech import\
+
+    from ucsmsdk.mometa.bios.BiosVfIntelTurboBoostTech import \
         BiosVfIntelTurboBoostTech
 
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfIntelTurboBoostTech(parent_mo_or_dn=obj,
-                        vp_intel_turbo_boost_tech=vp_intel_turbo_boost_tech)
+        mo = BiosVfIntelTurboBoostTech(
+            parent_mo_or_dn=obj,
+            vp_intel_turbo_boost_tech=vp_intel_turbo_boost_tech)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -457,10 +477,9 @@ def bios_conf_turbo_boost(handle, name, parent_org_dn,
         raise ValueError("Bios policy '%s' not found." % profile_dn)
 
 
-def bios_conf_intel_speed_step(handle, name, parent_org_dn,
-                               vp_enhanced_intel_speed_step_tech=
-                               "platform-default"):
-                               
+def bios_conf_intel_speed_step(
+        handle, name, parent_org_dn,
+        vp_enhanced_intel_speed_step_tech="platform-default"):
     """
     This method configures intel speed option of Bios Policy.
 
@@ -489,16 +508,19 @@ def bios_conf_intel_speed_step(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfEnhancedIntelSpeedStepTech(parent_mo_or_dn=obj,
-          vp_enhanced_intel_speed_step_tech=vp_enhanced_intel_speed_step_tech)
+        mo = BiosVfEnhancedIntelSpeedStepTech(
+            parent_mo_or_dn=obj,
+            vp_enhanced_intel_speed_step_tech=
+                vp_enhanced_intel_speed_step_tech)
         handle.add_mo(mo, True)
         handle.commit()
     else:
         raise ValueError("Bios policy '%s' not found." % profile_dn)
 
 
-def bios_conf_hyper_threading(handle, name, parent_org_dn,
-                            vp_intel_hyper_threading_tech="platform-default"):
+def bios_conf_hyper_threading(
+        handle, name, parent_org_dn,
+        vp_intel_hyper_threading_tech="platform-default"):
     """
     This method configures hyper threading option of Bios Policy.
 
@@ -506,7 +528,8 @@ def bios_conf_hyper_threading(handle, name, parent_org_dn,
         handle (UcsHandle)
         parent_org_dn (string): Dn of parent Org.
         name (string): Name of Bios policy.
-        vp_intel_hyper_threading_tech : "platform-default","disabled", "enabled"
+        vp_intel_hyper_threading_tech : "platform-default","disabled",
+                                        "enabled"
 
     Returns:
         BiosVfIntelHyperThreadingTech: Managed Object
@@ -526,8 +549,9 @@ def bios_conf_hyper_threading(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfIntelHyperThreadingTech(parent_mo_or_dn=obj,
-                vp_intel_hyper_threading_tech=vp_intel_hyper_threading_tech)
+        mo = BiosVfIntelHyperThreadingTech(
+            parent_mo_or_dn=obj,
+            vp_intel_hyper_threading_tech=vp_intel_hyper_threading_tech)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -535,8 +559,9 @@ def bios_conf_hyper_threading(handle, name, parent_org_dn,
         raise ValueError("Bios policy '%s' not found." % profile_dn)
 
 
-def bios_conf_core_multi_processing(handle, name, parent_org_dn,
-                                vp_core_multi_processing="platform-default"):
+def bios_conf_core_multi_processing(
+        handle, name, parent_org_dn,
+        vp_core_multi_processing="platform-default"):
     """
     This method configures hyper threading option of Bios Policy.
 
@@ -564,9 +589,9 @@ def bios_conf_core_multi_processing(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfCoreMultiProcessing(parent_mo_or_dn=obj,
-                                       vp_core_multi_processing=
-                                       vp_core_multi_processing)
+        mo = BiosVfCoreMultiProcessing(
+            parent_mo_or_dn=obj,
+            vp_core_multi_processing=vp_core_multi_processing)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -597,14 +622,14 @@ def bios_conf_disable_bit(handle, name, parent_org_dn,
                             vp_execute_disable_bit="enabled")
     """
 
-    from ucsmsdk.mometa.bios.BiosVfExecuteDisableBit import\
+    from ucsmsdk.mometa.bios.BiosVfExecuteDisableBit import \
         BiosVfExecuteDisableBit
 
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfExecuteDisableBit(parent_mo_or_dn=obj,
-                                vp_execute_disable_bit=vp_execute_disable_bit)
+        mo = BiosVfExecuteDisableBit(
+            parent_mo_or_dn=obj, vp_execute_disable_bit=vp_execute_disable_bit)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -612,8 +637,9 @@ def bios_conf_disable_bit(handle, name, parent_org_dn,
         raise ValueError("Bios policy '%s' not found." % profile_dn)
 
 
-def bios_conf_virtual_tech(handle, name, parent_org_dn,
-                    vp_intel_virtualization_technology="platform-default"):
+def bios_conf_virtual_tech(
+        handle, name, parent_org_dn,
+        vp_intel_virtualization_technology="platform-default"):
     """
     This method configures virtual tech option of Bios Policy.
 
@@ -642,8 +668,10 @@ def bios_conf_virtual_tech(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfIntelVirtualizationTechnology(parent_mo_or_dn=obj,
-         vp_intel_virtualization_technology=vp_intel_virtualization_technology)
+        mo = BiosVfIntelVirtualizationTechnology(
+            parent_mo_or_dn=obj,
+            vp_intel_virtualization_technology=
+                vp_intel_virtualization_technology)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -651,12 +679,12 @@ def bios_conf_virtual_tech(handle, name, parent_org_dn,
         raise ValueError("Bios policy '%s' not found." % profile_dn)
 
 
-def bios_conf_processor_prefetch(handle, name, parent_org_dn,
-                                 vp_dcuip_prefetcher="platform-default",
-                                 vp_adjacent_cache_line_prefetcher=
-                                 "platform-default",
-                                 vp_hardware_prefetcher="platform-default",
-                                 vp_dcu_streamer_prefetch="platform-default"):
+def bios_conf_processor_prefetch(
+        handle, name, parent_org_dn,
+        vp_dcuip_prefetcher="platform-default",
+        vp_adjacent_cache_line_prefetcher="platform-default",
+        vp_hardware_prefetcher="platform-default",
+        vp_dcu_streamer_prefetch="platform-default"):
     """
     This method configures processor pre-fetch option of Bios Policy.
 
@@ -689,11 +717,13 @@ def bios_conf_processor_prefetch(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfProcessorPrefetchConfig(parent_mo_or_dn=obj,
-           vp_dcuip_prefetcher=vp_dcuip_prefetcher,
-           vp_adjacent_cache_line_prefetcher=vp_adjacent_cache_line_prefetcher,
-           vp_hardware_prefetcher=vp_hardware_prefetcher,
-           vp_dcu_streamer_prefetch=vp_dcu_streamer_prefetch)
+        mo = BiosVfProcessorPrefetchConfig(
+            parent_mo_or_dn=obj,
+            vp_dcuip_prefetcher=vp_dcuip_prefetcher,
+            vp_adjacent_cache_line_prefetcher=
+                vp_adjacent_cache_line_prefetcher,
+            vp_hardware_prefetcher=vp_hardware_prefetcher,
+            vp_dcu_streamer_prefetch=vp_dcu_streamer_prefetch)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -726,12 +756,13 @@ def bios_conf_direct_cache_access(handle, name, parent_org_dn,
 
     from ucsmsdk.mometa.bios.BiosVfDirectCacheAccess import \
         BiosVfDirectCacheAccess
+
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfDirectCacheAccess(parent_mo_or_dn=obj,
-                                     vp_direct_cache_access=
-                                     vp_direct_cache_access)
+        mo = BiosVfDirectCacheAccess(
+            parent_mo_or_dn=obj,
+            vp_direct_cache_access=vp_direct_cache_access)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -763,6 +794,7 @@ def bios_conf_processor_c_state(handle, name, parent_org_dn,
     """
 
     from ucsmsdk.mometa.bios.BiosVfProcessorCState import BiosVfProcessorCState
+
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
@@ -842,9 +874,9 @@ def bios_conf_processor_c3_report(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfProcessorC3Report(parent_mo_or_dn=obj,
-                                     vp_processor_c3_report=
-                                     vp_processor_c3_report)
+        mo = BiosVfProcessorC3Report(
+            parent_mo_or_dn=obj,
+            vp_processor_c3_report=vp_processor_c3_report)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -881,8 +913,8 @@ def bios_conf_processor_c6_report(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfProcessorC6Report(parent_mo_or_dn=obj,
-                                vp_processor_c6_report=vp_processor_c6_report)
+        mo = BiosVfProcessorC6Report(
+            parent_mo_or_dn=obj, vp_processor_c6_report=vp_processor_c6_report)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -919,8 +951,8 @@ def bios_conf_processor_c7_report(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfProcessorC7Report(parent_mo_or_dn=obj,
-                                vp_processor_c7_report=vp_processor_c7_report)
+        mo = BiosVfProcessorC7Report(
+            parent_mo_or_dn=obj, vp_processor_c7_report=vp_processor_c7_report)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -1072,11 +1104,10 @@ def bios_conf_processor_energy(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfProcessorEnergyConfiguration(parent_mo_or_dn=obj,
-                                                vp_power_technology=
-                                                vp_power_technology,
-                                                vp_energy_performance=
-                                                vp_energy_performance)
+        mo = BiosVfProcessorEnergyConfiguration(
+            parent_mo_or_dn=obj,
+            vp_power_technology=vp_power_technology,
+            vp_energy_performance=vp_energy_performance)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -1084,9 +1115,9 @@ def bios_conf_processor_energy(handle, name, parent_org_dn,
         raise ValueError("Bios policy '%s' not found." % profile_dn)
 
 
-def bios_conf_frequency_floor_override(handle, name, parent_org_dn,
-                                       vp_frequency_floor_override=
-                                       "platform-default"):
+def bios_conf_frequency_floor_override(
+        handle, name, parent_org_dn,
+        vp_frequency_floor_override="platform-default"):
     """
     This method configures frequency override options of Bios Policy.
 
@@ -1110,12 +1141,13 @@ def bios_conf_frequency_floor_override(handle, name, parent_org_dn,
 
     from ucsmsdk.mometa.bios.BiosVfFrequencyFloorOverride import \
         BiosVfFrequencyFloorOverride
+
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfFrequencyFloorOverride(parent_mo_or_dn=obj,
-                                         vp_frequency_floor_override=
-                                         vp_frequency_floor_override)
+        mo = BiosVfFrequencyFloorOverride(
+            parent_mo_or_dn=obj,
+            vp_frequency_floor_override=vp_frequency_floor_override)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -1153,8 +1185,9 @@ def bios_conf_pstate_coordination(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfPSTATECoordination(parent_mo_or_dn=obj,
-                                vp_pstate_coordination=vp_pstate_coordination)
+        mo = BiosVfPSTATECoordination(
+            parent_mo_or_dn=obj,
+            vp_pstate_coordination=vp_pstate_coordination)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -1191,8 +1224,9 @@ def bios_conf_dram_clock(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfDRAMClockThrottling(parent_mo_or_dn=obj,
-                            vp_dram_clock_throttling=vp_dram_clock_throttling)
+        mo = BiosVfDRAMClockThrottling(
+            parent_mo_or_dn=obj,
+            vp_dram_clock_throttling=vp_dram_clock_throttling)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -1233,10 +1267,11 @@ def bios_conf_inter_leave(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfInterleaveConfiguration(parent_mo_or_dn=obj,
-                               vp_channel_interleaving=vp_channel_interleaving,
-                               vp_rank_interleaving=vp_rank_interleaving,
-                               vp_memory_interleaving=vp_memory_interleaving)
+        mo = BiosVfInterleaveConfiguration(
+            parent_mo_or_dn=obj,
+            vp_channel_interleaving=vp_channel_interleaving,
+            vp_rank_interleaving=vp_rank_interleaving,
+            vp_memory_interleaving=vp_memory_interleaving)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -1307,6 +1342,7 @@ def bios_conf_altitude(handle, name, parent_org_dn,
                     vp_altitude="3000-m")
     """
     from ucsmsdk.mometa.bios.BiosVfAltitude import BiosVfAltitude
+
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
@@ -1318,12 +1354,13 @@ def bios_conf_altitude(handle, name, parent_org_dn,
         raise ValueError("Bios policy '%s' not found." % profile_dn)
 
 
-def bios_conf_intel_directed_io(handle, name, parent_org_dn,
-                    vp_intel_vtd_pass_through_dma_support="platform-default",
-                    vp_intel_vtdats_support="platform-default",
-                    vp_intel_vtd_interrupt_remapping="platform-default",
-                    vp_intel_vtd_coherency_support="platform-default",
-                    vp_intel_vt_for_directed_io="platform-default"):
+def bios_conf_intel_directed_io(
+        handle, name, parent_org_dn,
+        vp_intel_vtd_pass_through_dma_support="platform-default",
+        vp_intel_vtdats_support="platform-default",
+        vp_intel_vtd_interrupt_remapping="platform-default",
+        vp_intel_vtd_coherency_support="platform-default",
+        vp_intel_vt_for_directed_io="platform-default"):
     """
     This method configures Intel Directed I/O options of Bios Policy.
 
@@ -1354,10 +1391,12 @@ def bios_conf_intel_directed_io(handle, name, parent_org_dn,
 
     from ucsmsdk.mometa.bios.BiosVfIntelVTForDirectedIO import \
         BiosVfIntelVTForDirectedIO
+
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfIntelVTForDirectedIO(parent_mo_or_dn=obj,
+        mo = BiosVfIntelVTForDirectedIO(
+            parent_mo_or_dn=obj,
             vp_intel_vtd_pass_through_dma_support=
                 vp_intel_vtd_pass_through_dma_support,
             vp_intel_vtdats_support=vp_intel_vtdats_support,
@@ -1371,8 +1410,9 @@ def bios_conf_intel_directed_io(handle, name, parent_org_dn,
         raise ValueError("Bios policy '%s' not found." % profile_dn)
 
 
-def bios_conf_ras_memory(handle, name, parent_org_dn,
-                        vp_select_memory_ras_configuration="platform-default"):
+def bios_conf_ras_memory(
+        handle, name, parent_org_dn,
+        vp_select_memory_ras_configuration="platform-default"):
     """
     This method configures RAS memory options of Bios Policy.
 
@@ -1396,11 +1436,14 @@ def bios_conf_ras_memory(handle, name, parent_org_dn,
 
     from ucsmsdk.mometa.bios.BiosVfSelectMemoryRASConfiguration import \
         BiosVfSelectMemoryRASConfiguration
+
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfSelectMemoryRASConfiguration(parent_mo_or_dn=obj,
-         vp_select_memory_ras_configuration=vp_select_memory_ras_configuration)
+        mo = BiosVfSelectMemoryRASConfiguration(
+            parent_mo_or_dn=obj,
+            vp_select_memory_ras_configuration=
+                vp_select_memory_ras_configuration)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -1432,6 +1475,7 @@ def bios_conf_numa_optimized(handle, name, parent_org_dn,
     """
 
     from ucsmsdk.mometa.bios.BiosVfNUMAOptimized import BiosVfNUMAOptimized
+
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
@@ -1468,6 +1512,7 @@ def bios_conf_ddr_mode(handle, name, parent_org_dn,
     """
 
     from ucsmsdk.mometa.bios.BiosVfLvDIMMSupport import BiosVfLvDIMMSupport
+
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
@@ -1546,8 +1591,9 @@ def bios_conf_serial_port_a(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfSerialPortAEnable(parent_mo_or_dn=obj,
-                            vp_serial_port_a_enable=vp_serial_port_a_enable)
+        mo = BiosVfSerialPortAEnable(
+            parent_mo_or_dn=obj,
+            vp_serial_port_a_enable=vp_serial_port_a_enable)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -1586,9 +1632,10 @@ def bios_conf_usb_boot(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfUSBBootConfig(parent_mo_or_dn=obj,
-                     vp_legacy_usb_support=vp_legacy_usb_support,
-                     vp_make_device_non_bootable=vp_make_device_non_bootable)
+        mo = BiosVfUSBBootConfig(
+            parent_mo_or_dn=obj,
+            vp_legacy_usb_support=vp_legacy_usb_support,
+            vp_make_device_non_bootable=vp_make_device_non_bootable)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -1619,14 +1666,15 @@ def bios_conf_usb_idle_power(handle, name, parent_org_dn,
                     vp_usb_idle_power_optimizing="high-performance")
     """
 
-    from ucsmsdk.mometa.bios.BiosVfUSBSystemIdlePowerOptimizingSetting import\
+    from ucsmsdk.mometa.bios.BiosVfUSBSystemIdlePowerOptimizingSetting import \
         BiosVfUSBSystemIdlePowerOptimizingSetting
 
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfUSBSystemIdlePowerOptimizingSetting(parent_mo_or_dn=obj,
-                    vp_usb_idle_power_optimizing=vp_usb_idle_power_optimizing)
+        mo = BiosVfUSBSystemIdlePowerOptimizingSetting(
+            parent_mo_or_dn=obj,
+            vp_usb_idle_power_optimizing=vp_usb_idle_power_optimizing)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -1663,8 +1711,9 @@ def bios_conf_usb_front_panel_lock(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfUSBFrontPanelAccessLock(parent_mo_or_dn=obj,
-                            vp_usb_front_panel_lock=vp_usb_front_panel_lock)
+        mo = BiosVfUSBFrontPanelAccessLock(
+            parent_mo_or_dn=obj,
+            vp_usb_front_panel_lock=vp_usb_front_panel_lock)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -1705,7 +1754,7 @@ def bios_conf_usb_port(handle, name, parent_org_dn,
         bios_conf_usb_port(handle,name="sample_bios",
                     parent_dn="org-root/org-sample",
                     vp_usb_port_front="enabled")
-    """    
+    """
 
     from ucsmsdk.mometa.bios.BiosVfUSBPortConfiguration import \
         BiosVfUSBPortConfiguration
@@ -1713,14 +1762,15 @@ def bios_conf_usb_port(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfUSBPortConfiguration(parent_mo_or_dn=obj,
-                                vp_usb_port_front=vp_usb_port_front,
-                                vp_usb_port_v_media=vp_usb_port_v_media,
-                                vp_usb_port_kvm=vp_usb_port_kvm,
-                                vp_port6064_emulation=vp_port6064_emulation,
-                                vp_usb_port_rear=vp_usb_port_rear,
-                                vp_usb_port_internal=vp_usb_port_internal,
-                                vp_usb_port_sd_card=vp_usb_port_sd_card)
+        mo = BiosVfUSBPortConfiguration(
+            parent_mo_or_dn=obj,
+            vp_usb_port_front=vp_usb_port_front,
+            vp_usb_port_v_media=vp_usb_port_v_media,
+            vp_usb_port_kvm=vp_usb_port_kvm,
+            vp_port6064_emulation=vp_port6064_emulation,
+            vp_usb_port_rear=vp_usb_port_rear,
+            vp_usb_port_internal=vp_usb_port_internal,
+            vp_usb_port_sd_card=vp_usb_port_sd_card)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -1796,9 +1846,10 @@ def bios_conf_usb_vf(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfUSBConfiguration(parent_mo_or_dn=obj,
-                                vp_xhci_mode=vp_xhci_mode,
-                                vp_legacy_usb_support=vp_legacy_usb_support)
+        mo = BiosVfUSBConfiguration(
+            parent_mo_or_dn=obj,
+            vp_xhci_mode=vp_xhci_mode,
+            vp_legacy_usb_support=vp_legacy_usb_support)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -1806,8 +1857,9 @@ def bios_conf_usb_vf(handle, name, parent_org_dn,
         raise ValueError("Bios policy '%s' not found." % profile_dn)
 
 
-def bios_conf_max_mem_below_4gb(handle, name, parent_org_dn,
-                                vp_maximum_memory_below4_gb="platform-default"):
+def bios_conf_max_mem_below_4gb(
+        handle, name, parent_org_dn,
+        vp_maximum_memory_below4_gb="platform-default"):
     """
     This method configures Max memory below 4gb option in Bios Policy.
 
@@ -1835,8 +1887,9 @@ def bios_conf_max_mem_below_4gb(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfMaximumMemoryBelow4GB(parent_mo_or_dn=obj,
-                    vp_maximum_memory_below4_gb=vp_maximum_memory_below4_gb)
+        mo = BiosVfMaximumMemoryBelow4GB(
+            parent_mo_or_dn=obj,
+            vp_maximum_memory_below4_gb=vp_maximum_memory_below4_gb)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -1874,8 +1927,9 @@ def bios_conf_mapped_mem_io(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfMemoryMappedIOAbove4GB(parent_mo_or_dn=obj,
-                vp_memory_mapped_io_above4_gb=vp_memory_mapped_io_above4_gb)
+        mo = BiosVfMemoryMappedIOAbove4GB(
+            parent_mo_or_dn=obj,
+            vp_memory_mapped_io_above4_gb=vp_memory_mapped_io_above4_gb)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -1920,8 +1974,9 @@ def bios_conf_vga_priority(handle, name, parent_org_dn,
         raise ValueError("Bios policy '%s' not found." % profile_dn)
 
 
-def bios_conf_qpi_link_frequency(handle, name, parent_org_dn,
-                            vp_qpi_link_frequency_select="platform-default"):
+def bios_conf_qpi_link_frequency(
+        handle, name, parent_org_dn,
+        vp_qpi_link_frequency_select="platform-default"):
     """
     This method configures QPI link option in Bios Policy.
 
@@ -1949,8 +2004,9 @@ def bios_conf_qpi_link_frequency(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfQPILinkFrequencySelect(parent_mo_or_dn=obj,
-                    vp_qpi_link_frequency_select=vp_qpi_link_frequency_select)
+        mo = BiosVfQPILinkFrequencySelect(
+            parent_mo_or_dn=obj,
+            vp_qpi_link_frequency_select=vp_qpi_link_frequency_select)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -1995,22 +2051,23 @@ def bios_conf_qpi_snoop_mode(handle, name, parent_org_dn,
         raise ValueError("Bios policy '%s' not found." % profile_dn)
 
 
-def bios_conf_rom_slot_option(handle, name, parent_org_dn,
-                          vp_slot3_state="platform-default",
-                          vp_slot4_state="platform-default",
-                          vp_slot1_state="platform-default",
-                          vp_pc_ie_slot_sas_option_rom="platform-default",
-                          vp_pc_ie_slot_hba_option_rom="platform-default",
-                          vp_slot6_state="platform-default",
-                          vp_slot9_state="platform-default",
-                          vp_pc_ie_slot_n2_option_rom="platform-default",
-                          vp_slot7_state="platform-default",
-                          vp_pc_ie_slot_n1_option_rom="platform-default",
-                          vp_slot8_state="platform-default",
-                          vp_slot2_state="platform-default",
-                          vp_slot5_state="platform-default",
-                          vp_slot10_state="platform-default",
-                          vp_pc_ie_slot_mlom_option_rom="platform-default"):
+def bios_conf_rom_slot_option(
+        handle, name, parent_org_dn,
+        vp_slot3_state="platform-default",
+        vp_slot4_state="platform-default",
+        vp_slot1_state="platform-default",
+        vp_pc_ie_slot_sas_option_rom="platform-default",
+        vp_pc_ie_slot_hba_option_rom="platform-default",
+        vp_slot6_state="platform-default",
+        vp_slot9_state="platform-default",
+        vp_pc_ie_slot_n2_option_rom="platform-default",
+        vp_slot7_state="platform-default",
+        vp_pc_ie_slot_n1_option_rom="platform-default",
+        vp_slot8_state="platform-default",
+        vp_slot2_state="platform-default",
+        vp_slot5_state="platform-default",
+        vp_slot10_state="platform-default",
+        vp_pc_ie_slot_mlom_option_rom="platform-default"):
     """
     This method configures BiosVfPCISlotOptionROMEnable in Bios Policy.
 
@@ -2037,22 +2094,23 @@ def bios_conf_rom_slot_option(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfPCISlotOptionROMEnable(parent_mo_or_dn=obj,
-                  vp_slot3_state=vp_slot3_state,
-                  vp_slot4_state=vp_slot4_state,
-                  vp_slot1_state=vp_slot1_state,
-                  vp_pc_ie_slot_sas_option_rom=vp_pc_ie_slot_sas_option_rom,
-                  vp_pc_ie_slot_hba_option_rom=vp_pc_ie_slot_hba_option_rom,
-                  vp_slot6_state=vp_slot6_state,
-                  vp_slot9_state=vp_slot9_state,
-                  vp_pc_ie_slot_n2_option_rom=vp_pc_ie_slot_n2_option_rom,
-                  vp_slot7_state=vp_slot7_state,
-                  vp_pc_ie_slot_n1_option_rom=vp_pc_ie_slot_n1_option_rom,
-                  vp_slot8_state=vp_slot8_state,
-                  vp_slot2_state=vp_slot2_state,
-                  vp_slot5_state=vp_slot5_state,
-                  vp_slot10_state=vp_slot10_state,
-                  vp_pc_ie_slot_mlom_option_rom=vp_pc_ie_slot_mlom_option_rom)
+        mo = BiosVfPCISlotOptionROMEnable(
+            parent_mo_or_dn=obj,
+            vp_slot3_state=vp_slot3_state,
+            vp_slot4_state=vp_slot4_state,
+            vp_slot1_state=vp_slot1_state,
+            vp_pc_ie_slot_sas_option_rom=vp_pc_ie_slot_sas_option_rom,
+            vp_pc_ie_slot_hba_option_rom=vp_pc_ie_slot_hba_option_rom,
+            vp_slot6_state=vp_slot6_state,
+            vp_slot9_state=vp_slot9_state,
+            vp_pc_ie_slot_n2_option_rom=vp_pc_ie_slot_n2_option_rom,
+            vp_slot7_state=vp_slot7_state,
+            vp_pc_ie_slot_n1_option_rom=vp_pc_ie_slot_n1_option_rom,
+            vp_slot8_state=vp_slot8_state,
+            vp_slot2_state=vp_slot2_state,
+            vp_slot5_state=vp_slot5_state,
+            vp_slot10_state=vp_slot10_state,
+            vp_pc_ie_slot_mlom_option_rom=vp_pc_ie_slot_mlom_option_rom)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -2060,9 +2118,9 @@ def bios_conf_rom_slot_option(handle, name, parent_org_dn,
         raise ValueError("Bios policy '%s' not found." % profile_dn)
 
 
-def bios_conf_trusted_platform(handle, name, parent_org_dn,
-                               vp_trusted_platform_module_support=
-                               "platform-default"):
+def bios_conf_trusted_platform(
+        handle, name, parent_org_dn,
+        vp_trusted_platform_module_support="platform-default"):
     """
     This method configures Trusted platform option in Bios Policy.
 
@@ -2090,8 +2148,10 @@ def bios_conf_trusted_platform(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfTrustedPlatformModule(parent_mo_or_dn=obj,
-         vp_trusted_platform_module_support=vp_trusted_platform_module_support)
+        mo = BiosVfTrustedPlatformModule(
+            parent_mo_or_dn=obj,
+            vp_trusted_platform_module_support=
+                vp_trusted_platform_module_support)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -2099,8 +2159,9 @@ def bios_conf_trusted_platform(handle, name, parent_org_dn,
         raise ValueError("Bios policy '%s' not found." % profile_dn)
 
 
-def bios_conf_trusted_execution(handle, name, parent_org_dn,
-            vp_intel_trusted_execution_technology_support="platform-default"):
+def bios_conf_trusted_execution(
+        handle, name, parent_org_dn,
+        vp_intel_trusted_execution_technology_support="platform-default"):
     """
     This method configures Trusted execution option in Bios Policy.
 
@@ -2128,7 +2189,8 @@ def bios_conf_trusted_execution(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfIntelTrustedExecutionTechnology(parent_mo_or_dn=obj,
+        mo = BiosVfIntelTrustedExecutionTechnology(
+            parent_mo_or_dn=obj,
             vp_intel_trusted_execution_technology_support=
                 vp_intel_trusted_execution_technology_support)
         handle.add_mo(mo, True)
@@ -2216,8 +2278,9 @@ def bios_conf_intel_sas_raid(handle, name, parent_org_dn,
         raise ValueError("Bios policy '%s' not found." % profile_dn)
 
 
-def bios_conf_onboard_scu__storage(handle, name, parent_org_dn,
-                            vp_onboard_scu_storage_support="platform-default"):
+def bios_conf_onboard_scu__storage(
+        handle, name, parent_org_dn,
+        vp_onboard_scu_storage_support="platform-default"):
     """
     This method configures SAS Raid option in Bios Policy.
 
@@ -2244,8 +2307,9 @@ def bios_conf_onboard_scu__storage(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfOnboardStorage(parent_mo_or_dn=obj,
-                vp_onboard_scu_storage_support=vp_onboard_scu_storage_support)
+        mo = BiosVfOnboardStorage(
+            parent_mo_or_dn=obj,
+            vp_onboard_scu_storage_support=vp_onboard_scu_storage_support)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -2327,8 +2391,9 @@ def bios_conf_assert_nmi_perr(handle, name, parent_org_dn,
         raise ValueError("Bios policy '%s' not found." % profile_dn)
 
 
-def bios_conf_boot_watchdog_timer(handle, name, parent_org_dn,
-                                vp_os_boot_watchdog_timer="platform-default"):
+def bios_conf_boot_watchdog_timer(
+        handle, name, parent_org_dn,
+        vp_os_boot_watchdog_timer="platform-default"):
     """
     This method configures watchdog timer option in Bios Policy.
 
@@ -2356,8 +2421,9 @@ def bios_conf_boot_watchdog_timer(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfOSBootWatchdogTimer(parent_mo_or_dn=obj,
-                        vp_os_boot_watchdog_timer=vp_os_boot_watchdog_timer)
+        mo = BiosVfOSBootWatchdogTimer(
+            parent_mo_or_dn=obj,
+            vp_os_boot_watchdog_timer=vp_os_boot_watchdog_timer)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -2365,9 +2431,9 @@ def bios_conf_boot_watchdog_timer(handle, name, parent_org_dn,
         raise ValueError("Bios policy '%s' not found." % profile_dn)
 
 
-def bios_conf_boot_watchdog_timer_policy(handle, name, parent_org_dn,
-                                         vp_os_boot_watchdog_timer_policy=
-                                         "platform-default"):
+def bios_conf_boot_watchdog_timer_policy(
+        handle, name, parent_org_dn,
+        vp_os_boot_watchdog_timer_policy="platform-default"):
     """
     This method configures watchdog timer policy option in Bios Policy.
 
@@ -2395,7 +2461,8 @@ def bios_conf_boot_watchdog_timer_policy(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfOSBootWatchdogTimerPolicy(parent_mo_or_dn=obj,
+        mo = BiosVfOSBootWatchdogTimerPolicy(
+            parent_mo_or_dn=obj,
             vp_os_boot_watchdog_timer_policy=vp_os_boot_watchdog_timer_policy)
         handle.add_mo(mo, True)
         handle.commit()
@@ -2404,9 +2471,9 @@ def bios_conf_boot_watchdog_timer_policy(handle, name, parent_org_dn,
         raise ValueError("Bios policy '%s' not found." % profile_dn)
 
 
-def bios_conf_boot_watchdog_timer_timeout(handle, name, parent_org_dn,
-                                          vp_os_boot_watchdog_timer_timeout=
-                                          "platform-default"):
+def bios_conf_boot_watchdog_timer_timeout(
+        handle, name, parent_org_dn,
+        vp_os_boot_watchdog_timer_timeout="platform-default"):
     """
     This method configures watchdog timer policy option in Bios Policy.
 
@@ -2434,8 +2501,10 @@ def bios_conf_boot_watchdog_timer_timeout(handle, name, parent_org_dn,
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
-        mo = BiosVfOSBootWatchdogTimerTimeout(parent_mo_or_dn=obj,
-           vp_os_boot_watchdog_timer_timeout=vp_os_boot_watchdog_timer_timeout)
+        mo = BiosVfOSBootWatchdogTimerTimeout(
+            parent_mo_or_dn=obj,
+            vp_os_boot_watchdog_timer_timeout=
+                vp_os_boot_watchdog_timer_timeout)
         handle.add_mo(mo, True)
         handle.commit()
     else:

@@ -17,7 +17,7 @@ This module contains methods required for creating network control policies.
 
 
 def nw_control_policy_create(handle, name, cdp, mac_register_mode,
-                             uplink_fail_action,forge, lldp_transmit,
+                             uplink_fail_action, forge, lldp_transmit,
                              lldp_receive, descr="", parent_dn="org-root"):
     """
     Creates Network Control Policy
@@ -60,17 +60,17 @@ def nw_control_policy_create(handle, name, cdp, mac_register_mode,
                               cdp=cdp,
                               uplink_fail_action=uplink_fail_action,
                               descr=descr)
-        mo_1 = DpsecMac(parent_mo_or_dn=mo,
-                        forge=forge,
-                        policy_owner="local",
-                        name="",
-                        descr="")
+        DpsecMac(parent_mo_or_dn=mo,
+                 forge=forge,
+                 policy_owner="local",
+                 name="",
+                 descr="")
 
         handle.add_mo(mo, modify_present=True)
         handle.commit()
         return mo
     else:
-        raise ValueError("Org %s is not available" %parent_dn)
+        raise ValueError("Org %s is not available" % parent_dn)
 
 
 def nw_control_policy_delete(handle, name, parent_dn="org-root"):
@@ -103,7 +103,7 @@ def nw_control_policy_delete(handle, name, parent_dn="org-root"):
 
 
 def nw_control_policy_exists(handle, name, cdp=None, mac_register_mode=None,
-                             uplink_fail_action=None,forge=None,
+                             uplink_fail_action=None, forge=None,
                              lldp_transmit=None, lldp_receive=None,
                              descr=None, parent_dn="org-root"):
     """

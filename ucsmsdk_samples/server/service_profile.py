@@ -112,9 +112,10 @@ def sp_template_create(handle, name, type, resolve_remote, descr="",
                   vmedia_policy_name=vmedia_policy_name
                   )
 
-    vnicConnDefMo = VnicConnDef(parent_mo_or_dn=mo,
-                                lan_conn_policy_name=lan_conn_policy_name,
-                                san_conn_policy_name=san_conn_policy_name)
+    vnic_conn_def_mo = VnicConnDef(
+        parent_mo_or_dn=mo,
+        lan_conn_policy_name=lan_conn_policy_name,
+        san_conn_policy_name=san_conn_policy_name)
 
     handle.add_mo(mo, True)
     handle.commit()
@@ -267,7 +268,7 @@ def set_inband_mgmt(handle, sp_dn, vlan_name):
 
     mo = MgmtInterface(parent_mo_or_dn=obj, mode="in-band")
     mo_1 = MgmtVnet(parent_mo_or_dn=mo, name=vlan_name)
-    mo_2 = VnicIpV4MgmtPooledAddr(parent_mo_or_dn=mo1, name="hyperflex")
+    mo_2 = VnicIpV4MgmtPooledAddr(parent_mo_or_dn=mo, name="hyperflex")
 
     handle.add_mo(mo, True)
     handle.commit()
@@ -398,17 +399,18 @@ def sp_create_from_template(handle,
     dn_set = DnSet()
     for num in range(int(name_suffix_starting_number),
                      int(number_of_instance) +
-                             int(name_suffix_starting_number)):
+                     int(name_suffix_starting_number)):
         dn = Dn()
         sp_name = naming_prefix + str(num)
         dn.attr_set("value", sp_name)
         dn_set.child_add(dn)
 
-    elem = ls_instantiate_n_named_template(cookie=handle.cookie,
-                                           dn=sp_template_dn,
-                                           in_error_on_existing=in_error_on_existing,
-                                           in_name_set=dn_set,
-                                           in_target_org=parent_dn)
+    elem = ls_instantiate_n_named_template(
+        cookie=handle.cookie,
+        dn=sp_template_dn,
+        in_error_on_existing=in_error_on_existing,
+        in_name_set=dn_set,
+        in_target_org=parent_dn)
     return handle.process_xml_elem(elem)
 
 
@@ -436,9 +438,10 @@ def sp_delete(handle, sp_name, parent_dn="org-root"):
             sp_delete(handle, org_name="", sp_name="sample_sp")
     """
 
-    mo = handle.query_dn(parent_dn)
+    dn = parent_dn + "/ls-" + sp_name
+    mo = handle.query_dn(dn)
     if not mo:
-        raise ValueError("sp '%s' does not exist" % parent_dn)
+        raise ValueError("sp '%s' does not exist" % dn)
 
     handle.remove_mo(mo)
     handle.commit()

@@ -86,26 +86,23 @@ def vnic_template_create(handle, name, vlans=[], con_policy_type=None,
                               ident_pool_name=ident_pool_name,
                               nw_ctrl_policy_name=nw_ctrl_policy_name)
 
-        handle.add_mo(mo, True)
-        handle.commit()
-
         # TODO: Query to check if connection policy exists
         if con_policy_name:
             if con_policy_type.lower() == "dynamic-vnic":
-                mo_1 = VnicDynamicConPolicyRef(parent_mo_or_dn=mo,
-                                               con_policy_name=con_policy_name)
+                VnicDynamicConPolicyRef(parent_mo_or_dn=mo,
+                                        con_policy_name=con_policy_name)
             elif con_policy_type.lower() == "usnic":
-                mo_1 = VnicUsnicConPolicyRef(parent_mo_or_dn=mo,
-                                             con_policy_name=con_policy_name)
+                VnicUsnicConPolicyRef(parent_mo_or_dn=mo,
+                                      con_policy_name=con_policy_name)
             elif con_policy_type.lower() == "vmq":
-                mo_1 = VnicVmqConPolicyRef(parent_mo_or_dn=mo,
-                                           con_policy_name=con_policy_name)
+                VnicVmqConPolicyRef(parent_mo_or_dn=mo,
+                                    con_policy_name=con_policy_name)
             else:
                 raise ValueError(con_policy_type +
                                  " is not a valid Connection Policy type.")
 
         vlan_mo = []
-        if vlans != None:
+        if vlans is not None:
             for vlan in vlans:
                 # TODO: Query to check if VnicEtherIf exists
                 if len(vlan) != 2:
@@ -154,7 +151,7 @@ def vnic_template_delete(handle, name, parent_dn="org-root"):
         raise ValueError("vNIC Template '%s' is not present" % dn)
 
 
-def vnic_template_exists(handle, name, vlans=None, con_policy_type=None,
+def vnic_template_exists(handle, name, con_policy_type=None,
                          con_policy_name=None, mtu=None, qos_policy_name=None,
                          target=None, ident_pool_name=None,
                          nw_ctrl_policy_name=None, pin_to_group_name=None,
@@ -198,7 +195,7 @@ def vnic_template_exists(handle, name, vlans=None, con_policy_type=None,
 
     dn = parent_dn + '/lan-conn-templ-' + name
     mo = handle.query_dn(dn)
-    #TODO: Compare vlans associated with the vnic template
+    # TODO: Compare vlans associated with the vnic template
     if mo:
         if ((con_policy_type and mo.con_policy_type != con_policy_type) and
             (con_policy_name and mo.con_policy_name != con_policy_name) and

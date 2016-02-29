@@ -297,7 +297,7 @@ def radius_provider_group_add_provider(handle, group_name, name, order,
 
 
 def radius_provider_group_provider_exists(handle, group_name, name, order,
-                                       descr=""):
+                                          descr=""):
     """
     checks if a provider exists under a radius provider group
 
@@ -339,7 +339,7 @@ def radius_provider_group_provider_exists(handle, group_name, name, order,
 
 
 def radius_provider_group_modify_provider(handle, group_name, name,
-                                        order=None, descr=None):
+                                          order=None, descr=None):
     """
     modifies a provider to a radius provider group
 

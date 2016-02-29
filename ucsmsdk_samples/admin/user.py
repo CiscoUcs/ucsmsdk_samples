@@ -17,9 +17,9 @@ This module performs the operation related to user.
 
 
 def user_create(handle, name, first_name, last_name, descr, clear_pwd_history,
-             phone, email, pwd, expires, pwd_life_time, expiration,
-             enc_pwd="", enc_pwd_set="no", account_status="active",
-             role="read-only", role_descr=""):
+                phone, email, pwd, expires, pwd_life_time, expiration,
+                enc_pwd="", enc_pwd_set="no", account_status="active",
+                role="read-only", role_descr=""):
     """
     Creates user and assign role to it.
 
@@ -73,15 +73,15 @@ def user_create(handle, name, first_name, last_name, descr, clear_pwd_history,
                  enc_pwd=enc_pwd,
                  enc_pwd_set=enc_pwd_set,
                  account_status=account_status)
-    role = AaaUserRole(parent_mo_or_dn=user, name=role, descr=role_descr)
+    AaaUserRole(parent_mo_or_dn=mo, name=role, descr=role_descr)
     handle.add_mo(mo, True)
     handle.commit()
     return mo
 
 
 def user_exists(handle, name, first_name, last_name, descr, clear_pwd_history,
-             phone, email, pwd, expires, pwd_life_time, expiration,
-             enc_pwd="", enc_pwd_set="no", account_status="active"):
+                phone, email, pwd, expires, pwd_life_time, expiration,
+                enc_pwd="", enc_pwd_set="no", account_status="active"):
     """
     checks if user exists
 
@@ -121,7 +121,8 @@ def user_exists(handle, name, first_name, last_name, descr, clear_pwd_history,
         if ((first_name and mo.first_name != first_name) and
             (last_name and mo.last_name != last_name) and
             (descr and mo.descr != descr) and
-            (clear_pwd_history and mo.clear_pwd_history != clear_pwd_history) and
+            (clear_pwd_history and
+             mo.clear_pwd_history != clear_pwd_history) and
             (phone and mo.phone != phone) and
             (email and mo.email != email) and
             (pwd and mo.pwd != pwd) and

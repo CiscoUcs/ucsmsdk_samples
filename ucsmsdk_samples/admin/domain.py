@@ -287,6 +287,7 @@ def native_authentication_default(handle, realm=None, session_timeout=None,
     handle.commit()
     return mo
 
+
 def native_authentication_console(handle, realm=None, provider_group=None,
                                   use2_factor=None, name=None, descr=None):
     """

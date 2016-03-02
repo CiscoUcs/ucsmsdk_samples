@@ -82,6 +82,20 @@ def get_firmware_bundles(handle, bundle_type=None):
 
 def get_blade_firmware_version(handle, bundle_version,
                                image_types=['blade-controller']):
+    """
+    Return the image firmware versions given the bundle version
+
+    Args:
+        handle (UcsHandle)
+        bundle_version (string): version
+        image_types (list of string)
+
+    Returns:
+        dict
+
+    Example:
+        get_blade_firmware_version(handle, bundle_version="2.2(6f)")
+    """
 
     bundles = get_firmware_bundles(handle,
                                    bundle_type='b-series-bundle')
@@ -146,7 +160,7 @@ def get_infra_firmware_version(handle, bundle_version,
         dict
 
     Example:
-        get_infra_firmware_version(handle, bundle_version="1.0.1.0")
+        get_infra_firmware_version(handle, bundle_version="2.2(6f)")
     """
 
     bundles = get_firmware_bundles(handle, bundle_type='infrastructure-bundle')
@@ -731,6 +745,23 @@ def firmware_activate_infra(handle, version="2.2(2c)",
 
 
 def _get_blade_firmware_running(handle, blade):
+    """
+    Gets Running Firmware version
+
+    Args:
+        handle (UcsHandle)
+        blade (ComputeBlade): ManagedObject
+
+    Returns:
+        FirmwareRunning: Managed Objects
+
+    Raises:
+        None
+
+    Example:
+        _get_blade_firmware_running(handle, blade)
+    """
+
     mgmt_controllers = handle.query_children(in_mo=blade,
                                              class_id="MgmtController")
 
@@ -760,18 +791,15 @@ def wait_for_blade_activation(handle,
                               timeout=15 * 60):
     """
     Returns True if firmware is already running at the specified version
-    If not running at the desired version, optionally wait until activation
-    has completed and UCS came back online.
+    If not running at the desired version, optionally wait until activation.
 
     Args:
         handle (UcsHandle)
         bundle_version(string): version
-        subject (string): subject
-        image_types (list): image types
-        wait_for_upgrade_completion (bool): True/False
-        acknowledge_reboot (bool): True/False
+        firmware_running_map (dict): {'blade_dn' :
+                                        'FirmwareRunning ManagedObject'}
         timeout (number): timeout in seconds
-        observer (string): observer
+
 
     Returns:
         True/False(bool)
@@ -841,6 +869,8 @@ def firmware_activate_blade(handle, version, require_user_confirmation=True):
     Args:
         handle (UcsHandle)
         version: version
+        require_user_confirmation (bool): by default True. If False needs no
+                                          user intervention.
 
     Returns:
         None
@@ -1016,6 +1046,8 @@ def firmware_auto_install(handle, version, image_dir, infra_only=False,
         image_dir (string): image directory
         infra_only (bool): by default False. If set to True, will update
                           firmware of FI only
+        require_user_confirmation (bool): by default True. If False needs no
+                                          user intervention.
 
     Returns:
         None

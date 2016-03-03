@@ -12,6 +12,7 @@
 # limitations under the License.
 
 
+
 def sp_template_create(handle, name, type, resolve_remote, descr="",
                        usr_lbl="", src_templ_name="", ext_ip_state="none",
                        ext_ip_pool_name="", ident_pool_name="",
@@ -444,4 +445,71 @@ def sp_delete(handle, sp_name, parent_dn="org-root"):
         raise ValueError("sp '%s' does not exist" % dn)
 
     handle.remove_mo(mo)
+    handle.commit()
+
+
+def sp_power_on(handle, sp_name, parent_dn="org-root"):
+    """
+    This function will power on a service profile
+
+    Args:
+        handle (UcsHandle)
+
+        sp_name (string): Service Profile  name.
+        parent_dn (string): Org.
+
+    Returns:
+        None
+
+    Raises:
+        ValueError: If LsServer is not present
+
+    Example:
+        sp_power_on(handle, sp_name="sample_sp", parent_dn="org-root")
+        sp_power_on(handle, sp_name="sample_sp", parent_dn="org-root/sub-org")
+    """
+
+    from ucsmsdk.mometa.ls.LsPower import LsPowerConsts
+    from ucsmsdk.mometa.ls.LsPower import LsPower
+
+    dn = parent_dn + "/ls-" + sp_name
+    mo = handle.query_dn(dn)
+    if not mo:
+        raise ValueError("sp '%s' does not exist" % dn)
+
+    power_change = LsPower(parent_mo_or_dn=mo, state=LsPowerConsts.STATE_UP)
+    handle.set_mo(mo)
+    handle.commit()
+
+def sp_power_off(handle, sp_name, parent_dn="org-root"):
+    """
+    This function wil power off a service profile
+
+    Args:
+        handle (UcsHandle)
+
+        sp_name (string): Service Profile  name.
+        parent_dn (string): Org.
+
+    Returns:
+        None
+
+    Raises:
+        ValueError: If LsServer is not present
+
+    Example:
+        sp_power_off(handle, sp_name="sample_sp", parent_dn="org-root")
+        sp_power_off(handle, sp_name="sample_sp", parent_dn="org-root/sub-org")
+    """
+    
+    from ucsmsdk.mometa.ls.LsPower import LsPowerConsts
+    from ucsmsdk.mometa.ls.LsPower import LsPower
+
+    dn = parent_dn + "/ls-" + sp_name
+    mo = handle.query_dn(dn)
+    if not mo:
+        raise ValueError("sp '%s' does not exist" % dn)
+
+    power_change = LsPower(parent_mo_or_dn=mo, state=LsPowerConsts.STATE_DOWN)
+    handle.set_mo(mo)
     handle.commit()

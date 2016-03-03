@@ -788,6 +788,7 @@ def _get_blade_firmware_running(handle, blade):
 def wait_for_blade_activation(handle,
                               bundle_version,
                               firmware_running_map,
+                              require_user_confirmation=True,
                               timeout=15 * 60):
     """
     Returns True if firmware is already running at the specified version
@@ -826,7 +827,7 @@ def wait_for_blade_activation(handle,
         try:
             is_running_desired_version = True
             for blade in sorted(firmware_running_map):
-                firmware_running = firmware_running_map[blade]
+                firmware_running = firmware_running_map[blade][0]
 
                 if firmware_running.version == bundle_version:
                     firmware_running_state[firmware_running.dn] = True
@@ -846,9 +847,45 @@ def wait_for_blade_activation(handle,
                              bundle_version))
                 if firmware_running.version != bundle_version:
                     is_running_desired_version = False
+
+                    if require_user_confirmation:
+                        set_flag = False
+                        set_str = raw_input("The update process will need to "
+                                            "reboot the server(s). "
+                                            "Would you like to acknowledge "
+                                            "the same?"
+                                            "Enter 'yes' to proceed.")
+                        if set_str.strip().lower() == "yes":
+                            set_flag = True
+
+                        if not set_flag:
+                            log.warning("Acknowledgement is required to "
+                                        "update blade server.")
+                            continue
+
+                    sp_dn = firmware_running_map[blade][1]
+                    dn = sp_dn + '/ack'
+                    ls_maint_ack = handle.query_dn(dn)
+                    if ls_maint_ack:
+                        if ls_maint_ack.oper_state == "waiting-for-user":
+                            if ls_maint_ack.admin_state == 'trigger-immediate':
+                                ls_maint_ack.admin_state = 'untriggered'
+                                handle.set_mo(ls_maint_ack)
+                                handle.commit()
+                                log.debug("Re-Acknowledging blade '%s' with "
+                                          "service profile '%s'." % (blade,
+                                                                     sp_dn))
+                                time.sleep(5)
+
+                            ls_maint_ack.admin_state = 'trigger-immediate'
+                            handle.set_mo(ls_maint_ack)
+                            handle.commit()
+                            log.debug("Acknowledging blade '%s' with service "
+                                      "profile '%s'." % (blade, sp_dn))
+
                     continue
 
-                firmware_running_map[blade] = firmware_running
+                firmware_running_map[blade][0] = firmware_running
         except Exception as e:
             log.exception(e.message)
             log.debug("sleeping for 30 seconds")
@@ -893,7 +930,8 @@ def firmware_activate_blade(handle, version, require_user_confirmation=True):
         if not firmware_running:
             log.debug("Improper firmware on blade '%s'" % blade_dn)
             continue
-        firmware_running_map[blade_dn] = firmware_running
+        firmware_running_map[blade_dn] = [firmware_running,
+                                          blade.assigned_to_dn]
         if firmware_running.version == version:
             log.debug("Blade ('%s') running software version already at "
                       "version: '%s'" % (blade_dn, version))
@@ -969,6 +1007,7 @@ def firmware_activate_blade(handle, version, require_user_confirmation=True):
         status = wait_for_blade_activation(handle,
                                            version,
                                            firmware_running_map,
+                                           require_user_confirmation,
                                            timeout=15 * 60)
     return status
 

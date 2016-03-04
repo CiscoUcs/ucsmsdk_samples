@@ -483,7 +483,7 @@ def sp_power_on(handle, sp_name, parent_dn="org-root"):
 
 def sp_power_off(handle, sp_name, parent_dn="org-root"):
     """
-    This function wil power off a service profile
+    This function will power off a service profile
 
     Args:
         handle (UcsHandle)
@@ -501,7 +501,7 @@ def sp_power_off(handle, sp_name, parent_dn="org-root"):
         sp_power_off(handle, sp_name="sample_sp", parent_dn="org-root")
         sp_power_off(handle, sp_name="sample_sp", parent_dn="org-root/sub-org")
     """
-    
+
     from ucsmsdk.mometa.ls.LsPower import LsPowerConsts
     from ucsmsdk.mometa.ls.LsPower import LsPower
 
@@ -513,3 +513,73 @@ def sp_power_off(handle, sp_name, parent_dn="org-root"):
     power_change = LsPower(parent_mo_or_dn=mo, state=LsPowerConsts.STATE_DOWN)
     handle.set_mo(mo)
     handle.commit()
+
+def sp_wwpn(handle, sp_name, parent_dn="org-root"):
+    """
+    This function will return the fibre channel wwpn addresses of a service profile
+
+    Args:
+        handle (UcsHandle)
+        sp_name (string): Service Profile  name.
+        parent_dn (string): Org.
+
+    Returns:
+        dict containing:
+        adaptor name
+        wwpn address
+
+    Raises:
+        ValueError: If LsServer is not present
+
+    Example:
+        sp_wwpn(handle, sp_name="sample_sp", parent_dn="org-root")
+        sp_wwpn(handle, sp_name="sample_sp", parent_dn="org-root/sub-org")
+    """
+
+    dn = parent_dn + "/ls-" + sp_name
+    mo = handle.query_dn(dn)
+    if not mo:
+        raise ValueError("sp '%s' does not exist" % dn)
+
+    wwpn_dict = {}
+
+    query_data = handle.query_children(in_mo=mo, class_id='VnicFc')
+    for item in query_data:
+        wwpn_dict[item.name] = item.addr
+
+    return wwpn_dict
+
+
+def sp_macaddress(handle, sp_name, parent_dn="org-root"):
+    """
+    This function will return the mac addresses of a service profile
+
+    Args:
+        handle (UcsHandle)
+        sp_name (string): Service Profile  name.
+        parent_dn (string): Org.
+
+    Returns:
+        dict containing:
+        adaptor name
+        mac address
+
+    Raises:
+        ValueError: If LsServer is not present
+
+    Example:
+        sp_macaddress(handle, sp_name="sample_sp", parent_dn="org-root")
+        sp_macaddress(handle, sp_name="sample_sp", parent_dn="org-root/sub-org")
+    """
+    dn = parent_dn + "/ls-" + sp_name
+    mo = handle.query_dn(dn)
+    if not mo:
+        raise ValueError("sp '%s' does not exist" % dn)
+
+    mac_dict = {}
+
+    query_data = handle.query_children(in_mo=mo, class_id='VnicEther')
+    for item in query_data:
+        mac_dict[item.name] = item.addr
+
+    return mac_dict

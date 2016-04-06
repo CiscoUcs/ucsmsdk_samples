@@ -705,7 +705,7 @@ def firmware_activate_infra(handle, version="2.2(2c)",
         return
     if require_user_confirmation:
         set_flag = False
-        set_str = raw_input("Are you sure want to proceed? This will reboot "
+        set_str = input("Are you sure want to proceed? This will reboot "
                             "theFabric Interconnects. Enter 'yes' to proceed.")
         if set_str.strip().lower() == "yes":
             set_flag = True
@@ -850,7 +850,7 @@ def wait_for_blade_activation(handle,
 
                     if require_user_confirmation:
                         set_flag = False
-                        set_str = raw_input("The update process will need to "
+                        set_str = input("The update process will need to "
                                             "reboot the server(s). "
                                             "Would you like to acknowledge "
                                             "the same?"
@@ -956,7 +956,7 @@ def firmware_activate_blade(handle, version, require_user_confirmation=True):
 
             if require_user_confirmation:
                 set_flag = False
-                set_str = raw_input("Are you sure want to proceed? This will "
+                set_str = input("Are you sure want to proceed? This will "
                                     "reboot the server."
                                     "Enter 'yes' to proceed.")
                 if set_str.strip().lower() == "yes":
@@ -971,7 +971,7 @@ def firmware_activate_blade(handle, version, require_user_confirmation=True):
 
             if require_user_confirmation:
                 set_flag = False
-                set_str = raw_input("The update process will need to reboot "
+                set_str = input("The update process will need to reboot "
                                     "the server(s). Would you like to "
                                     "acknowledge the same?"
                                     "Enter 'yes' to proceed.")

@@ -45,7 +45,7 @@ articles, and such.
 Submit Feedback
 ~~~~~~~~~~~~~~~
 
-The best way to send feedback is to file an issue at https://github.com/vijayvikrant/ucsmsdk_samples/issues.
+The best way to send feedback is to file an issue at https://github.com/CiscoUcs/ucsmsdk_samples/issues.
 
 If you are proposing a feature:
 

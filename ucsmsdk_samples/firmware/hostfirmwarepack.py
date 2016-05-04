@@ -261,11 +261,16 @@ def hfp_sp_attach(handle, sp_dn, hfp_name):
     if sp is None:
         raise ValueError("sp does not exist.")
 
-    org_dn = os.path.dirname(sp_dn)
-    dn = org_dn + "/fw-host-pack-" + hfp_name
-    obj = handle.query_dn(dn)
-    if obj is None:
-        raise ValueError("host firmware pack policy does not exist.")
+    obj = None
+    org_dn = os.path.dirname(sp.dn)
+    while obj is None:
+        dn = org_dn + "/fw-host-pack-" + hfp_name
+        obj = handle.query_dn(dn)
+        if obj:
+            break
+        elif obj is None and org_dn == 'org-root':
+            raise ValueError("host firmware pack policy does not exist.")
+        org_dn = os.path.dirname(org_dn)
 
     sp.host_fw_policy_name = hfp_name
     handle.set_mo(sp)

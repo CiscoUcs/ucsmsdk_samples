@@ -372,7 +372,7 @@ def sp_create_from_template(handle,
         number_of_instance (string): Total number of instances to be created.
         sp_template_name (string): SP template name.
         in_error_on_existing (string): "true" or "false"
-        parent_dn (string): Parent of Org.
+        parent_dn (string): Org dn in which service profile template resides.
 
     Returns:
         None or List of LsServer Objects
@@ -385,7 +385,8 @@ def sp_create_from_template(handle,
                                 name_suffix_starting_number="1",
                                 number_of_instance="3",
                                 sp_template_name="sample_temp",
-                                in_error_on_existing="true")
+                                in_error_on_existing="true",
+                                parent_dn="org-root/ls-org_sample")
 
     """
 

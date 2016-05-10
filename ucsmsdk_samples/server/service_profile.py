@@ -367,13 +367,12 @@ def sp_create_from_template(handle,
 
     Args:
         handle (UcsHandle)
-        org_name (string): Name of the organization
         naming_prefix (string): Suffix name of service profile.
         name_suffix_starting_number (string): Starting Number for Suffix
         number_of_instance (string): Total number of instances to be created.
         sp_template_name (string): SP template name.
         in_error_on_existing (string): "true" or "false"
-        parent_dn (string): Parent of Org.
+        parent_dn (string): Org dn in which service profile template resides.
 
     Returns:
         None or List of LsServer Objects
@@ -382,20 +381,30 @@ def sp_create_from_template(handle,
         ValueError: If LsServer is not present
 
     Example:
-        sp_create_from_template(handle, org_name="sample-org",
-                     naming_prefix="sample_sp",name_suffix_starting_number="1",
-                     number_of_instance="3",sp_template_name="sample_temp",
-                     in_error_on_existing="true")
+        sp_create_from_template(handle, naming_prefix="sample_sp",
+                                name_suffix_starting_number="1",
+                                number_of_instance="3",
+                                sp_template_name="sample_temp",
+                                in_error_on_existing="true",
+                                parent_dn="org-root/ls-org_sample")
 
     """
+
+    import os 
 
     from ucsmsdk.ucsmethodfactory import ls_instantiate_n_named_template
     from ucsmsdk.ucsbasetype import DnSet, Dn
 
-    sp_template_dn = parent_dn + "/ls-" + sp_template_name
-    mo = handle.query_dn(sp_template_dn)
-    if not mo:
-        raise ValueError("SP template does not exist.")
+    mo = None
+    org_dn = parent_dn
+    while mo is None:
+        sp_template_dn = org_dn + "/ls-" + sp_template_name
+        mo = handle.query_dn(sp_template_dn)
+        if mo:
+            break
+        elif not mo and org_dn == 'org-root':
+            raise ValueError("SP template does not exist.")
+        org_dn = os.path.dirname(org_dn)
 
     dn_set = DnSet()
     for num in range(int(name_suffix_starting_number),

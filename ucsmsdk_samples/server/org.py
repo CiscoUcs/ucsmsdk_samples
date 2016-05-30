@@ -128,18 +128,19 @@ def org_remove(handle, name, parent_dn="org-root"):
 
 def org_exists(handle, name, descr="", parent_dn="org-root"):
     """
-    This method removes sub organization.
+    Check if given org already exists.
 
     Args:
         handle (UcsHandle)
-        name (string): Name of the organization
+        name (string): Name of  organization
+        descr (string): Basic description about the org
         parent_dn (string):
 
-    Returns:
-        None
+    Returns:the
+        True/False (Boolean)
 
     Example:
-        org_remove(handle, name="sample_org")
+        org_exists(handle, name="sample_org")
     """
 
     dn = parent_dn + "/org-" + name

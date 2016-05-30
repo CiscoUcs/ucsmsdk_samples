@@ -136,7 +136,7 @@ def org_exists(handle, name, descr="", parent_dn="org-root"):
         descr (string): Basic description about the org
         parent_dn (string):
 
-    Returns:the
+    Returns:
         True/False (Boolean)
 
     Example:

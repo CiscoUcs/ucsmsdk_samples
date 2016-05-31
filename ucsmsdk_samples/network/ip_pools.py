@@ -57,6 +57,29 @@ def ip_pool_create(handle, name, assignment_order,
     handle.commit()
     return mo
 
+def ip_pool_remove(handle, name, parent_dn="org-root"):
+    """
+    Removes the specified IP Pool
+    Args:
+        handle (UcsHandle)
+        name (String) : IP Pool Name
+        parent_dn (String) : Dn of the Org in which the IP Pool reside
+    Returns:
+        None
+    Raises:
+        ValueError: If IP Block is not present
+    Example:
+        ip_block_remove(handle, "cimc", parent_dn="org-root/org-demo/")
+    """
+
+    dn = parent_dn + "/ip-pool-" + name
+    mo = handle.query_dn(dn)
+    if mo:
+        handle.remove_mo(mo)
+        handle.commit()
+    else:
+        raise ValueError("Ippool %s is not available" % dn)
+
 
 def add_ip_block(handle, r_from, to, subnet, default_gw, prim_dns, sec_dns,
                  parent_dn):
@@ -103,3 +126,27 @@ def add_ip_block(handle, r_from, to, subnet, default_gw, prim_dns, sec_dns,
         handle.add_mo(mo, True)
         handle.commit()
         return mo
+        
+
+def ip_block_remove(handle, name, parent_dn="org-root"):
+    """
+    Removes the specified IP Block
+    Args:
+        handle (UcsHandle)
+        name (String) : IP Block Name
+        parent_dn (String) : Dn of the Org in which the IP Block reside
+    Returns:
+        None
+    Raises:
+        ValueError: If IP Block is not present
+    Example:
+        ip_block_remove(handle, "1.1.1.1-1.1.1.253", parent_dn="org-root/org-demo/ip-pool-cimc")
+    """
+
+    dn = parent_dn + "/block-" + name
+    mo = handle.query_dn(dn)
+    if mo:
+        handle.remove_mo(mo)
+        handle.commit()
+    else:
+        raise ValueError("Ipblock %s is not available" % dn)

@@ -29,7 +29,7 @@ setup(
     long_description=readme + '\n\n' + history,
     author="Vikrant Balyan",
     author_email='vvb@cisco.com',
-    url='https://github.com/vijayvikrant/ucsmsdk_samples',
+    url='https://github.com/ciscoucs/ucsmsdk_samples',
     packages=[
         'ucsmsdk_samples',
     ],

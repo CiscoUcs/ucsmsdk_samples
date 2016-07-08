@@ -101,7 +101,7 @@ Before you submit a pull request, check that it meets these guidelines:
    your new functionality into a function with a docstring, and add the
    feature to the list in README.rst.
 3. The pull request should work for Python 2.6, 2.7, 3.3, 3.4 and 3.5, and for PyPy. Check
-   https://travis-ci.org/vijayvikrant/ucsmsdk_samples/pull_requests
+   https://travis-ci.org/ciscoucs/ucsmsdk_samples/pull_requests
    and make sure that the tests pass for all supported Python versions.
 
 Tips

@@ -12,13 +12,13 @@
 # limitations under the License.
 
 """
-This module contains the methods required for creating server ports.
+This module contains the methods required for creating uplink ports.
 """
 
 
-def server_port_create(handle, dn, port_id, slot_id):
+def uplink_port_create(handle, dn, port_id, slot_id):
     """
-    This method configures the port as a server port
+    This method configures the port as an uplink port
     
     Args:
          handle (Handle)
@@ -27,17 +27,17 @@ def server_port_create(handle, dn, port_id, slot_id):
          slot_id (number): Slot id of the port
          
     Returns:
-        FabricDceSwSrvEp
+        FabricEthLanEp
 
     Example:
-        server_port_create(handle, dn=fabric/server/sw-A, port_id=10,
+        uplink_port_create(handle, dn=fabric/lan/A, port_id=10,
                           slot_id=1)
     """
 
-    from ucsmsdk.mometa.fabric.FabricDceSwSrvEp import \
-        FabricDceSwSrvEp
+    from ucsmsdk.mometa.fabric.FabricEthLanEp import \
+        FabricEthLanEp
     
-    mo = FabricDceSwSrvEp(parent_mo_or_dn=dn, slot_id=slot_id, port_id=port_id)
+    mo = FabricEthLanEp(parent_mo_or_dn=dn, slot_id=slot_id, port_id=port_id)
     handle.add_mo(mo, modify_present=False)
     handle.commit()
     return mo

@@ -17,7 +17,7 @@ This module contains the methods required for creating vNIC templates.
 
 
 def vnic_template_create(handle, name, vlans=[], con_policy_type=None,
-                         con_policy_name=None, mtu=1500, qos_policy_name="",
+                         con_policy_name=None, mtu="1500", qos_policy_name="",
                          target="", ident_pool_name="", nw_ctrl_policy_name="",
                          pin_to_group_name="", switch_id="A",
                          stats_policy_name="default",
@@ -79,7 +79,7 @@ def vnic_template_create(handle, name, vlans=[], con_policy_type=None,
                               stats_policy_name=stats_policy_name,
                               switch_id=switch_id,
                               pin_to_group_name=pin_to_group_name,
-                              mtu=mtu,
+                              mtu=str(mtu),
                               policy_owner="local",
                               qos_policy_name=qos_policy_name,
                               target=target,

@@ -125,13 +125,15 @@ def vlan_exists(handle, name, vlan_id=None, sharing=None,
     dn = parent_dn + '/net-' + name
     mo = handle.query_dn(dn)
     if mo:
-        if ((vlan_id and mo.vlan_id != vlan_id) and
+        if (
+            (vlan_id and mo.vlan_id != vlan_id) and
             (sharing and mo.sharing != sharing) and
-            (mcast_policy_name and mo.mcast_policy_name
-                != mcast_policy_name) and
+            (mcast_policy_name and
+             mo.mcast_policy_name != mcast_policy_name) and
             (compression_type and mo.compression_type != compression_type) and
             (default_net and mo.default_net != default_net) and
-            (pub_nw_name and mo.pub_nw_name != pub_nw_name)):
+            (pub_nw_name and mo.pub_nw_name != pub_nw_name)
+        ):
             return False
         return True
     return False

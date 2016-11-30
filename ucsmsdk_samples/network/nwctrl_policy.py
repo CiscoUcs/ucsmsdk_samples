@@ -135,15 +135,17 @@ def nw_control_policy_exists(handle, name, cdp=None, mac_register_mode=None,
     dn = parent_dn + '/nwctrl-' + name
     mo = handle.query_dn(dn)
     if mo:
-        if ((cdp and mo.cdp != cdp) and
-            (mac_register_mode and mo.mac_register_mode
-                != mac_register_mode) and
-            (uplink_fail_action and mo.uplink_fail_action
-                != uplink_fail_action) and
+        if (
+            (cdp and mo.cdp != cdp) and
+            (mac_register_mode and
+             mo.mac_register_mode != mac_register_mode) and
+            (uplink_fail_action and
+             mo.uplink_fail_action != uplink_fail_action) and
             (forge and mo.forge != forge) and
             (lldp_transmit and mo.lldp_transmit != lldp_transmit) and
             (lldp_receive and mo.lldp_receive != lldp_receive) and
-            (descr and mo.descr != descr)):
+            (descr and mo.descr != descr)
+        ):
             return False
         return True
     return False

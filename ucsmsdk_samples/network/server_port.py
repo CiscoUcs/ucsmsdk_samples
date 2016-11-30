@@ -19,13 +19,13 @@ This module contains the methods required for creating server ports.
 def server_port_create(handle, dn, port_id, slot_id):
     """
     This method configures the port as a server port
-    
+
     Args:
          handle (Handle)
          dn (string): parent_dn
          port_id (number): Port id of the port
          slot_id (number): Slot id of the port
-         
+
     Returns:
         FabricDceSwSrvEp
 
@@ -36,7 +36,7 @@ def server_port_create(handle, dn, port_id, slot_id):
 
     from ucsmsdk.mometa.fabric.FabricDceSwSrvEp import \
         FabricDceSwSrvEp
-    
+
     mo = FabricDceSwSrvEp(parent_mo_or_dn=dn, slot_id=slot_id, port_id=port_id)
     handle.add_mo(mo, modify_present=False)
     handle.commit()

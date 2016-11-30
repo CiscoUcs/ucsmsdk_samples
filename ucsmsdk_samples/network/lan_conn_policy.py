@@ -247,16 +247,21 @@ def vnic_exists(handle, parent_dn,  name, nw_ctrl_policy_name=None,
     dn = parent_dn + '/ether-' + name
     mo = handle.query_dn(dn)
     if mo:
-        if ((nw_ctrl_policy_name
-             and mo.nw_ctrl_policy_name != nw_ctrl_policy_name) and
+        if (
+            (
+                nw_ctrl_policy_name and
+                mo.nw_ctrl_policy_name != nw_ctrl_policy_name
+            ) and
             (admin_host_port and mo.admin_host_port != admin_host_port) and
             (admin_vcon and mo.admin_vcon != admin_vcon) and
             (stats_policy_name and mo.stats_policy_name !=
                 stats_policy_name) and
             (admin_cdn_name and mo.admin_cdn_name != admin_cdn_name) and
             (switch_id and mo.switch_id != switch_id) and
-            (pin_to_group_name and mo.pin_to_group_name != pin_to_group_name)
-            and
+            (
+                pin_to_group_name and
+                mo.pin_to_group_name != pin_to_group_name
+            ) and
             (mtu and mo.mtu != mtu) and
             (qos_policy_name and mo.qos_policy_name != qos_policy_name) and
             (adaptor_profile_name and mo.adaptor_profile_name !=
@@ -264,7 +269,8 @@ def vnic_exists(handle, parent_dn,  name, nw_ctrl_policy_name=None,
             (ident_pool_name and mo.ident_pool_name != ident_pool_name) and
             (order and mo.order != order) and
             (nw_templ_name and mo.nw_templ_name != nw_templ_name) and
-            (addr and mo.addr != addr)):
+            (addr and mo.addr != addr)
+        ):
             return False
         return True
     return False
@@ -413,15 +419,20 @@ def vnic_iscsi_exists(handle, parent_dn, name, addr=None, admin_host_port=None,
     dn = parent_dn + '/iscsi-' + name
     mo = handle.query_dn(dn)
     if mo:
-        if ((addr and mo.addr != addr) and
+        if (
+            (addr and mo.addr != addr) and
             (admin_host_port and mo.admin_host_port != admin_host_port) and
             (admin_vcon and mo.admin_vcon != admin_vcon) and
-            (stats_policy_name and mo.stats_policy_name != stats_policy_name)
-            and
+            (
+                stats_policy_name and
+                mo.stats_policy_name != stats_policy_name
+            ) and
             (admin_cdn_name and mo.admin_cdn_name != admin_cdn_name) and
             (switch_id and mo.switch_id != switch_id) and
-            (pin_to_group_name and mo.pin_to_group_name != pin_to_group_name)
-            and
+            (
+                pin_to_group_name and
+                mo.pin_to_group_name != pin_to_group_name
+            ) and
             (vnic_name and mo.vnic_name != vnic_name) and
             (qos_policy_name and mo.qos_policy_name != qos_policy_name) and
             (adaptor_profile_name and mo.adaptor_profile_name !=
@@ -429,7 +440,8 @@ def vnic_iscsi_exists(handle, parent_dn, name, addr=None, admin_host_port=None,
             (ident_pool_name and mo.ident_pool_name != ident_pool_name) and
             (order and mo.order != order) and
             (nw_templ_name and mo.nw_templ_name != nw_templ_name) and
-            (vlan_name and mo.vlan_name != vlan_name)):
+            (vlan_name and mo.vlan_name != vlan_name)
+        ):
             return False
         return True
     return False

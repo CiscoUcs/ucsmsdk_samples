@@ -100,7 +100,8 @@ def ldap_provider_exists(handle, name, order="lowest-available", rootdn="",
     dn = "sys/ldap-ext/provider-" + name
     mo = handle.query_dn(dn)
     if mo:
-        if ((order and mo.order != order) and
+        if (
+            (order and mo.order != order) and
             (rootdn and mo.rootdn != rootdn) and
             (basedn and mo.basedn != basedn) and
             (port and mo.port != port) and
@@ -111,7 +112,8 @@ def ldap_provider_exists(handle, name, order="lowest-available", rootdn="",
             (timeout and mo.timeout != timeout) and
             (vendor and mo.vendor != vendor) and
             (retries and mo.retries != retries) and
-            (descr and mo.descr != descr)):
+            (descr and mo.descr != descr)
+        ):
             return False
         return True
     return False
@@ -581,8 +583,7 @@ def ldap_provider_group_provider_exists(handle, group_name, name, order,
     provider_dn = group_dn + "/provider-ref-" + name
     mo = handle.query_dn(provider_dn)
     if mo:
-        if ((descr and mo.descr != descr) and
-            (order and mo.order != order)):
+        if ((descr and mo.descr != descr) and (order and mo.order != order)):
             return False
         return True
     return False

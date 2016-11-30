@@ -19,7 +19,7 @@ requirements = [
 ]
 
 test_requirements = [
-    # TODO: put package test requirements here
+    'nose'
 ]
 
 setup(
@@ -49,7 +49,7 @@ setup(
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
     ],
-    test_suite='tests',
+    test_suite='nose.collector',
     tests_require=test_requirements,
     extras_require={
         'docs': ['sphinx<1.3', 'sphinxcontrib-napoleon',

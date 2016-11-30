@@ -146,9 +146,10 @@ def maintenance_policy_exist(handle, name, uptime_disr="user-ack", descr="",
     dn = parent_dn + "/maint-" + name
     mo = handle.query_dn(dn)
     if mo:
-        if ((uptime_disr and mo.uptime_disr != uptime_disr)
-            and
-            (descr and mo.descr != descr)):
+        if (
+            (uptime_disr and mo.uptime_disr != uptime_disr) and
+            (descr and mo.descr != descr)
+        ):
             return False
         return True
     return False

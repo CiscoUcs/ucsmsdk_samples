@@ -18,6 +18,7 @@ from ucsmsdk.ucshandle import UcsHandle
 from ucsmsdk.mometa.org.OrgOrg import OrgOrg
 from ucsmsdk_samples.server.ipmi_policy import ipmi_policy_create
 from ucsmsdk.mometa.aaa.AaaEpAuthProfile import AaaEpAuthProfile
+from ucsmsdk_samples.server.local_drive import disk_state_set
 
 
 # Patch UcsHandle.commit to simulate CIMC interaction w/o real CIMC
@@ -80,3 +81,40 @@ def test_invalid_ipmi_policy_create(query_mock, add_mo_mock, commit_mock):
     query_mock.return_value = None
     # Verify exception was raised for invalid org
     assert_raises(ValueError, ipmi_policy_create, handle, 'invalid')
+
+
+# Patch UcsHandle.commit to simulate CIMC interaction w/o real CIMC
+@patch.object(UcsHandle, 'commit')
+# Patch UcsHandle.add_mo to simulate CIMC interaction w/o real CIMC
+@patch.object(UcsHandle, 'add_mo')
+def test_valid_disk_state(add_mo_mock, commit_mock):
+        add_mo_mock.return_value = True
+        commit_mock.return_value = True
+        handle = UcsHandle('169.254.1.1', 'admin', 'password')
+
+        # Scenario: jbod mode
+        test_retval = disk_state_set(handle, 1, 4, "jbod")
+        assert test_retval.admin_action == "jbod"
+        assert test_retval.dn == "sys/rack-unit-1/board/storage-SAS-1/disk-4"
+
+        # Scenario: unconfigured-good mode
+        test_retval = disk_state_set(handle, 2, 5, "unconfigured-good")
+        assert test_retval.admin_action == "unconfigured-good"
+        assert test_retval.dn == "sys/rack-unit-2/board/storage-SAS-1/disk-5"
+
+        # Scenario: custom controller
+        test_retval = disk_state_set(handle, 3, 6, "jbod", "storage-SAS-4")
+        assert test_retval.dn == "sys/rack-unit-3/board/storage-SAS-4/disk-6"
+
+
+# Patch UcsHandle.commit to simulate CIMC interaction w/o real CIMC
+@patch.object(UcsHandle, 'commit')
+# Patch UcsHandle.add_mo to simulate CIMC interaction w/o real CIMC
+@patch.object(UcsHandle, 'add_mo')
+def test_invalid_disk_state(add_mo_mock, commit_mock):
+        add_mo_mock.return_value = True
+        commit_mock.return_value = True
+        handle = UcsHandle('169.254.1.1', 'admin', 'password')
+
+        # Scenario invalid state
+        assert_raises(ValueError, disk_state_set, handle, 16, 1, "blah")

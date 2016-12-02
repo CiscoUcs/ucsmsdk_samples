@@ -64,8 +64,10 @@ def locale_exists(handle, name, descr="", policy_owner="local"):
     dn = "sys/user-ext/locale-" + name
     mo = handle.query_dn(dn)
     if mo:
-        if ((descr and mo.descr != descr) and
-            (policy_owner and mo.policy_owner != policy_owner)):
+        if (
+            (descr and mo.descr != descr) and
+            (policy_owner and mo.policy_owner != policy_owner)
+        ):
             return False
         return True
     return False

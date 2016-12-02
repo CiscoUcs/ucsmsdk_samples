@@ -12,7 +12,6 @@
 # limitations under the License.
 
 
-
 def sp_template_create(handle, name, type, resolve_remote, descr="",
                        usr_lbl="", src_templ_name="", ext_ip_state="none",
                        ext_ip_pool_name="", ident_pool_name="",
@@ -47,7 +46,7 @@ def sp_template_create(handle, name, type, resolve_remote, descr="",
         src_templ_name (string): Name of Source template
         ext_ip_state= :none", "pooled", "static"
         ext_ip_pool_name (string): Name of IP Pool
-        ident_pool_name (string): Name of Ident pool 
+        ident_pool_name (string): Name of Ident pool
         agent_policy_name (string): Name of agent policy
         bios_profile_name (string): Name of bios profile
         boot_policy_name (string): Name of boot policy
@@ -67,7 +66,7 @@ def sp_template_create(handle, name, type, resolve_remote, descr="",
         vcon_profile_name (string): Virtual Connection profile policy
         vmedia_policy_name (string): Virtual media policy
         parent_dn= Parent DN
-    
+
     Returns:
         Service Profile: Managed Object
 
@@ -113,10 +112,10 @@ def sp_template_create(handle, name, type, resolve_remote, descr="",
                   vmedia_policy_name=vmedia_policy_name
                   )
 
-    vnic_conn_def_mo = VnicConnDef(
-        parent_mo_or_dn=mo,
-        lan_conn_policy_name=lan_conn_policy_name,
-        san_conn_policy_name=san_conn_policy_name)
+    # Add vNIC Connection Policy to template
+    VnicConnDef(parent_mo_or_dn=mo,
+                lan_conn_policy_name=lan_conn_policy_name,
+                san_conn_policy_name=san_conn_policy_name)
 
     handle.add_mo(mo, True)
     handle.commit()
@@ -148,7 +147,7 @@ def sp_template_modify(handle, name, type=None, resolve_remote=None,
         src_templ_name (string): Name of Source template
         ext_ip_state= :none", "pooled", "static"
         ext_ip_pool_name (string): Name of IP Pool
-        ident_pool_name (string): Name of Ident pool 
+        ident_pool_name (string): Name of Ident pool
         agent_policy_name (string): Name of agent policy
         bios_profile_name (string): Name of bios profile
         boot_policy_name (string): Name of boot policy
@@ -168,7 +167,7 @@ def sp_template_modify(handle, name, type=None, resolve_remote=None,
         vcon_profile_name (string): Virtual Connection profile policy
         vmedia_policy_name (string): Virtual media policy
         parent_dn= Parent DN
-    
+
     Returns:
         LsServer: Managed Object
 
@@ -268,8 +267,8 @@ def set_inband_mgmt(handle, sp_dn, vlan_name):
         raise ValueError("SP '%s' does not exist" % sp_dn)
 
     mo = MgmtInterface(parent_mo_or_dn=obj, mode="in-band")
-    mo_1 = MgmtVnet(parent_mo_or_dn=mo, name=vlan_name)
-    mo_2 = VnicIpV4MgmtPooledAddr(parent_mo_or_dn=mo, name="hyperflex")
+    MgmtVnet(parent_mo_or_dn=mo, name=vlan_name)
+    VnicIpV4MgmtPooledAddr(parent_mo_or_dn=mo, name="hyperflex")
 
     handle.add_mo(mo, True)
     handle.commit()
@@ -390,7 +389,7 @@ def sp_create_from_template(handle,
 
     """
 
-    import os 
+    import os
 
     from ucsmsdk.ucsmethodfactory import ls_instantiate_n_named_template
     from ucsmsdk.ucsbasetype import DnSet, Dn
@@ -486,9 +485,10 @@ def sp_power_on(handle, sp_name, parent_dn="org-root"):
     if not mo:
         raise ValueError("sp '%s' does not exist" % dn)
 
-    power_change = LsPower(parent_mo_or_dn=mo, state=LsPowerConsts.STATE_UP)
+    LsPower(parent_mo_or_dn=mo, state=LsPowerConsts.STATE_UP)
     handle.set_mo(mo)
     handle.commit()
+
 
 def sp_power_off(handle, sp_name, parent_dn="org-root"):
     """
@@ -519,13 +519,15 @@ def sp_power_off(handle, sp_name, parent_dn="org-root"):
     if not mo:
         raise ValueError("sp '%s' does not exist" % dn)
 
-    power_change = LsPower(parent_mo_or_dn=mo, state=LsPowerConsts.STATE_DOWN)
+    LsPower(parent_mo_or_dn=mo, state=LsPowerConsts.STATE_DOWN)
     handle.set_mo(mo)
     handle.commit()
 
+
 def sp_wwpn(handle, sp_name, parent_dn="org-root"):
     """
-    This function will return the fibre channel wwpn addresses of a service profile
+    This function will return the fibre channel wwpn addresses
+    of a service profile
 
     Args:
         handle (UcsHandle)
@@ -577,8 +579,10 @@ def sp_macaddress(handle, sp_name, parent_dn="org-root"):
         ValueError: If LsServer is not present
 
     Example:
-        sp_macaddress(handle, sp_name="sample_sp", parent_dn="org-root")
-        sp_macaddress(handle, sp_name="sample_sp", parent_dn="org-root/sub-org")
+        sp_macaddress(handle, sp_name="sample_sp",
+                      parent_dn="org-root")
+        sp_macaddress(handle, sp_name="sample_sp",
+                      parent_dn="org-root/sub-org")
     """
     dn = parent_dn + "/ls-" + sp_name
     mo = handle.query_dn(dn)

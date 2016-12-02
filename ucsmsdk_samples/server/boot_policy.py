@@ -13,9 +13,6 @@
 
 
 import logging
-log = logging.getLogger('ucs')
-
-
 from ucsmsdk.mometa.lsboot.LsbootVirtualMedia import LsbootVirtualMedia
 from ucsmsdk.mometa.lsboot.LsbootStorage import LsbootStorage
 from ucsmsdk.mometa.lsboot.LsbootLocalStorage import LsbootLocalStorage
@@ -26,6 +23,9 @@ from ucsmsdk.mometa.lsboot.LsbootUsbFlashStorageImage import \
     LsbootUsbFlashStorageImage
 from ucsmsdk.mometa.lsboot.LsbootUsbInternalImage import LsbootUsbInternalImage
 from ucsmsdk.mometa.lsboot.LsbootUsbExternalImage import LsbootUsbExternalImage
+
+
+log = logging.getLogger('ucs')
 
 
 def boot_policy_create(handle, name, descr="",
@@ -184,13 +184,13 @@ def boot_policy_exist(handle, name, reboot_on_update="yes",
     dn = parent_dn + "/boot-policy-" + name
     mo = handle.query_dn(dn)
     if mo:
-        if ((boot_mode and mo.boot_mode != boot_mode)
-            and
-            (reboot_on_update and mo.reboot_on_update != reboot_on_update)
-            and
+        if (
+            (boot_mode and mo.boot_mode != boot_mode) and
+            (reboot_on_update and mo.reboot_on_update != reboot_on_update) and
             (enforce_vnic_name and
-                     mo.enforce_vnic_name != enforce_vnic_name)and
-            (descr and mo.descr != descr)):
+             mo.enforce_vnic_name != enforce_vnic_name) and
+            (descr and mo.descr != descr)
+        ):
             return False
         return True
     return False
@@ -206,7 +206,7 @@ def _add_device(handle, parent_mo, boot_device):
                 log.debug("Deleting boot device from boot policy: %s",
                           child.dn)
                 handle.remove_mo(child)
-                
+
     for k in boot_device.keys():
         log.debug("Add boot device: order=%s, %s", k, boot_device[k])
         if boot_device[k] in ["cdrom-local", "cdrom"]:

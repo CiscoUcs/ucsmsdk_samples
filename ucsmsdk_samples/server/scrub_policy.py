@@ -160,11 +160,13 @@ def scrub_policy_exist(handle, name, flex_flash_scrub="no",
     dn = parent_dn + "/scrub-" + name
     mo = handle.query_dn(dn)
     if mo:
-        if ((disk_scrub and mo.disk_scrub != disk_scrub) and
+        if (
+            (disk_scrub and mo.disk_scrub != disk_scrub) and
             (flex_flash_scrub and mo.flex_flash_scrub != flex_flash_scrub) and
             (bios_settings_scrub and mo.bios_settings_scrub !=
                 bios_settings_scrub) and
-            (descr and mo.descr != descr)):
+            (descr and mo.descr != descr)
+        ):
             return False
         return True
     return False

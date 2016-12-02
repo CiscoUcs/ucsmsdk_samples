@@ -171,12 +171,14 @@ def snmp_trap_exists(handle, hostname, community, port, version="v3",
     dn = "sys/svc-ext/snmp-svc/snmp-trap" + hostname
     mo = handle.query_dn(dn)
     if mo:
-        if ((community and mo.community != community) and
+        if (
+            (community and mo.community != community) and
             (port and mo.port != port) and
             (version and mo.version != version) and
             (notification_type and
              mo.notification_type != notification_type) and
-            (v3_privilege and mo.v3_privilege != v3_privilege)):
+            (v3_privilege and mo.v3_privilege != v3_privilege)
+        ):
             return False
         return True
     return False
@@ -325,11 +327,13 @@ def snmp_user_exists(handle, name, descr, pwd, privpwd, auth="md5",
     dn = "sys/svc-ext/snmp-svc/snmpv3-user-" + name
     mo = handle.query_dn(dn)
     if mo:
-        if ((descr and mo.descr != descr) and
+        if (
+            (descr and mo.descr != descr) and
             (pwd and mo.pwd != pwd) and
             (privpwd and mo.privpwd != privpwd) and
             (auth and mo.auth != auth) and
-            (use_aes and mo.use_aes != use_aes)):
+            (use_aes and mo.use_aes != use_aes)
+        ):
             return False
         return True
     return False

@@ -68,9 +68,11 @@ def role_exists(handle, name, priv, descr="", policy_owner="local"):
     dn = "sys/user-ext/role-" + name
     mo = handle.query_dn(dn)
     if mo:
-        if ((priv and mo.priv != priv) and
+        if (
+            (priv and mo.priv != priv) and
             (descr and mo.descr != descr) and
-            (policy_owner and mo.policy_owner != policy_owner)):
+            (policy_owner and mo.policy_owner != policy_owner)
+        ):
             return False
         return True
     return False

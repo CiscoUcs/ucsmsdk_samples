@@ -168,17 +168,15 @@ def local_disk_policy_exist(handle, name, mode="any-configuration",
     dn = parent_dn + "/local-disk-config-" + name
     mo = handle.query_dn(dn)
     if mo:
-        if ((mode and mo.mode != mode)
-            and
-            (flex_flash_state and mo.flex_flash_state != flex_flash_state)
-            and
+        if (
+            (mode and mo.mode != mode) and
+            (flex_flash_state and mo.flex_flash_state != flex_flash_state) and
             (flex_flash_raid_reporting_state and
-                mo.flex_flash_raid_reporting_state !=
-                     flex_flash_raid_reporting_state)
-            and
-            (protect_config and mo.protect_config != protect_config)
-            and
-            (descr and mo.descr != descr)):
+             mo.flex_flash_raid_reporting_state !=
+             flex_flash_raid_reporting_state) and
+            (protect_config and mo.protect_config != protect_config) and
+            (descr and mo.descr != descr)
+        ):
             return False
         return True
     return False

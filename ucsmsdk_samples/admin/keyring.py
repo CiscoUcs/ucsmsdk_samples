@@ -78,12 +78,14 @@ def key_ring_exists(handle, name, descr="", policy_owner="local", tp="",
     dn = "sys/pki-ext/keyring-" + name
     mo = handle.query_dn(dn)
     if mo:
-        if ((descr and mo.descr != descr) and
+        if (
+            (descr and mo.descr != descr) and
             (policy_owner and mo.policy_owner != policy_owner) and
             (tp and mo.tp != tp) and
             (cert and mo.cert != cert) and
             (regen and mo.regen != regen) and
-            (modulus and mo.modulus != modulus)):
+            (modulus and mo.modulus != modulus)
+        ):
             return False
         return True
     return False
@@ -273,7 +275,8 @@ def certificate_request_exists(handle, name, dns="", locality="", state="",
     dn = "sys/pki-ext/keyring-" + name + "certreq"
     mo = handle.query_dn(dn)
     if mo:
-        if ((dns and mo.dns != dns) and
+        if (
+            (dns and mo.dns != dns) and
             (locality and mo.locality != locality) and
             (state and mo.state != state) and
             (country and mo.country != country) and
@@ -287,7 +290,8 @@ def certificate_request_exists(handle, name, dns="", locality="", state="",
             (ip_b and mo.ip_b != ip_b) and
             (ipv6 and mo.ipv6 != ipv6) and
             (ipv6_a and mo.ipv6_a != ipv6_a) and
-            (ipv6_b and mo.ipv6_b != ipv6_b)):
+            (ipv6_b and mo.ipv6_b != ipv6_b)
+        ):
             return False
         return True
     return False

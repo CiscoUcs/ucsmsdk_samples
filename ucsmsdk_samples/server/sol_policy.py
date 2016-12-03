@@ -145,11 +145,11 @@ def sol_policy_exist(handle, name, admin_state, speed="9600", descr="",
     dn = parent_dn + "/scrub-" + name
     mo = handle.query_dn(dn)
     if mo:
-        if ((admin_state and mo.admin_state != admin_state)
-            and
-            (speed and mo.speed != speed)
-            and
-            (descr and mo.descr != descr)):
+        if (
+            (admin_state and mo.admin_state != admin_state) and
+            (speed and mo.speed != speed) and
+            (descr and mo.descr != descr)
+        ):
             return False
         return True
     return False

@@ -118,7 +118,8 @@ def user_exists(handle, name, first_name, last_name, descr, clear_pwd_history,
     dn = "sys/user-ext/user-" + name
     mo = handle.query_dn(dn)
     if mo:
-        if ((first_name and mo.first_name != first_name) and
+        if (
+            (first_name and mo.first_name != first_name) and
             (last_name and mo.last_name != last_name) and
             (descr and mo.descr != descr) and
             (clear_pwd_history and
@@ -131,7 +132,8 @@ def user_exists(handle, name, first_name, last_name, descr, clear_pwd_history,
             (expiration and mo.expiration != expiration) and
             (enc_pwd and mo.enc_pwd != enc_pwd) and
             (enc_pwd_set and mo.enc_pwd_set != enc_pwd_set) and
-            (account_status and mo.account_status != account_status)):
+            (account_status and mo.account_status != account_status)
+        ):
             return False
         return True
     return False

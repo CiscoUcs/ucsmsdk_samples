@@ -85,27 +85,27 @@ def bios_create(handle, parent_org_dn, name, descr="",
         parent_mo_or_dn=obj, name=name, descr=descr,
         reboot_on_update=reboot_on_update)
 
-    mo_1 = BiosVfConsistentDeviceNameControl(
+    BiosVfConsistentDeviceNameControl(
         parent_mo_or_dn=mo,
         vp_cdn_control=vp_cdn_control)
 
-    mo_2 = BiosVfFrontPanelLockout(
+    BiosVfFrontPanelLockout(
         parent_mo_or_dn=mo,
         vp_front_panel_lockout=vp_front_panel_lockout)
 
-    mo_3 = BiosVfPOSTErrorPause(
+    BiosVfPOSTErrorPause(
         parent_mo_or_dn=mo, vp_post_error_pause=vp_post_error_pause)
 
-    mo_4 = BiosVfQuietBoot(parent_mo_or_dn=mo, vp_quiet_boot=vp_quiet_boot)
+    BiosVfQuietBoot(parent_mo_or_dn=mo, vp_quiet_boot=vp_quiet_boot)
 
-    mo_5 = BiosVfResumeOnACPowerLoss(
+    BiosVfResumeOnACPowerLoss(
         parent_mo_or_dn=mo,
         vp_resume_on_ac_power_loss=vp_resume_on_ac_power_loss)
 
-    mo_6 = BiosVfSerialPortAEnable(
+    BiosVfSerialPortAEnable(
         parent_mo_or_dn=mo, vp_serial_port_a_enable=vp_serial_port_a_enable)
 
-    mo_7 = BiosVfConsoleRedirection(
+    BiosVfConsoleRedirection(
         parent_mo_or_dn=mo,
         vp_baud_rate=vp_baud_rate,
         vp_console_redirection=vp_console_redirection,
@@ -510,8 +510,8 @@ def bios_conf_intel_speed_step(
     if obj:
         mo = BiosVfEnhancedIntelSpeedStepTech(
             parent_mo_or_dn=obj,
-            vp_enhanced_intel_speed_step_tech=
-                vp_enhanced_intel_speed_step_tech)
+            vp_enhanced_intel_speed_step_tech=vp_enhanced_intel_speed_step_tech
+        )
         handle.add_mo(mo, True)
         handle.commit()
     else:
@@ -665,13 +665,15 @@ def bios_conf_virtual_tech(
     from ucsmsdk.mometa.bios.BiosVfIntelVirtualizationTechnology import \
         BiosVfIntelVirtualizationTechnology
 
+    # Shorten variable name to satisfy flake8, but keep backward compatibility
+    vp_intel_virt_tech = vp_intel_virtualization_technology
+
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
         mo = BiosVfIntelVirtualizationTechnology(
             parent_mo_or_dn=obj,
-            vp_intel_virtualization_technology=
-                vp_intel_virtualization_technology)
+            vp_intel_virtualization_technology=vp_intel_virt_tech)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -714,14 +716,16 @@ def bios_conf_processor_prefetch(
     from ucsmsdk.mometa.bios.BiosVfProcessorPrefetchConfig import \
         BiosVfProcessorPrefetchConfig
 
+    # Shorten variable name to satisfy flake8, but keep backward compatibility
+    vp_adj_cache_line_prefetcher = vp_adjacent_cache_line_prefetcher
+
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
         mo = BiosVfProcessorPrefetchConfig(
             parent_mo_or_dn=obj,
             vp_dcuip_prefetcher=vp_dcuip_prefetcher,
-            vp_adjacent_cache_line_prefetcher=
-                vp_adjacent_cache_line_prefetcher,
+            vp_adjacent_cache_line_prefetcher=vp_adj_cache_line_prefetcher,
             vp_hardware_prefetcher=vp_hardware_prefetcher,
             vp_dcu_streamer_prefetch=vp_dcu_streamer_prefetch)
         handle.add_mo(mo, True)
@@ -1392,13 +1396,15 @@ def bios_conf_intel_directed_io(
     from ucsmsdk.mometa.bios.BiosVfIntelVTForDirectedIO import \
         BiosVfIntelVTForDirectedIO
 
+    # Shorten variable name to satisfy flake8, but keep backward compatibility
+    vp_intel_vtd_pass_thru_dma = vp_intel_vtd_pass_through_dma_support
+
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
         mo = BiosVfIntelVTForDirectedIO(
             parent_mo_or_dn=obj,
-            vp_intel_vtd_pass_through_dma_support=
-                vp_intel_vtd_pass_through_dma_support,
+            vp_intel_vtd_pass_through_dma_support=vp_intel_vtd_pass_thru_dma,
             vp_intel_vtdats_support=vp_intel_vtdats_support,
             vp_intel_vtd_interrupt_remapping=vp_intel_vtd_interrupt_remapping,
             vp_intel_vtd_coherency_support=vp_intel_vtd_coherency_support,
@@ -1437,13 +1443,15 @@ def bios_conf_ras_memory(
     from ucsmsdk.mometa.bios.BiosVfSelectMemoryRASConfiguration import \
         BiosVfSelectMemoryRASConfiguration
 
+    # Shorten variable name to satisfy flake8, but keep backward compatibility
+    vp_select_memory_ras_config = vp_select_memory_ras_configuration
+
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
         mo = BiosVfSelectMemoryRASConfiguration(
             parent_mo_or_dn=obj,
-            vp_select_memory_ras_configuration=
-                vp_select_memory_ras_configuration)
+            vp_select_memory_ras_configuration=vp_select_memory_ras_config)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -2145,13 +2153,15 @@ def bios_conf_trusted_platform(
     from ucsmsdk.mometa.bios.BiosVfTrustedPlatformModule import \
         BiosVfTrustedPlatformModule
 
+    # Shorten variable name to satisfy flake8, but keep backward compatibility
+    vp_trusted_platform_mod_support = vp_trusted_platform_module_support
+
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
         mo = BiosVfTrustedPlatformModule(
             parent_mo_or_dn=obj,
-            vp_trusted_platform_module_support=
-                vp_trusted_platform_module_support)
+            vp_trusted_platform_module_support=vp_trusted_platform_mod_support)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -2186,13 +2196,15 @@ def bios_conf_trusted_execution(
     from ucsmsdk.mometa.bios.BiosVfIntelTrustedExecutionTechnology import \
         BiosVfIntelTrustedExecutionTechnology
 
+    # Shorten variable name to satisfy flake8, but keep backward compatibility
+    vp_trust_exec_tech = vp_intel_trusted_execution_technology_support
+
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
         mo = BiosVfIntelTrustedExecutionTechnology(
             parent_mo_or_dn=obj,
-            vp_intel_trusted_execution_technology_support=
-                vp_intel_trusted_execution_technology_support)
+            vp_intel_trusted_execution_technology_support=vp_trust_exec_tech)
         handle.add_mo(mo, True)
         handle.commit()
         return mo
@@ -2498,13 +2510,15 @@ def bios_conf_boot_watchdog_timer_timeout(
     from ucsmsdk.mometa.bios.BiosVfOSBootWatchdogTimerTimeout import \
         BiosVfOSBootWatchdogTimerTimeout
 
+    # Shorten variable name to satisfy flake8, but keep backward compatibility
+    vp_boot_watchdog_timer_timeout = vp_os_boot_watchdog_timer_timeout
+
     profile_dn = parent_org_dn + "/bios-prof-" + name
     obj = handle.query_dn(profile_dn)
     if obj:
         mo = BiosVfOSBootWatchdogTimerTimeout(
             parent_mo_or_dn=obj,
-            vp_os_boot_watchdog_timer_timeout=
-                vp_os_boot_watchdog_timer_timeout)
+            vp_os_boot_watchdog_timer_timeout=vp_boot_watchdog_timer_timeout)
         handle.add_mo(mo, True)
         handle.commit()
     else:

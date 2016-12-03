@@ -197,21 +197,23 @@ def vnic_template_exists(handle, name, con_policy_type=None,
     mo = handle.query_dn(dn)
     # TODO: Compare vlans associated with the vnic template
     if mo:
-        if ((con_policy_type and mo.con_policy_type != con_policy_type) and
+        if (
+            (con_policy_type and mo.con_policy_type != con_policy_type) and
             (con_policy_name and mo.con_policy_name != con_policy_name) and
             (mtu and mo.mtu != mtu) and
             (qos_policy_name and mo.qos_policy_name != qos_policy_name) and
             (target and mo.target != target) and
             (ident_pool_name and mo.ident_pool_name != ident_pool_name) and
-            (nw_ctrl_policy_name and mo.nw_ctrl_policy_name
-                != nw_ctrl_policy_name) and
-            (pin_to_group_name and mo.pin_to_group_name
-                != pin_to_group_name) and
+            (nw_ctrl_policy_name and
+             mo.nw_ctrl_policy_name != nw_ctrl_policy_name) and
+            (pin_to_group_name and
+             mo.pin_to_group_name != pin_to_group_name) and
             (switch_id and mo.switch_id != switch_id) and
-            (stats_policy_name and mo.stats_policy_name
-                != stats_policy_name) and
+            (stats_policy_name and
+             mo.stats_policy_name != stats_policy_name) and
             (templ_type and mo.templ_type != templ_type) and
-            (descr and mo.descr != descr)):
+            (descr and mo.descr != descr)
+        ):
             return False
         return True
     return False

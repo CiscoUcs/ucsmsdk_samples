@@ -70,11 +70,11 @@ def domain_exists(handle, name, refresh_period="600", session_timeout="7200",
     dn = "sys/svc-ext/dns-svc/dns-" + name
     mo = handle.query_dn(dn)
     if mo:
-        if ((descr and (mo.descr != descr))
-            and
-            (refresh_period and (mo.refresh_period != refresh_period))
-            and
-            (session_timeout and (mo.session_timeout != session_timeout))):
+        if (
+            (descr and (mo.descr != descr)) and
+            (refresh_period and (mo.refresh_period != refresh_period)) and
+            (session_timeout and (mo.session_timeout != session_timeout))
+        ):
             return False
         return True
     return False

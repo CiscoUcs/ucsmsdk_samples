@@ -12,16 +12,17 @@
 # limitations under the License.
 
 
-
 def domain_serials(handle):
     """
-    This function will query all of the models and serial numbers from the ucs domain
+    This function will query all of the models and serial numbers
+    from the ucs domain
 
     Args:
         handle (UcsHandle)
-    
+
     Returns:
-        Dictionary of dn, model, and serial for chassis, interconnects, and blades
+        Dictionary of dn, model, and serial
+        for chassis, interconnects, and blades
 
     Raises:
         None
@@ -29,13 +30,14 @@ def domain_serials(handle):
     Example:
         domain_serials(handle)
     """
-    
+
     query_dict = {}
     query_dict['chassis'] = {}
     query_dict['fi'] = {}
     query_dict['blade'] = {}
 
-    query_data = handle.query_classids('orgOrg', 'EquipmentChassis', 'NetworkElement', 'ComputeBlade')
+    query_data = handle.query_classids('orgOrg', 'EquipmentChassis',
+                                       'NetworkElement', 'ComputeBlade')
 
     for chassis in query_data['EquipmentChassis']:
         query_dict['chassis'][chassis.dn] = {}

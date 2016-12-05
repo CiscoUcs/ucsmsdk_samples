@@ -23,6 +23,8 @@ from ucsmsdk.mometa.lsboot.LsbootUsbFlashStorageImage import \
     LsbootUsbFlashStorageImage
 from ucsmsdk.mometa.lsboot.LsbootUsbInternalImage import LsbootUsbInternalImage
 from ucsmsdk.mometa.lsboot.LsbootUsbExternalImage import LsbootUsbExternalImage
+from ucsmsdk.mometa.lsboot.LsbootLan import LsbootLan
+from ucsmsdk.mometa.lsboot.LsbootLanImagePath import LsbootLanImagePath
 
 
 log = logging.getLogger('ucs')

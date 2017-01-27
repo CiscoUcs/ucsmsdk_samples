@@ -15,11 +15,11 @@
 import time
 import datetime
 import logging
+from ucsmsdk.ucseventhandler import UcsEventHandle
+from ucsmsdk.mometa.ls.LsServer import LsServerConsts
 
 log = logging.getLogger('ucs')
 
-from ucsmsdk.ucseventhandler import UcsEventHandle
-from ucsmsdk.mometa.ls.LsServer import LsServerConsts
 
 # TODO: should not be global. This will not work when multiple nodes are
 # associate in parallel

@@ -155,12 +155,14 @@ def hfp_exists(handle, name, blade_bundle_version, rack_bundle_version,
     dn = parent_dn + "/fw-host-pack-" + name
     mo = handle.query_dn(dn)
     if mo:
-        if ((blade_bundle_version and
+        if (
+            (blade_bundle_version and
                 mo.blade_bundle_version != blade_bundle_version) and
             (rack_bundle_version and
                 mo.rack_bundle_version != rack_bundle_version) and
             (mode and mo.mode != mode) and
-            (descr and mo.descr != descr)):
+            (descr and mo.descr != descr)
+        ):
             return False
         return True
     return False

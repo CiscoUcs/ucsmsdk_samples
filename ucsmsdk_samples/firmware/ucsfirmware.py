@@ -706,7 +706,7 @@ def firmware_activate_infra(handle, version="2.2(2c)",
     if require_user_confirmation:
         set_flag = False
         set_str = input("Are you sure want to proceed? This will reboot "
-                            "theFabric Interconnects. Enter 'yes' to proceed.")
+                        "theFabric Interconnects. Enter 'yes' to proceed.")
         if set_str.strip().lower() == "yes":
             set_flag = True
 
@@ -851,10 +851,10 @@ def wait_for_blade_activation(handle,
                     if require_user_confirmation:
                         set_flag = False
                         set_str = input("The update process will need to "
-                                            "reboot the server(s). "
-                                            "Would you like to acknowledge "
-                                            "the same?"
-                                            "Enter 'yes' to proceed.")
+                                        "reboot the server(s). "
+                                        "Would you like to acknowledge "
+                                        "the same?"
+                                        "Enter 'yes' to proceed.")
                         if set_str.strip().lower() == "yes":
                             set_flag = True
 
@@ -957,8 +957,8 @@ def firmware_activate_blade(handle, version, require_user_confirmation=True):
             if require_user_confirmation:
                 set_flag = False
                 set_str = input("Are you sure want to proceed? This will "
-                                    "reboot the server."
-                                    "Enter 'yes' to proceed.")
+                                "reboot the server."
+                                "Enter 'yes' to proceed.")
                 if set_str.strip().lower() == "yes":
                     set_flag = True
 
@@ -972,9 +972,9 @@ def firmware_activate_blade(handle, version, require_user_confirmation=True):
             if require_user_confirmation:
                 set_flag = False
                 set_str = input("The update process will need to reboot "
-                                    "the server(s). Would you like to "
-                                    "acknowledge the same?"
-                                    "Enter 'yes' to proceed.")
+                                "the server(s). Would you like to "
+                                "acknowledge the same?"
+                                "Enter 'yes' to proceed.")
                 if set_str.strip().lower() == "yes":
                     set_flag = True
 

@@ -57,7 +57,7 @@ def qos_class_enable(handle, priority, weight="normal", mtu="normal",
         qos_class = handle.query_dn("fabric/lan/classes/class-" + priority)
         if qos_class:
             qos_class.weight = weight
-            qos_class.cos = cos 
+            qos_class.cos = cos
         else:
             raise ValueError("QoS class %s is not available" % priority)
     else:
@@ -135,13 +135,13 @@ def qos_class_conf_drift(handle, priority, admin_state=None, cos=None,
     dn = "fabric/lan/classes/class-" + priority
     mo = handle.query_dn(dn)
     if mo:
-        # the mo is present and already disabled 
+        # the mo is present and already disabled
         if admin_state == "disabled" and mo.admin_state == admin_state:
-            return False 
+            return False
 
         # the mo is present and not disabled. Need to act
         if admin_state == "disabled" and mo.admin_state != admin_state:
-            return True 
+            return True
 
         # the mo is present and already enabled
         if admin_state == "enabled" and mo.admin_state == admin_state:
@@ -150,8 +150,8 @@ def qos_class_conf_drift(handle, priority, admin_state=None, cos=None,
                 (drop and mo.drop != drop) or
                 (weight and mo.weight != weight) or
                 (mtu and mo.mtu != mtu) or
-                (multicast_optimize and mo.multicast_optimize
-                    != multicast_optimize)):
+                (multicast_optimize and
+                 mo.multicast_optimize != multicast_optimize)):
                 # configuration drift detected
                 return True
             # passed prop:val and mo[prop:val] are same.
@@ -161,7 +161,6 @@ def qos_class_conf_drift(handle, priority, admin_state=None, cos=None,
         # the mo is present and not enabled. Need to act
         if admin_state == "enabled" and mo.admin_state != admin_state:
             return True
-            
     return False
 
 
@@ -271,10 +270,12 @@ def qos_policy_exists(handle, name, priority=None, burst=None, rate=None,
     dn = parent_dn + '/ep-qos-' + name
     mo = handle.query_dn(dn)
     if mo:
-        if ((priority and mo.priority != priority) and
+        if (
+            (priority and mo.priority != priority) and
             (burst and mo.burst != burst) and
             (rate and mo.rate != rate) and
-            (host_control and mo.host_control != host_control)):
+            (host_control and mo.host_control != host_control)
+        ):
             return False
         return True
     return False

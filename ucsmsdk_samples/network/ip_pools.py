@@ -57,6 +57,7 @@ def ip_pool_create(handle, name, assignment_order,
     handle.commit()
     return mo
 
+
 def ip_pool_remove(handle, name, parent_dn="org-root"):
     """
     Removes the specified IP Pool
@@ -126,7 +127,7 @@ def add_ip_block(handle, r_from, to, subnet, default_gw, prim_dns, sec_dns,
         handle.add_mo(mo, True)
         handle.commit()
         return mo
-        
+
 
 def ip_block_remove(handle, name, parent_dn="org-root"):
     """
@@ -140,7 +141,8 @@ def ip_block_remove(handle, name, parent_dn="org-root"):
     Raises:
         ValueError: If IP Block is not present
     Example:
-        ip_block_remove(handle, "1.1.1.1-1.1.1.253", parent_dn="org-root/org-demo/ip-pool-cimc")
+        ip_block_remove(handle, "1.1.1.1-1.1.1.253",
+                        parent_dn="org-root/org-demo/ip-pool-cimc")
     """
 
     dn = parent_dn + "/block-" + name

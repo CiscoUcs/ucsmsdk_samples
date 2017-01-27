@@ -83,13 +83,15 @@ def radius_provider_exists(handle, name, order="lowest-available", key="",
     dn = "sys/radius-ext/provider-" + name
     mo = handle.query_dn(dn)
     if mo:
-        if ((order and mo.order != order) and
+        if (
+            (order and mo.order != order) and
             (key and mo.key != key) and
             (auth_port and mo.auth_port != auth_port) and
             (timeout and mo.timeout != timeout) and
             (retries and mo.retries != retries) and
             (enc_key and mo.enc_key != enc_key) and
-            (descr and mo.descr != descr)):
+            (descr and mo.descr != descr)
+        ):
             return False
         return True
     return False
@@ -331,8 +333,7 @@ def radius_provider_group_provider_exists(handle, group_name, name, order,
         raise ValueError("Radius Provider does not exist.")
 
     if mo:
-        if ((order and mo.order != order) and
-            (descr and mo.descr != descr)):
+        if ((order and mo.order != order) and (descr and mo.descr != descr)):
             return False
         return True
     return False

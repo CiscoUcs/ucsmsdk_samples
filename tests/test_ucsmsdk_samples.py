@@ -10,8 +10,6 @@ Tests for `ucsmsdk_samples` module.
 
 import unittest
 
-from ucsmsdk_samples import ucsmsdk_samples
-
 
 class TestUcsmsdk_samples(unittest.TestCase):
 

@@ -13,6 +13,7 @@
 
 from ucsmsdk.mometa.compute.ComputePool import ComputePool
 from ucsmsdk.mometa.compute.ComputePooledRackUnit import ComputePooledRackUnit
+from ucsmsdk.mometa.compute.ComputePooledSlot import ComputePooledSlot
 
 
 def server_pool_create(handle, name, descr="", parent_dn="org-root"):
@@ -69,6 +70,38 @@ def server_pool_add_rack_unit(handle, rack_id, parent_dn="org-root"):
         raise TypeError("Object {0} is not a ComputePool".format(obj.dn))
 
     mo = ComputePooledRackUnit(parent_mo_or_dn=parent_dn, id=str(rack_id))
+    handle.add_mo(mo)
+    handle.commit()
+    return mo
+
+
+def server_pool_add_slot(handle, chassis_id, slot_id, parent_dn="org-root"):
+    """
+    This method adds a blade server to a ComputePool.
+
+    Args:
+        handle (UcsHandle)
+        chassis_id (string): ID of chassis in which blade inserted.
+        slot_id (string): ID of slot in which blade is inserted.
+        parent_dn (string): Parent of Org.
+
+    Returns:
+       ComputePooledSlot: Managed Object
+
+    Example:
+        server_pool_add_slot(handle, chassis_id="1", slot_id="1",
+        parent_dn="org-root/org-sub/compute-pool-sample_compute_pool")
+
+    """
+
+    obj = handle.query_dn(parent_dn)
+    if not obj:
+        raise ValueError("org '%s' does not exist" % parent_dn)
+    if not isinstance(obj, ComputePool):
+        raise TypeError("Object {0} is not a ComputePool".format(obj.dn))
+
+    mo = ComputePooledSlot(parent_mo_or_dn=parent_dn, slot_id=str(slot_id),
+                           chassis_id=str(chassis_id))
     handle.add_mo(mo)
     handle.commit()
     return mo

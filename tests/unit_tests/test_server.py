@@ -20,9 +20,10 @@ from ucsmsdk_samples.server.ipmi_policy import ipmi_policy_create
 from ucsmsdk.mometa.aaa.AaaEpAuthProfile import AaaEpAuthProfile
 from ucsmsdk_samples.server.local_drive import disk_state_set
 from ucsmsdk_samples.server.server_pool import server_pool_create, \
-    server_pool_add_rack_unit
+    server_pool_add_rack_unit, server_pool_add_slot
 from ucsmsdk.mometa.compute.ComputePool import ComputePool
 from ucsmsdk.mometa.compute.ComputePooledRackUnit import ComputePooledRackUnit
+from ucsmsdk.mometa.compute.ComputePooledSlot import ComputePooledSlot
 
 
 # Patch UcsHandle.commit to simulate ucsm interaction w/o real ucsm
@@ -203,3 +204,48 @@ def test_invalid_server_pool_add_rack_unit(query_mock, add_mo_mock,
     query_mock.return_value = OrgOrg(parent_mo_or_dn="org-root", name="root")
     # Verify exception was raised for invalid type
     assert_raises(TypeError, server_pool_add_rack_unit, handle, 16,)
+
+
+# Patch UcsHandle.commit to simulate ucsm interaction w/o real ucsm
+@patch.object(UcsHandle, 'commit')
+# Patch UcsHandle.add_mo to simulate ucsm interaction w/o real ucsm
+@patch.object(UcsHandle, 'add_mo')
+# Patch UcsHandle.query_dn to simulate valid/invalid orgs
+@patch.object(UcsHandle, 'query_dn')
+def test_valid_server_pool_add_slot(query_mock, add_mo_mock, commit_mock):
+    query_mock.return_value = ComputePool(parent_mo_or_dn="org-root",
+                                          name="test-pool")
+    add_mo_mock.return_value = True
+    commit_mock.return_value = True
+    handle = UcsHandle('169.254.1.1', 'admin', 'password')
+
+    # Scenario: Default parameters
+    pool_retval = server_pool_add_slot(handle, 1, 8)
+    # Verify we were passed back the correct object type
+    assert isinstance(pool_retval, ComputePooledSlot)
+    # Verify the ID we gave it was assigned correctly
+    assert pool_retval.chassis_id == str(1)
+    assert pool_retval.slot_id == str(8)
+
+
+# Patch UcsHandle.commit to simulate ucsm interaction w/o real ucsm
+@patch.object(UcsHandle, 'commit')
+# Patch UcsHandle.add_mo to simulate ucsm interaction w/o real ucsm
+@patch.object(UcsHandle, 'add_mo')
+# Patch UcsHandle.query_dn to simulate valid/invalid orgs
+@patch.object(UcsHandle, 'query_dn')
+def test_invalid_server_pool_add_slot(query_mock, add_mo_mock,
+                                      commit_mock):
+    add_mo_mock.return_value = True
+    commit_mock.return_value = True
+    handle = UcsHandle('169.254.1.1', 'admin', 'password')
+
+    # Scenario: Invalid Org
+    query_mock.return_value = None
+    # Verify exception was raised for invalid org
+    assert_raises(ValueError, server_pool_add_slot, handle, 1, 8)
+
+    # Scenario: Org is not a ComputePool
+    query_mock.return_value = OrgOrg(parent_mo_or_dn="org-root", name="root")
+    # Verify exception was raised for invalid type
+    assert_raises(TypeError, server_pool_add_slot, handle, 1, 8)

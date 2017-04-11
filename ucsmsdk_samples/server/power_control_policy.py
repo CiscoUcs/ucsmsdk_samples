@@ -139,8 +139,7 @@ def power_control_policy_exist(handle, name, prio="no-cap", descr="",
     dn = parent_dn + "/power-policy-" + name
     mo = handle.query_dn(dn)
     if mo:
-        if ((prio and mo.prio != prio) and
-            (descr and mo.descr != descr)):
+        if ((prio and mo.prio != prio) and (descr and mo.descr != descr)):
             return False
         return True
     return False

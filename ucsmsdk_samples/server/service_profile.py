@@ -33,6 +33,7 @@ def sp_template_create(handle, name, type, resolve_remote, descr="",
                        stats_policy_name="",
                        vcon_profile_name="",
                        vmedia_policy_name="",
+                       server_pool_name="",
                        parent_dn="org-root"):
     """
     This method creates Service profile template.
@@ -65,6 +66,7 @@ def sp_template_create(handle, name, type, resolve_remote, descr="",
         stats_policy_name (string): Statistics Policy
         vcon_profile_name (string): Virtual Connection profile policy
         vmedia_policy_name (string): Virtual media policy
+        server_pool_name (string): Server Pool
         parent_dn= Parent DN
 
     Returns:
@@ -79,6 +81,7 @@ def sp_template_create(handle, name, type, resolve_remote, descr="",
     """
     from ucsmsdk.mometa.ls.LsServer import LsServer
     from ucsmsdk.mometa.vnic.VnicConnDef import VnicConnDef
+    from ucsmsdk.mometa.ls.LsRequirement import LsRequirement
 
     obj = handle.query_dn(parent_dn)
     if not obj:
@@ -116,6 +119,9 @@ def sp_template_create(handle, name, type, resolve_remote, descr="",
     VnicConnDef(parent_mo_or_dn=mo,
                 lan_conn_policy_name=lan_conn_policy_name,
                 san_conn_policy_name=san_conn_policy_name)
+
+    # Add Server Pool to template
+    LsRequirement(parent_mo_or_dn=mo, name=server_pool_name)
 
     handle.add_mo(mo, True)
     handle.commit()

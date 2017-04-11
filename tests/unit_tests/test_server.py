@@ -71,6 +71,7 @@ def test_valid_ipmi_policy_create(query_mock, add_mo_mock, commit_mock):
     assert user_retval.pwd is 'password'
 
 
+
 # Patch UcsHandle.commit to simulate ucsm interaction w/o real ucsm
 @patch.object(UcsHandle, 'commit')
 # Patch UcsHandle.add_mo to simulate ucsm interaction w/o real ucsm
@@ -86,7 +87,6 @@ def test_invalid_ipmi_policy_create(query_mock, add_mo_mock, commit_mock):
     query_mock.return_value = None
     # Verify exception was raised for invalid org
     assert_raises(ValueError, ipmi_policy_create, handle, 'invalid')
-
 
 # Patch UcsHandle.commit to simulate ucsm interaction w/o real ucsm
 @patch.object(UcsHandle, 'commit')

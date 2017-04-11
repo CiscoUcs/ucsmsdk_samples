@@ -30,6 +30,9 @@ from ucsmsdk.mometa.lsboot.LsbootLanImagePath import LsbootLanImagePath
 log = logging.getLogger('ucs')
 
 
+log = logging.getLogger('ucs')
+
+
 def boot_policy_create(handle, name, descr="",
                        reboot_on_update="yes",
                        enforce_vnic_name="yes",

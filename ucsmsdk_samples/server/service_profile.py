@@ -120,6 +120,7 @@ def sp_template_create(handle, name, type, resolve_remote, descr="",
                 lan_conn_policy_name=lan_conn_policy_name,
                 san_conn_policy_name=san_conn_policy_name)
 
+
     # Add Server Pool to template
     LsRequirement(parent_mo_or_dn=mo, name=server_pool_name)
 

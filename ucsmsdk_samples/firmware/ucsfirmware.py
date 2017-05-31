@@ -357,14 +357,9 @@ def firmware_add_remote(handle, file_name, remote_path, protocol, server,
                             file_name="ucs-k9-bundle-c-series.2.2.5b.C.bin",
                             remote_path="/home/imagedir",
                             protocol="nfs",
-                            server="10.65.1.2,
+                            server="10.65.1.2",
                             user="user", pwd="pwd")
     """
-
-    file_path = os.path.join(remote_path, file_name)
-
-    if not os.path.exists(file_path):
-        raise IOError("Image does not exist")
 
     if protocol is not FirmwareDownloaderConsts.PROTOCOL_TFTP:
         if not user:

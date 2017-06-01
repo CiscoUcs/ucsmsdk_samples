@@ -52,6 +52,20 @@ def firmware_available(username, password, mdf_id_list=None, proxy=None):
     image_names = [image.image_name for image in images]
     return sorted(image_names)
 
+def return_download_state(handle, file_name):
+    '''
+    Returns Transfer Status of  FirmwareDownloader object for a single download. 
+    
+    Args:
+        handle (UcsHandle)
+        file_name (string): firmware image name
+
+    Example:
+        return_download_status(handle, 'ucs-k9-bundle-infra.2.2.5b.A.bin')
+    '''
+    download_state = (h.query_dn(dn='sys/fw-catalogue/dnld-%s' % file_name)).transfer_state
+    
+    return download_state
 
 def get_firmware_bundles(handle, bundle_type=None):
     """
@@ -350,7 +364,8 @@ def firmware_add_remote(handle, file_name, remote_path, protocol, server,
         FirmwareDownloader: Managed Object
 
     Raises:
-        ValueError if image not available or incorrect credential
+        ValueError if incorrect credential
+        IOError if file fails to download
 
     Example:
         firmware_add_remote(handle,
@@ -383,6 +398,11 @@ def firmware_add_remote(handle, file_name, remote_path, protocol, server,
     handle.add_mo(firmware_downloader)
     # handle.set_dump_xml()
     handle.commit()
+    
+    time.sleep(5)
+    if return_download_state(handle, file_name) == 'failed':
+        raise IOError("File failed to download")
+    
     return firmware_downloader
 
 

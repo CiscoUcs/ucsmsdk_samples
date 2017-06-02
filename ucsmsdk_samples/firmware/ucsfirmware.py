@@ -24,7 +24,10 @@ from ucsmsdk.mometa.top.TopSystem import TopSystem
 from ucsmsdk.mometa.firmware.FirmwareCatalogue import FirmwareCatalogue
 from ucsmsdk.mometa.firmware.FirmwareDownloader import FirmwareDownloader
 from ucsmsdk.mometa.firmware.FirmwareDownloader import FirmwareDownloaderConsts
+from ucsmsdk.mometa.firmware.FirmwareDistributable import FirmwareDistributableConsts
 from ucsmsdk.mometa.firmware.FirmwareAck import FirmwareAckConsts
+
+from ucsmsdk.ucsexception import UcsOperationError
 
 log = logging.getLogger('ucs')
 
@@ -52,20 +55,6 @@ def firmware_available(username, password, mdf_id_list=None, proxy=None):
     image_names = [image.image_name for image in images]
     return sorted(image_names)
 
-def return_download_state(handle, file_name):
-    '''
-    Returns Transfer Status of  FirmwareDownloader object for a single download. 
-    
-    Args:
-        handle (UcsHandle)
-        file_name (string): firmware image name
-
-    Example:
-        return_download_status(handle, 'ucs-k9-bundle-infra.2.2.5b.A.bin')
-    '''
-    download_state = (h.query_dn(dn='sys/fw-catalogue/dnld-%s' % file_name)).transfer_state
-    
-    return download_state
 
 def get_firmware_bundles(handle, bundle_type=None):
     """
@@ -376,6 +365,24 @@ def firmware_add_remote(handle, file_name, remote_path, protocol, server,
                             user="user", pwd="pwd")
     """
 
+    def return_download_state(handle, file_name):
+        '''
+        Returns Transfer State of  FirmwareDownloader object for a single download.
+
+        Args:
+            handle (UcsHandle)
+            file_name (string): firmware image name
+
+        Example:
+            return_download_state(handle, 'ucs-k9-bundle-infra.2.2.5b.A.bin')
+        '''
+        download = handle.query_dn(dn='sys/fw-catalogue/dnld-%s' % file_name)
+        if download is None:
+            raise UcsOperationError("Query FirmwareDownloader", "None returned")
+
+        download_state = download.transfer_state
+        return download_state
+
     if protocol is not FirmwareDownloaderConsts.PROTOCOL_TFTP:
         if not user:
             raise ValueError("Provide user")
@@ -399,8 +406,9 @@ def firmware_add_remote(handle, file_name, remote_path, protocol, server,
     # handle.set_dump_xml()
     handle.commit()
     
-    time.sleep(5)
-    if return_download_state(handle, file_name) == 'failed':
+    time.sleep(10)
+    if return_download_state(handle, file_name) == \
+            FirmwareDistributableConsts.TRANSFER_STATE_FAILED:
         raise IOError("File failed to download")
     
     return firmware_downloader

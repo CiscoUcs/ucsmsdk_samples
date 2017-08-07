@@ -34,7 +34,7 @@ def disk_state_set(handle, rack_id, disk_id, state,
        StorageLocalDisk
 
     Example:
-        disk_state_set(handle, 1, 3, "uconfigured-good")
+        disk_state_set(handle, 1, 3, "unconfigured-good")
 
     """
 

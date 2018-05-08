@@ -14,6 +14,7 @@
 
 from mock import patch
 from nose.tools import assert_raises
+from ucsmsdk.mometa.uuidpool.UuidpoolPool import UuidpoolPool
 from ucsmsdk.ucshandle import UcsHandle
 from ucsmsdk.mometa.org.OrgOrg import OrgOrg
 from ucsmsdk_samples.server.ipmi_policy import ipmi_policy_create
@@ -25,8 +26,10 @@ from ucsmsdk.mometa.compute.ComputePool import ComputePool
 from ucsmsdk.mometa.compute.ComputePooledRackUnit import ComputePooledRackUnit
 from ucsmsdk.mometa.compute.ComputePooledSlot import ComputePooledSlot
 
-
 # Patch UcsHandle.commit to simulate ucsm interaction w/o real ucsm
+from ucsmsdk_samples.server.uuid_pools import uuid_pool_create
+
+
 @patch.object(UcsHandle, 'commit')
 # Patch UcsHandle.add_mo to simulate ucsm interaction w/o real ucsm
 @patch.object(UcsHandle, 'add_mo')
@@ -249,3 +252,37 @@ def test_invalid_server_pool_add_slot(query_mock, add_mo_mock,
     query_mock.return_value = OrgOrg(parent_mo_or_dn="org-root", name="root")
     # Verify exception was raised for invalid type
     assert_raises(TypeError, server_pool_add_slot, handle, 1, 8)
+
+
+# Patch UcsHandle.commit to simulate ucsm interaction w/o real ucsm
+@patch.object(UcsHandle, 'commit')
+# Patch UcsHandle.add_mo to simulate ucsm interaction w/o real ucsm
+@patch.object(UcsHandle, 'add_mo')
+# Patch UcsHandle.query_dn to simulate valid/invalid orgs
+@patch.object(UcsHandle, 'query_dn')
+def test_valid_uuid_pool_create(query_mock, add_mo_mock, commit_mock):
+    query_mock.return_value = UuidpoolPool(parent_mo_or_dn="org-root",
+                                           name="test-pool")
+    add_mo_mock.return_value = True
+    commit_mock.return_value = True
+    handle = UcsHandle('169.254.1.1', 'admin', 'password')
+
+    uuid_pool = uuid_pool_create(handle=handle, name="test-pool")
+
+    assert uuid_pool.name == "test-pool"
+
+
+# Patch UcsHandle.commit to simulate ucsm interaction w/o real ucsm
+@patch.object(UcsHandle, 'commit')
+# Patch UcsHandle.add_mo to simulate ucsm interaction w/o real ucsm
+@patch.object(UcsHandle, 'add_mo')
+# Patch UcsHandle.query_dn to simulate valid/invalid orgs
+@patch.object(UcsHandle, 'query_dn')
+def test_missing_name_uuid_pool_create(query_mock, add_mo_mock, commit_mock):
+    add_mo_mock.return_value = True
+    commit_mock.return_value = True
+    handle = UcsHandle('169.254.1.1', 'admin', 'password')
+    # Scenario: Name missing
+    query_mock.return_value = None
+
+    assert_raises(TypeError, uuid_pool_create, handle)

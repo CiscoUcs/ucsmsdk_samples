@@ -71,7 +71,6 @@ def test_valid_ipmi_policy_create(query_mock, add_mo_mock, commit_mock):
     assert user_retval.pwd is 'password'
 
 
-
 # Patch UcsHandle.commit to simulate ucsm interaction w/o real ucsm
 @patch.object(UcsHandle, 'commit')
 # Patch UcsHandle.add_mo to simulate ucsm interaction w/o real ucsm
@@ -88,28 +87,29 @@ def test_invalid_ipmi_policy_create(query_mock, add_mo_mock, commit_mock):
     # Verify exception was raised for invalid org
     assert_raises(ValueError, ipmi_policy_create, handle, 'invalid')
 
+
 # Patch UcsHandle.commit to simulate ucsm interaction w/o real ucsm
 @patch.object(UcsHandle, 'commit')
 # Patch UcsHandle.add_mo to simulate ucsm interaction w/o real ucsm
 @patch.object(UcsHandle, 'add_mo')
 def test_valid_disk_state(add_mo_mock, commit_mock):
-        add_mo_mock.return_value = True
-        commit_mock.return_value = True
-        handle = UcsHandle('169.254.1.1', 'admin', 'password')
+    add_mo_mock.return_value = True
+    commit_mock.return_value = True
+    handle = UcsHandle('169.254.1.1', 'admin', 'password')
 
-        # Scenario: jbod mode
-        test_retval = disk_state_set(handle, 1, 4, "jbod")
-        assert test_retval.admin_action == "jbod"
-        assert test_retval.dn == "sys/rack-unit-1/board/storage-SAS-1/disk-4"
+    # Scenario: jbod mode
+    test_retval = disk_state_set(handle, 1, 4, "jbod")
+    assert test_retval.admin_action == "jbod"
+    assert test_retval.dn == "sys/rack-unit-1/board/storage-SAS-1/disk-4"
 
-        # Scenario: unconfigured-good mode
-        test_retval = disk_state_set(handle, 2, 5, "unconfigured-good")
-        assert test_retval.admin_action == "unconfigured-good"
-        assert test_retval.dn == "sys/rack-unit-2/board/storage-SAS-1/disk-5"
+    # Scenario: unconfigured-good mode
+    test_retval = disk_state_set(handle, 2, 5, "unconfigured-good")
+    assert test_retval.admin_action == "unconfigured-good"
+    assert test_retval.dn == "sys/rack-unit-2/board/storage-SAS-1/disk-5"
 
-        # Scenario: custom controller
-        test_retval = disk_state_set(handle, 3, 6, "jbod", "storage-SAS-4")
-        assert test_retval.dn == "sys/rack-unit-3/board/storage-SAS-4/disk-6"
+    # Scenario: custom controller
+    test_retval = disk_state_set(handle, 3, 6, "jbod", "storage-SAS-4")
+    assert test_retval.dn == "sys/rack-unit-3/board/storage-SAS-4/disk-6"
 
 
 # Patch UcsHandle.commit to simulate ucsm interaction w/o real ucsm
@@ -117,12 +117,12 @@ def test_valid_disk_state(add_mo_mock, commit_mock):
 # Patch UcsHandle.add_mo to simulate ucsm interaction w/o real ucsm
 @patch.object(UcsHandle, 'add_mo')
 def test_invalid_disk_state(add_mo_mock, commit_mock):
-        add_mo_mock.return_value = True
-        commit_mock.return_value = True
-        handle = UcsHandle('169.254.1.1', 'admin', 'password')
+    add_mo_mock.return_value = True
+    commit_mock.return_value = True
+    handle = UcsHandle('169.254.1.1', 'admin', 'password')
 
-        # Scenario invalid state
-        assert_raises(ValueError, disk_state_set, handle, 16, 1, "blah")
+    # Scenario invalid state
+    assert_raises(ValueError, disk_state_set, handle, 16, 1, "blah")
 
 
 # Patch UcsHandle.commit to simulate ucsm interaction w/o real ucsm
@@ -198,12 +198,12 @@ def test_invalid_server_pool_add_rack_unit(query_mock, add_mo_mock,
     # Scenario: Invalid Org
     query_mock.return_value = None
     # Verify exception was raised for invalid org
-    assert_raises(ValueError, server_pool_add_rack_unit, handle, 16,)
+    assert_raises(ValueError, server_pool_add_rack_unit, handle, 16, )
 
     # Scenario: Org is not a ComputePool
     query_mock.return_value = OrgOrg(parent_mo_or_dn="org-root", name="root")
     # Verify exception was raised for invalid type
-    assert_raises(TypeError, server_pool_add_rack_unit, handle, 16,)
+    assert_raises(TypeError, server_pool_add_rack_unit, handle, 16, )
 
 
 # Patch UcsHandle.commit to simulate ucsm interaction w/o real ucsm

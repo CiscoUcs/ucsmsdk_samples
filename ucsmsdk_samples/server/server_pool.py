@@ -105,3 +105,29 @@ def server_pool_add_slot(handle, chassis_id, slot_id, parent_dn="org-root"):
     handle.add_mo(mo)
     handle.commit()
     return mo
+
+
+def server_pool_exists(handle, parent_dn="org-root"):
+    """
+    This method adds a validates if a server pool exists.
+
+    Args:
+        handle (UcsHandle)
+        parent_dn (string): Parent of Org.
+
+    Returns:
+       ComputePooledSlot: Managed Object
+
+    Example:
+        server_pool_add_slot(handle,
+        parent_dn="org-root/org-sub/compute-pool-sample_compute_pool")
+
+    """
+
+    obj = handle.query_dn(parent_dn)
+    if not obj:
+        return False
+    if not isinstance(obj, ComputePool):
+        raise TypeError("Object {0} is not a ComputePool".format(obj.dn))
+    else:
+        return True

@@ -348,7 +348,7 @@ def firmware_add_local_large_file(handle, image_dir, image_name, timeout=10 * 60
         ValueError if download fail or timeout
 
     Example:
-        firmware_add_local_largeFile(image_dir="/home/imagedir",
+        firmware_add_local_large_file(image_dir="/home/imagedir",
                            image_name="ucs-k9-bundle-c-series.2.2.5b.C.bin")
     """
 

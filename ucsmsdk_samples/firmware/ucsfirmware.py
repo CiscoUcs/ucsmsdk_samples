@@ -332,7 +332,7 @@ def firmware_add_local(handle, image_dir, image_name, timeout=10 * 60):
     return firmware_downloader
 
 
-def firmware_add_local_largeFile(handle, image_dir, image_name, timeout=10 * 60):
+def firmware_add_local_large_file(handle, image_dir, image_name, timeout=10 * 60):
     """
     Downloads the firmware image on ucsm from local server
 

@@ -345,6 +345,65 @@ def firmware_add_local(handle, image_dir, image_name, timeout=10 * 60):
     return firmware_downloader
 
 
+def firmware_add_local_large_file(handle, image_dir, image_name, timeout=10 * 60):
+    """
+    Downloads the firmware image on ucsm from local server
+
+    Args:
+        image_dir (string): path of download directory
+        image_name (string): firmware image name
+        timeout (number): timeout in seconds
+
+    Returns:
+        FirmwareDownloader: Managed Object
+
+    Raises:
+        ValueError if download fail or timeout
+
+    Example:
+        firmware_add_local_large_file(image_dir="/home/imagedir",
+                           image_name="ucs-k9-bundle-c-series.2.2.5b.C.bin")
+    """
+
+    file_path = os.path.join(image_dir, image_name)
+
+    if not os.path.exists(file_path):
+        raise IOError("File does not exist")
+
+    top_system = TopSystem()
+    firmware_catalogue = FirmwareCatalogue(parent_mo_or_dn=top_system)
+    firmware_downloader = FirmwareDownloader(
+        parent_mo_or_dn=firmware_catalogue,
+        file_name=image_name)
+    firmware_downloader.server = FirmwareDownloaderConsts.PROTOCOL_LOCAL
+    firmware_downloader.protocol = FirmwareDownloaderConsts.PROTOCOL_LOCAL
+    firmware_downloader.admin_state = \
+        FirmwareDownloaderConsts.ADMIN_STATE_RESTART
+
+    uri_suffix = "operations/file-%s/imagechunk.txt" % image_name
+    handle.firmware_upload(url_suffix=uri_suffix,
+                       file_dir=image_dir,
+                       file_name=image_name)
+
+    handle.add_mo(firmware_downloader, modify_present=True)
+    # handle.set_dump_xml()
+    handle.commit()
+
+    start = datetime.datetime.now()
+    while not firmware_downloader.transfer_state == \
+            FirmwareDownloaderConsts.TRANSFER_STATE_DOWNLOADED:
+        firmware_downloader = handle.query_dn(firmware_downloader.dn)
+        if firmware_downloader.transfer_state == \
+                FirmwareDownloaderConsts.TRANSFER_STATE_FAILED:
+            raise Exception("Download of '%s' failed. Error: %s" %
+                            (image_name,
+                             firmware_downloader.fsm_rmt_inv_err_descr))
+        if (datetime.datetime.now() - start).total_seconds() > timeout:
+            raise Exception("Download of '%s' timed out" % image_name)
+
+    return firmware_downloader
+
+
 def firmware_add_remote(handle, file_name, remote_path, protocol, server,
                         user="", pwd=""):
     """

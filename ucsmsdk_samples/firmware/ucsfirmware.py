@@ -16,6 +16,7 @@ import os
 import time
 import datetime
 import sys
+from imp import reload
 
 from ucsmsdk.utils.ccoimage import get_ucs_cco_image_list
 from ucsmsdk.utils.ccoimage import get_ucs_cco_image
@@ -292,6 +293,12 @@ def firmware_add_local(handle, image_dir, image_name, timeout=10 * 60):
         firmware_add_local(image_dir="/home/imagedir",
                            image_name="ucs-k9-bundle-c-series.2.2.5b.C.bin")
     """
+    # Change default encoding
+    encoding = sys.getdefaultencoding()
+    if sys.version_info[:2] <= (2, 7):
+        # If Python 2.7 or older, then set 'ISO-8859-1' as default encoding
+        reload(sys)
+        sys.setdefaultencoding('ISO-8859-1')
 
     file_path = os.path.join(image_dir, image_name)
 
@@ -328,6 +335,12 @@ def firmware_add_local(handle, image_dir, image_name, timeout=10 * 60):
                              firmware_downloader.fsm_rmt_inv_err_descr))
         if (datetime.datetime.now() - start).total_seconds() > timeout:
             raise Exception("Download of '%s' timed out" % image_name)
+
+    #reset encoding
+    if sys.version_info[:2] <= (2, 7):
+        # If Python 2.7 or older, then set 'ISO-8859-1' as default encoding
+        reload(sys)
+        sys.setdefaultencoding(encoding)
 
     return firmware_downloader
 
@@ -1172,3 +1185,4 @@ def firmware_auto_install(handle, version, image_dir, infra_only=False,
         log.debug("Error Occurred in Script.")
         handle.logout()
         raise
+

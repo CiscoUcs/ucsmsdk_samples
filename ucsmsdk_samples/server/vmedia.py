@@ -295,19 +295,4 @@ def vmedia_mount_state(handle, sp_dn):
     if not mount_entries:
         raise ValueError("Vmedia Mount Entries do not exist.")
 
-    mnt_state = {
-        "unknown": "Mapping is not present",
-        "not-mounted": "Mapping is not present",
-        "unmounting": "Unmounting in progress",
-        "mounting": "Mounting in progress",
-        "mounted": "Mounted successfully",
-        "mount-failed": "Mounting failed",
-    }
-    for mount_entry in mount_entries:
-        log.debug("name:%s, type:%s, status:%s, description:%s" % (
-            mount_entry.mapping_name,
-            mount_entry.device_type,
-            mount_entry.oper_mount_status,
-            mnt_state[mount_entry.oper_mount_status],
-        ))
     return mount_entries
